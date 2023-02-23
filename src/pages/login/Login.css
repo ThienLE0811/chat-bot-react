@@ -1,0 +1,49 @@
+.login{
+    padding-top: 15vh;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.singup {
+    padding-top: 18vh;
+    height: 77vh;
+}
+
+.container {
+    background-color: #dafae8;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.footer-text {
+    padding-top: 10vh;
+}
+
+.footer-text {
+    padding-top: 28vh;
+}
+
+@media only screen and (max-height: 820px) {
+    .footer-text {
+        padding-top: 18vh;
+    }
+}
+
+@media only screen and (max-height: 844px) {
+    .footer-text {
+            padding-top: 20vh;
+        }
+}
+
+@media only screen and (max-height: 740px) {
+    .footer-text {
+        padding-top: 15vh;
+    }
+}
+
+@media only screen and (max-height: 722px) {
+    .footer-text {
+        padding-top: 13vh;
+    }
+}
