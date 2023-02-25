@@ -10,25 +10,25 @@ import {
   ProLayout,
 } from "@ant-design/pro-components";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { message, Button } from "antd";
 import { handleLogoutApi } from "../../services/userService";
-import menuData from "./router";
-import Train from "../Train";
-import Dialogue from "../Dialogue";
+import { motion } from "framer-motion";
+import { workplace } from "../../config/router";
+import { variants, transition } from "../../config/pageTransition";
 
 function Home() {
   const navigate = useNavigate();
-  const [pathname, setPathname] = useState<string>("");
+  const { pathname } = useLocation();
 
-  const checkAccess = () => {
-    const checkAccess = document.cookie;
-    console.log("checkAccess::", checkAccess);
-    if (!checkAccess || checkAccess === null) {
-      navigate("/");
-    }
-  };
-  checkAccess();
+  // const checkAccess = () => {
+  //   const checkAccess = document.cookie;
+  //   console.log("checkAccess::", checkAccess);
+  //   if (!checkAccess || checkAccess === null) {
+  //     navigate("/");
+  //   }
+  // };
+  // checkAccess();
 
   const handleLogout = async () => {
     try {
@@ -49,16 +49,20 @@ function Home() {
     >
       <ProLayout
         location={{
-          pathname: "/home",
+          pathname,
         }}
         // navTheme="light"
         title={"AceBot"}
         logo="https://gogroup.vn/wp-content/uploads/2022/12/gogroup-logo.png"
         iconfontUrl="//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js"
         layout="mix"
-        route={menuData}
+        // route={menuData}
+        route={{
+          routes: workplace.children,
+        }}
         fixedHeader={true}
         fixSiderbar={true}
+        splitMenus={true}
         avatarProps={{
           src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
           size: "small",
@@ -68,7 +72,7 @@ function Home() {
             navigate("/");
           },
         }}
-        menuDataRender={() => menuData}
+        // menuDataRender={() => menuData}
         menuItemRender={(item, dom) => (
           <div
             onClick={() => {
@@ -81,9 +85,19 @@ function Home() {
           </div>
         )}
       >
-        <PageContainer style={{ paddingInline: 6 }} ghost title={false}>
+        {/* <PageContainer style={{ paddingInline: 6 }} ghost title={false}>
           <Outlet></Outlet>
-        </PageContainer>
+        </PageContainer> */}
+        <motion.div
+          key={pathname}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={transition}
+          variants={variants}
+        >
+          <Outlet />
+        </motion.div>
       </ProLayout>
     </div>
   );

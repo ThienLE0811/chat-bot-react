@@ -41,7 +41,7 @@ function Login() {
   const checkUser = async (res: AxiosResponse<any, any>) => {
     const checkLogin = res?.data?.data?.userRole;
     console.log("checkLogin", checkLogin);
-    return navigate("/home");
+    return navigate("/");
     // return checkLogin === ("ADMIN" || "USER")
     //   ? navigate("/home")
     //   : navigate("/singup");
