@@ -12,3 +12,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.ant-pro-top-nav-header-main-left {
+  margin-right: 3vh;
+}

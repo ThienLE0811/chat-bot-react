@@ -7,21 +7,7 @@ import { useRef, useState } from "react";
 import ResponsesiveTextTable from "../../components/ResponsiveTextTable";
 
 export default () => {
-  //   const {
-  //     currentRow,
-  //     setCurrentRow,
-  //     setShowDetail,
-  //     setModalFormUserVisible,
-  //     actionRef,
-  //   } = useModel("user", (model) => ({
-  //     currentRow: model.currentRow,
-  //     setCurrentRow: model.setCurrentRow,
-  //     setShowDetail: model.setShowDetail,
-  //     setModalFormUserVisible: model.setModalFormUserVisible,
-  //     actionRef: model.actionRef,
-  //   }));
-
-  const [modalFormUserVisible, setModalFormUserVisible] =
+  const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
@@ -34,76 +20,33 @@ export default () => {
 
   return [
     {
-      title: "Tài khoản",
-      dataIndex: "userName",
-      width: 90,
+      title: "Tên",
+      dataIndex: "title",
+      width: 120,
       render: (dom, entity) => {
         return (
           <a
-          // onClick={() => {
-          //   if (access?.["USER_MANAGEMENT.GET_USER_BY_ID"]) {
-          //     setCurrentRow(entity);
-          //     setShowDetail(true);
-          //   }
-          // }}
+            onClick={() => {
+              console.log("click");
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
           >
             {dom}
           </a>
         );
       },
     },
-    // {
-    //   title: "Trạng thái",
-    //   dataIndex: "usrStatus",
-    //   valueType: "select",
-    //   initialValue: "ACTIVE",
-    //   valueEnum: {
-    //     ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-    //     INACTIVE: { text: <Badge status="error" text="Không hoạt động" /> },
-    //   },
-    // },
     {
-      title: "Email",
-      dataIndex: "email",
-    },
-    {
-      title: "Họ tên",
-      dataIndex: "firstName",
-      hideInSearch: true,
-      renderText: (text, record) =>
-        `${record?.usrFirstName} ${record?.usrLastName}`,
-    },
-    {
-      title: "Nhóm",
-      renderText: (text, record) => (
-        <ResponsesiveTextTable
-          maxWidth={200}
-          minWidth={40}
-          text={record?.grpName}
-        />
+      title: "Nội dung",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
       ),
       ellipsis: true,
-      debounceTime: 800,
-      fieldProps: {
-        showSearch: true,
-      },
-      formItemProps: {},
-      //   request: async ({ keyWords }) =>
-      //     (
-      //       await api.group.getListGroup({ params: { keyword: keyWords } })
-      //     ).data?.map((value: any) => ({
-      //       label: value?.grpName,
-      //       value: value?.grpCode,
-      //     })),
-      dataIndex: "userRole",
+      hideInSearch: true,
+      // hideInTable: true,
+      dataIndex: "dataIntent",
     },
-    // {
-    //   title: 'Domain name',
-    //   render: (text) => <ResponsesiveTextTable maxWidth={200} minWidth={90} text={text} />,
-    //   ellipsis: true,
-    //   hideInSearch: true,
-    //   dataIndex: 'usrDn',
-    // },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
@@ -121,7 +64,7 @@ export default () => {
       hideInForm: true,
       dataIndex: "updatedAt",
       render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={100} text={text} />
+        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
       ),
       valueType: "date",
       fieldProps: {
@@ -134,15 +77,15 @@ export default () => {
       dataIndex: "option",
       valueType: "option",
       fixed: "right",
-      width: 80,
+      width: 100,
       render: (_, record) => [
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
             onClick={() => {
-              !currentRow?.usrUid && setCurrentRow(record);
-              setModalFormUserVisible(true);
+              setCurrentRow(record);
+              setModalFormIntentVisible(true);
             }}
           />
         </Tooltip>,

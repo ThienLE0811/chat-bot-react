@@ -29,6 +29,10 @@ export interface LoginResponseSuccessData {
    * @memberof LoginResponseSuccessData
    */
   expires?: number;
+  userRole?: string;
+  token?: string
 }
 
 export interface PostsInfo {}
+
+export interface IntentInfo {}

@@ -24,4 +24,13 @@ const handleSingUpApi = async (username:string, password:string, email:string) =
       })
 };
 
-export { handleLoginApi,handleLogoutApi,handleSingUpApi }
+const getUser = async () => {
+  return await axios.get("http://localhost:8000/users", {})
+};
+
+const deleteUser = async (userId:number) => {
+  return await axios.delete(`http://localhost:8000/users/delete/${userId}`, {})
+};
+
+
+export { handleLoginApi,handleLogoutApi,handleSingUpApi,getUser,deleteUser }

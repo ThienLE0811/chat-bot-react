@@ -35,7 +35,7 @@ export default () => {
   return [
     {
       title: "Tài khoản",
-      dataIndex: "userName",
+      dataIndex: "usrUsername",
       width: 90,
       render: (dom, entity) => {
         return (
@@ -52,27 +52,45 @@ export default () => {
         );
       },
     },
-    // {
-    //   title: "Trạng thái",
-    //   dataIndex: "usrStatus",
-    //   valueType: "select",
-    //   initialValue: "ACTIVE",
-    //   valueEnum: {
-    //     ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-    //     INACTIVE: { text: <Badge status="error" text="Không hoạt động" /> },
-    //   },
-    // },
+    {
+      title: "Trạng thái",
+      dataIndex: "usrStatus",
+      valueType: "select",
+      initialValue: "ACTIVE",
+      valueEnum: {
+        ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
+        INACTIVE: { text: <Badge status="error" text="Không hoạt động" /> },
+      },
+    },
     {
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "usrEmail",
+    },
+    {
+      title: "Phòng ban",
+      dataIndex: "usrPosition",
+      hideInSearch: true,
+      ellipsis: true,
+      // hideInDescriptions: true,
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={200} minWidth={60} text={text} />
+      ),
     },
     {
       title: "Họ tên",
-      dataIndex: "firstName",
+      dataIndex: "usrFirstName",
       hideInSearch: true,
       renderText: (text, record) =>
         `${record?.usrFirstName} ${record?.usrLastName}`,
     },
+    {
+      title: "Số điện thoại",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={200} minWidth={60} text={text} />
+      ),
+      dataIndex: "usrPhone",
+    },
+
     {
       title: "Nhóm",
       renderText: (text, record) => (
@@ -95,7 +113,7 @@ export default () => {
       //       label: value?.grpName,
       //       value: value?.grpCode,
       //     })),
-      dataIndex: "userRole",
+      dataIndex: "grpCode",
     },
     // {
     //   title: 'Domain name',
@@ -105,8 +123,29 @@ export default () => {
     //   dataIndex: 'usrDn',
     // },
     {
+      title: "Khu vực",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={200} minWidth={50} text={text} />
+      ),
+      ellipsis: true,
+      hideInSearch: true,
+      hideInTable: true,
+      dataIndex: "depUId",
+    },
+    {
+      title: "Công việc",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={200} minWidth={65} text={text} />
+      ),
+      ellipsis: true,
+      hideInSearch: true,
+      dataIndex: "usrJob",
+      hideInTable: true,
+    },
+
+    {
       title: "Ngày tạo",
-      dataIndex: "createdAt",
+      dataIndex: "usrCreateDate",
       valueType: "date",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
@@ -119,7 +158,7 @@ export default () => {
     {
       title: "Ngày cập nhật",
       hideInForm: true,
-      dataIndex: "updatedAt",
+      dataIndex: "usrUpdateDate",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={200} minWidth={100} text={text} />
       ),
@@ -146,24 +185,27 @@ export default () => {
             }}
           />
         </Tooltip>,
-        <Popconfirm
-          title="Xóa thông tin"
-          key={"1"}
-          onConfirm={async () => {
-            const res = await 1;
-            if (res) {
-              message.success("Xóa thành công");
-              actionRef.current?.reload();
-            } else {
-              message.error("Xóa không thành công");
-            }
-          }}
-        >
-          <Button
-            icon={<DeleteOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+        <Tooltip title="Thay đổi trạng thái" key={"2"}>
+          <Switch
+            checked={record?.usrStatus === "ACTIVE"}
+            // disabled={!access?.["USER_MANAGEMENT.IN_ACTIVE_USER"]}
+            // onChange={(checked, event) => {
+            //   api.user
+            //     .updateStatusUser({
+            //       usrUid: record?.usrUid,
+            //       usrStatus: checked ? "ACTIVE" : "INACTIVE",
+            //     })
+            //     .then((value:any) => {
+            //       if (value.body?.status === "OK") {
+            //         message.success("Cập nhật thành công!");
+            //         actionRef.current?.reload();
+            //       } else {
+            //       }
+            //       // console.log(event);
+            //     });
+            // }}
           />
-        </Popconfirm>,
+        </Tooltip>,
       ],
     },
   ] as ProColumns<any>[];

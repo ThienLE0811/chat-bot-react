@@ -1,83 +1,129 @@
-import { PlusOutlined } from "@ant-design/icons";
 import {
   ActionType,
   PageContainer,
+  ProDescriptions,
+  ProDescriptionsItemProps,
   ProTable,
 } from "@ant-design/pro-components";
-import { Button } from "antd";
-import { useRef } from "react";
-import { PostsInfo } from "../../services/data";
+import Home from "../Home/Home";
+import { Button, Drawer } from "antd";
+import ModalFormUser from "./components/ModalFormUser";
+import { useRef, useState } from "react";
+import { PlusOutlined } from "@ant-design/icons";
+import columnsUserTable from "./components/columnsUserTable";
 
 function Dialogue() {
+  const [modalFormUserVisible, setModalFormUserVisible] =
+    useState<boolean>(false);
+  const [currentRow, setCurrentRow] = useState<any>();
+  // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
+  //   []
+  // );
+  const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
+  const [loadCheck, setLoadCheck] = useState({});
 
   return (
-    <PageContainer
-      childrenContentStyle={{
-        padding: 12,
-      }}
-      breadcrumbRender={false}
-      title={false}
-      footer={[]}
-    >
-      <ProTable<PostsInfo>
-        // columns={columns}
-        actionRef={actionRef}
-        cardBordered
-        bordered
-        debounceTime={800}
-        headerTitle="Danh sách Intent"
-        size="small"
-        tableLayout="auto"
-        // dataSource={postsListData.data}
-        // request={async (params = {}, sort, filter) => {
-        //   dispatch(fetchPostsTableData({ params, sort, filter }));
-        //   return [];
+    <PageContainer title={false} breadcrumbRender={false}>
+      <ProTable
+        // actionRef={actionRef}
+        // formRef={formRef}
+        rowKey="usrUid"
+        headerTitle="Danh sách ý định"
+        // search={{
+        //   labelWidth: 120,
         // }}
-        rowKey="id"
-        search={{
-          filterType: "light",
-        }}
-        cardProps={{
-          bodyStyle: { padding: 4 },
-        }}
+        search={false}
+        scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
           search: {
-            placeholder: "Tìm kiếm bài viết...",
+            placeholder: "Nhập từ khoá để tìm kiếm...",
+            style: { width: 300 },
           },
-          setting: false,
           density: false,
+          setting: false,
         }}
-        form={{
-          syncToUrl: (values, type) => {
-            if (type === "get") {
-              return {
-                ...values,
-                categorys: values.categorys,
-                created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
+        size="small"
+        cardProps={{
+          bodyStyle: {
+            paddingBottom: 0,
+            paddingTop: 0,
+            paddingInline: 12,
           },
         }}
-        dateFormatter="string"
+        pagination={{
+          defaultPageSize: 10,
+          showSizeChanger: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} trên ${total} người dùng`,
+        }}
         toolBarRender={() => [
           <Button
-            key="button"
-            // onClick={() =>()}
-            icon={<PlusOutlined />}
             type="primary"
+            key="primary"
+            danger
+            onClick={() => {
+              setModalFormUserVisible(true);
+            }}
+            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
           >
-            Tạo mới
+            <PlusOutlined /> Tạo ý định
           </Button>,
         ]}
+        // request={(params, sort, filters) =>
+        //   api.user.getListUser({ params, sort, filters })
+        // }
+        columns={columnsUserTable()}
+        // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
+        // rowSelection={{
+        //   onChange: (_, selectedRows) => {
+        //     setSelectedRows(selectedRows);
+        //   },
+        // }}
       />
-      {/* <ModalPostsForm
-        modalProps={{
-          open: ,
+      <ModalFormUser
+        visible={modalFormUserVisible}
+        initiateData={currentRow}
+        onVisibleChange={(visible) => {
+          if (!visible && !showDetail) setCurrentRow(undefined);
+          setModalFormUserVisible(visible);
         }}
-        onCancel={() => )}
-      /> */}
+        onSuccess={() => actionRef.current?.reload()}
+      />
+      <Drawer
+        width={"60%"}
+        open={showDetail}
+        onClose={() => {
+          setShowDetail(false);
+        }}
+        afterOpenChange={(open) => {
+          if (open) {
+            // fetchUserInfo(currentRow?.usrUid);
+          } else {
+            setCurrentRow(undefined);
+          }
+        }}
+        closable={false}
+      >
+        {/* {currentRow?.usrUid && ( */}
+        <ProDescriptions<any>
+          column={{ xl: 3 }}
+          // loading={loadingUserInfo}
+          title={`${currentRow?.usrLastName} ${currentRow?.usrFirstName}`}
+          dataSource={currentRow}
+          // request={async () => ({
+          //   data: userInfo || {},
+          // })}
+          params={{
+            id: currentRow?.usrUid,
+          }}
+          columns={columnsUserTable() as ProDescriptionsItemProps<any>[]}
+        />
+        {/* )} */}
+        {/* {currentRow?.grpUid && (
+          <DetailPermission groupId={currentRow?.grpUid} />
+        )} */}
+      </Drawer>
     </PageContainer>
   );
 }

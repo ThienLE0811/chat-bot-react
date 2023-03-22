@@ -17,21 +17,40 @@ export const newStructureRoutesProLayout = (
   }));
 
 
-  export const saveCredentialCookie = ({
-  refreshToken,
-  accessToken,
-  expires,
-  userId,
-}: LoginResponseSuccessData) => {
-  Cookies.set("refreshToken", refreshToken || "", {
+  export const saveCredentialCookie = (
+  data:any) => {
+  // Cookies.set("refreshToken", refreshToken || "", {
+  //   expires: 3000,
+  // });
+
+  Cookies.set("access_token", data?.token?.token || "", {
     expires: 3000,
   });
 
-  Cookies.set("access_token", accessToken || "", {
-    expires: expires,
-  });
-
-  Cookies.set("userId", userId || "", {
+  Cookies.set("userName", data?.userInfo?.username || "", {
     expires: 3000,
   });
+
+  Cookies.set("firstName", data?.userInfo?.firstname || "", {
+    expires: 3000,
+  });
+
+  Cookies.set("lastName", data?.userInfo?.lastname || "", {
+    expires: 3000,
+  });
+
+  Cookies.set("userRole", JSON.stringify(data?.userInfo?.userRole) || "", {
+    expires: 3000
+  });
+};
+
+//httpOnly: true
+
+export const clearCredentialCookie = () => {
+  Cookies.remove("userRole", { path: "/" });
+  Cookies.remove("userName", { path: "/" });
+  Cookies.remove("firstName", { path: "/" });
+  Cookies.remove("lastName", { path: "/" });
+  Cookies.remove("userInfo", { path: "/" });
+  Cookies.remove("access_token", { path: "/"});
 };

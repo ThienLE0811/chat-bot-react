@@ -11,6 +11,7 @@ import ModalFormUser from "./components/ModalFormUser";
 import { useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import columnsUserTable from "./components/columnsUserTable";
+import { getUser } from "../../services/userService";
 
 function User() {
   const [modalFormUserVisible, setModalFormUserVisible] =
@@ -24,15 +25,16 @@ function User() {
   const [loadCheck, setLoadCheck] = useState({});
 
   return (
-    <PageContainer title="User">
+    <PageContainer title={false} breadcrumbRender={false}>
       <ProTable
         // actionRef={actionRef}
         // formRef={formRef}
         rowKey="usrUid"
         headerTitle="Danh sách người dùng"
-        search={{
-          labelWidth: 120,
-        }}
+        // search={{
+        //   labelWidth: 120,
+        // }}
+        search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
           search: {
@@ -40,6 +42,7 @@ function User() {
             style: { width: 300 },
           },
           density: false,
+          setting: false,
         }}
         size="small"
         cardProps={{
@@ -71,6 +74,7 @@ function User() {
         // request={(params, sort, filters) =>
         //   api.user.getListUser({ params, sort, filters })
         // }
+        request={() => getUser()}
         columns={columnsUserTable()}
         // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
         // rowSelection={{

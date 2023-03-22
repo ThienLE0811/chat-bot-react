@@ -19,6 +19,7 @@ import { handleLoginApi } from "../../services/userService";
 // import jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
 import { AxiosResponse } from "axios";
+import { saveCredentialCookie } from "../../utils";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -30,13 +31,6 @@ const iconStyles: CSSProperties = {
 
 function Login() {
   const navigate = useNavigate();
-
-  const saveCookie = async (res: AxiosResponse<any, any>) => {
-    const token = res?.data?.data?.token?.decodeData;
-    console.log("token::: ", token);
-    document.cookie = `token=${token}`;
-    console.log("doc::: ", document.cookie);
-  };
 
   const checkUser = async (res: AxiosResponse<any, any>) => {
     const checkLogin = res?.data?.data?.userRole;
@@ -56,11 +50,12 @@ function Login() {
   const handleLogin = async (values: any) => {
     const { username, password } = values;
     try {
-      const res = await handleLoginApi(username, password);
+      const res: any = await handleLoginApi(username, password);
       message.success("Đăng nhập thành công");
-      await saveCookie(res);
+      // await saveCookie(res);
+      console.log("res::", res);
+      saveCredentialCookie(res?.data?.data);
       await checkUser(res);
-      // await checkLogin(res);
     } catch (err) {
       console.error(err);
       message.error("Đăng nhập thất bại");

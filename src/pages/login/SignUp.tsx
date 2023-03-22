@@ -28,9 +28,8 @@ function SingUp() {
       const res = await handleSingUpApi(username, password, email);
       console.log(res?.data);
       message.success("Đăng ký thành công");
-      navigate("/");
+      navigate("/auth/login");
     } catch (err) {
-      console.error(err);
       message.error("Đăng ký thất bại");
     }
   };
@@ -54,6 +53,7 @@ function SingUp() {
           <>
             <ProFormText
               name="username"
+              label="Username"
               fieldProps={{
                 size: "large",
                 prefix: <UserOutlined className={"prefixIcon"} />,
@@ -70,6 +70,7 @@ function SingUp() {
 
             <ProFormText
               name="email"
+              label="Email"
               fieldProps={{
                 size: "large",
                 prefix: <MailOutlined className={"prefixIcon"} />,
