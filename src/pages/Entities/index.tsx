@@ -56,10 +56,18 @@ function Entities() {
     {
       title: "Loại",
       dataIndex: "dataEntities",
-      width: 120,
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
+      valueType: "treeSelect",
+      // render: (text, record) => (
+      //   <>
+      //     <ResponsesiveTextTable
+      //       maxWidth={300}
+      //       minWidth={150}
+      //       // text={text?.props?.children?.join(", ") || ""}
+      //       // text={record?.data.join(", ")}
+      //       text={record?.dataEntities.join(", ")}
+      //     />
+      //   </>
+      // ),
     },
     {
       title: "Mô tả",
@@ -70,7 +78,7 @@ function Entities() {
             minWidth={150}
             // text={text?.props?.children?.join(", ") || ""}
             // text={record?.data.join(", ")}
-            text={record?.data}
+            text={record?.description}
           />
         </>
       ),
@@ -92,7 +100,6 @@ function Entities() {
     },
     {
       title: "Ngày cập nhật",
-      hideInForm: true,
       dataIndex: "updatedAt",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
@@ -175,7 +182,7 @@ function Entities() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} ý định`,
+            `${range[0]}-${range[1]} trên ${total} thực thể`,
         }}
         toolBarRender={() => [
           <Button
@@ -225,8 +232,8 @@ function Entities() {
       >
         {/* {currentRow?.usrUid && ( */}
         <ProDescriptions<any>
-          column={{ xl: 3, sm: 1 }}
-          title={`Thông tin chi tiết: ${currentRow?.title}`}
+          column={{ xl: 2, sm: 1 }}
+          title={`Thông tin chi tiết: ${currentRow?.nameEntities}`}
           dataSource={currentRow}
           // request={async () => ({
           //   data: userInfo || {},

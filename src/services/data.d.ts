@@ -16,7 +16,7 @@ export interface LoginResponseSuccessData {
    * @type {string}
    * @memberof LoginResponseSuccessData
    */
-  refreshToken?: string;
+ 
   /**
    *
    * @type {string}
@@ -29,7 +29,10 @@ export interface LoginResponseSuccessData {
    * @memberof LoginResponseSuccessData
    */
   expires?: number;
-  userRole?: string;
+  userInfo?: {
+    userRoleName: string;
+    
+  };
   token?: string
 }
 

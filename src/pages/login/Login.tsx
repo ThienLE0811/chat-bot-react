@@ -18,8 +18,12 @@ import { useNavigate } from "react-router-dom";
 import { handleLoginApi } from "../../services/userService";
 // import jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
+
 import { AxiosResponse } from "axios";
 import { saveCredentialCookie } from "../../utils";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { LoginResponseSuccessData } from "../../services/data";
+import { setAccountInfo } from "../../redux/slices/account";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -31,9 +35,10 @@ const iconStyles: CSSProperties = {
 
 function Login() {
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
+  const { accountInfo } = useAppSelector((state) => state.account);
   const checkUser = async (res: AxiosResponse<any, any>) => {
-    const checkLogin = res?.data?.data?.userRole;
+    const checkLogin = res?.data?.data?.userInfo?.userRoleName;
     console.log("checkLogin", checkLogin);
     return navigate("/");
     // return checkLogin === ("ADMIN" || "USER")
@@ -48,17 +53,25 @@ function Login() {
   // };
 
   const handleLogin = async (values: any) => {
-    const { username, password } = values;
+    const { userName, password } = values;
     try {
-      const res: any = await handleLoginApi(username, password);
-      message.success("Đăng nhập thành công");
-      // await saveCookie(res);
-      console.log("res::", res);
-      saveCredentialCookie(res?.data?.data);
-      await checkUser(res);
-    } catch (err) {
-      console.error(err);
+      const response = await handleLoginApi(userName, password);
+      console.log("res:: ", response);
+      if (response) {
+        const loginData: LoginResponseSuccessData = response.data?.data;
+        saveCredentialCookie(loginData);
+        dispatch(setAccountInfo(loginData?.userInfo));
+        await checkUser(response);
+        console.log("account:: ", accountInfo?.userRoleName);
+        console.log("data login:: ", loginData?.userInfo?.userRoleName);
+        accountInfo?.userRoleName !== loginData?.userInfo?.userRoleName &&
+          window.location.reload();
+      } else {
+        message.error("Đăng nhập thất bại");
+      }
+    } catch (error) {
       message.error("Đăng nhập thất bại");
+      console.log(error);
     }
   };
 
@@ -67,6 +80,7 @@ function Login() {
       <div className="login">
         <LoginForm
           logo="https://gogroup.vn/wp-content/uploads/2022/12/gogroup-logo.png"
+          // logo="./gogroup-logo.png"
           title="AceBot"
           subTitle="Nền tảng xây dựng chat bot"
           submitter={{
@@ -97,7 +111,7 @@ function Login() {
 
           <>
             <ProFormText
-              name="username"
+              name="userName"
               fieldProps={{
                 size: "large",
                 prefix: <UserOutlined className={"prefixIcon"} />,

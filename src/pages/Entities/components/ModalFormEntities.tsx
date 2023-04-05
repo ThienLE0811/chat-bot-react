@@ -122,6 +122,20 @@ const ModalFormEntities: React.FC<ModalFormUserProps> = (props) => {
           />
         </Col>
         <Col span={24}>
+          <ProFormTextArea
+            label="Mô tả"
+            required
+            name="description"
+            rules={[
+              {
+                max: 1000,
+                message: "Vui lòng không nhập quá 1000 kí tự hoặc để trống",
+                required: true,
+              },
+            ]}
+          />
+        </Col>
+        <Col span={24}>
           <ProFormSelect
             label="Nội dung"
             name="dataEntities"

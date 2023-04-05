@@ -23,6 +23,7 @@ const iconStyles: CSSProperties = {
 function SingUp() {
   const navigate = useNavigate();
   const handleSignUp = async (values: any) => {
+    console.log("values:: ", values);
     const { username, password, email } = values;
     try {
       const res = await handleSingUpApi(username, password, email);
@@ -39,6 +40,7 @@ function SingUp() {
       <div className="singup">
         <LoginForm
           logo="https://gogroup.vn/wp-content/uploads/2022/12/gogroup-logo.png"
+          // logo="./gogroup-logo.png"
           title="AceBot"
           subTitle="Nền tảng xây dựng chat bot"
           submitter={{
@@ -52,7 +54,7 @@ function SingUp() {
 
           <>
             <ProFormText
-              name="username"
+              name="userName"
               label="Username"
               fieldProps={{
                 size: "large",

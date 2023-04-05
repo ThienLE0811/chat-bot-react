@@ -33,7 +33,7 @@ export type FormValueType = {
   frequency?: string;
 } & Partial<any>;
 
-export type ModalFormUserProps = {
+export type ModalFormGroupProps = {
   visible: boolean;
   initiateData?: any;
   onSuccess?: () => void;
@@ -41,7 +41,7 @@ export type ModalFormUserProps = {
   onVisibleChange: (visible: boolean) => void;
 };
 
-const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
+const ModalFormGroup: React.FC<ModalFormGroupProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
   const actionRef = useRef<ActionType>();
@@ -140,7 +140,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         <Col span={8}>
           <ProFormText
             label="Vai trò"
-            name="userRoleName"
+            name="userRole"
             disabled
             rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
           />
@@ -150,4 +150,4 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
   );
 };
 
-export default ModalFormUser;
+export default ModalFormGroup;

@@ -4,36 +4,27 @@ import {
   ProColumns,
   ProDescriptions,
   ProDescriptionsItemProps,
-  ProList,
   ProTable,
 } from "@ant-design/pro-components";
 import Home from "../Home/Home";
 import {
-  Avatar,
   Button,
   Drawer,
   message,
   notification,
   Popconfirm,
   Switch,
-  Tag,
   Tooltip,
 } from "antd";
-import ModalFormUser from "./components/ModalFormIntent";
 import { useRef, useState } from "react";
-import {
-  BulbFilled,
-  DeleteOutlined,
-  EditOutlined,
-  MailFilled,
-  PlusOutlined,
-} from "@ant-design/icons";
-// import columnsIntentTable from "./components/columnsIntentTable";
-import { deleteIntent, getIntent } from "../../services/intentServices";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+// import columnsResponseTable from "./components/columnsResponseTable";
+import { deleteResponse, getResponse } from "../../services/responseService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import ModalFormResponse from "./components/ModalFormResponse";
 
-function Intent() {
-  const [modalFormIntentVisible, setModalFormIntentVisible] =
+function Response() {
+  const [modalFormResponseVisible, setModalFormResponseVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
@@ -45,7 +36,7 @@ function Intent() {
 
   const columns = [
     {
-      title: "Tên",
+      title: "Tên câu trả lời",
       dataIndex: "title",
       width: 120,
       render: (dom, entity) => {
@@ -62,19 +53,40 @@ function Intent() {
         );
       },
     },
+    // {
+    //   title: "Tên câu trả lời",
+    //   dataIndex: "dataResponse",
+    //   valueType: "treeSelect",
+    //   render: (text, record) => (
+    //     <>
+    //       <ResponsesiveTextTable
+    //         maxWidth={300}
+    //         minWidth={150}
+    //         // text={text?.props?.children?.join(", ") || ""}
+    //         // text={record?.data.join(", ")}
+
+    //         text={record?.data.map((value: any) => value.name_data)}
+    //       />
+    //     </>
+    //   ),
+    // },
     {
-      title: "Mô tả",
-      valueType: "treeSelect",
+      title: "Nội dung",
       // render: (text, record) => (
       //   <>
       //     <ResponsesiveTextTable
       //       maxWidth={300}
       //       minWidth={150}
       //       // text={text?.props?.children?.join(", ") || ""}
-      //       text={record?.data.join(", ")}
+      //       // text={record?.data.join(", ")}
+
+      //       text={record?.dataResponse || ""}
       //     />
+      //     {console.log("log:: ", record?.data)}
       //   </>
       // ),
+      width: 250,
+      valueType: "select",
       ellipsis: true,
       hideInSearch: true,
       dataIndex: "data",
@@ -93,7 +105,7 @@ function Intent() {
     },
     {
       title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
+      dataIndex: "updateAt",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
       ),
@@ -116,7 +128,7 @@ function Intent() {
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
             onClick={() => {
               setCurrentRow(record);
-              setModalFormIntentVisible(true);
+              setModalFormResponseVisible(true);
             }}
           />
         </Tooltip>,
@@ -124,7 +136,7 @@ function Intent() {
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
-            const res = await deleteIntent(record?._id);
+            const res = await deleteResponse(record?._id);
             if (res?.data?.statusCode === 200) {
               notification.success({ message: "Xóa thành công" });
               actionRef.current?.reload();
@@ -149,7 +161,7 @@ function Intent() {
         actionRef={actionRef}
         // formRef={formRef}
         rowKey="usrUid"
-        headerTitle="Danh sách ý định"
+        headerTitle="Danh sách câu trả lời"
         // search={{
         //   labelWidth: 120,
         // }}
@@ -175,7 +187,7 @@ function Intent() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} ý định`,
+            `${range[0]}-${range[1]} trên ${total} câu trả lời`,
         }}
         toolBarRender={() => [
           <Button
@@ -183,129 +195,23 @@ function Intent() {
             key="primary"
             danger
             onClick={() => {
-              setModalFormIntentVisible(true);
+              setModalFormResponseVisible(true);
             }}
             // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
           >
             <PlusOutlined /> Tạo ý định
           </Button>,
         ]}
-        request={(params, sort, filters) => getIntent()}
+        request={(params, sort, filters) => getResponse()}
         columns={columns}
       />
 
-      {/* <ProList
-        toolBarRender={() => {
-          return [
-            <Button
-              type="primary"
-              key="primary"
-              danger
-              onClick={() => {
-                setModalFormIntentVisible(true);
-              }}
-              // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
-            >
-              <PlusOutlined /> Tạo ý định
-            </Button>,
-          ];
-        }}
-        actionRef={actionRef}
-        onItem={(record) => {
-          return {
-            onClick: () => {
-              setCurrentRow(record);
-              setShowDetail(true);
-            },
-          };
-        }}
-        options={{
-          // search: {
-          //   placeholder: "Nhập từ khoá để tìm kiếm...",
-          //   style: { width: 300 },
-          // },
-          search: false,
-          density: false,
-          setting: false,
-        }}
-        rowKey="_id"
-        request={(params, sort, filters) => getIntent()}
-        pagination={{
-          defaultPageSize: 10,
-          showSizeChanger: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} ý định`,
-        }}
-        headerTitle="Danh sách ý định"
-        metas={{
-          title: {
-            render: (dom, entity: any) => {
-              console.log("123: ", dom);
-              return <div>{entity?.title}</div>;
-            },
-          },
-          description: {
-            search: false,
-            render: (dom, entity: any) => (
-              <>
-                {/* Mô tả:{" "}
-                <Tag color={entity?.actions === "ACTIVE" ? "success" : "error"}>
-                  {entity?.data}
-                </Tag> */}
-      {/* Mô tả: <Tag color="processing">{entity?.data.join(", ")}</Tag>
-              </>
-            ),
-          },
-
-          actions: {
-            render: (dom, entity: any) => {
-              return [
-                <Tooltip title="Sửa thông tin" key={"1"}>
-                  <Button
-                    icon={<EditOutlined />}
-                    // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
-                    onClick={() => {
-                      setCurrentRow(entity);
-                      setModalFormIntentVisible(true);
-                    }}
-                  />
-                </Tooltip>,
-                <Popconfirm
-                  title="Bạn chắc chắn muốn xóa?"
-                  key={"2"}
-                  onConfirm={async () => {
-                    const res = await deleteIntent(entity?._id);
-                    if (res?.data?.statusCode === 200) {
-                      notification.success({ message: "Xóa thành công" });
-                      actionRef.current?.reload();
-                    } else {
-                      notification.error({ message: "Xóa không thành công" });
-                    }
-                  }}
-                >
-                  <Button icon={<DeleteOutlined />} danger />
-                </Popconfirm>,
-              ];
-            },
-          },
-          avatar: {
-            render: () => (
-              <Avatar
-                style={{ backgroundColor: "#87d068" }}
-                icon={<BulbFilled />}
-              />
-            ),
-            search: false,
-          },
-        }}
-      /> */}
-
-      <ModalFormUser
-        visible={modalFormIntentVisible}
+      <ModalFormResponse
+        visible={modalFormResponseVisible}
         initiateData={currentRow}
         onVisibleChange={(visible) => {
           if (!visible && !showDetail) setCurrentRow(undefined);
-          setModalFormIntentVisible(visible);
+          setModalFormResponseVisible(visible);
         }}
         onSuccess={() => actionRef.current?.reload()}
       />
@@ -327,7 +233,7 @@ function Intent() {
         {/* {currentRow?.usrUid && ( */}
         <ProDescriptions<any>
           column={{ xl: 2, sm: 1 }}
-          title={`Thông tin chi tiết: ${currentRow?.title}`}
+          title={`Thông tin chi tiết: ${currentRow?.nameResponse}`}
           dataSource={currentRow}
           // request={async () => ({
           //   data: userInfo || {},
@@ -346,4 +252,4 @@ function Intent() {
   );
 }
 
-export default Intent;
+export default Response;

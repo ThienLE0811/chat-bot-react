@@ -8,14 +8,21 @@ import {
 } from "@ant-design/pro-components";
 import Home from "../Home/Home";
 import { Button, Drawer, message, Popconfirm, Tooltip } from "antd";
-import ModalFormUser from "./components/ModalFormUser";
+import ModalFormUser from "./components/ModalFormGroup";
 import { useRef, useState } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import columnsUserTable from "./components/columnsUserTable";
+import {
+  ControlOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { deleteUser, getUser } from "../../services/userService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import ModalFormGroup from "./components/ModalFormGroup";
+import { getPermission } from "../../services/groupService";
+import { useAppSelector } from "../../hooks/redux";
 
-function User() {
+function Group() {
   const [modalFormUserVisible, setModalFormUserVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -25,11 +32,12 @@ function User() {
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const [loadCheck, setLoadCheck] = useState({});
+  const { accountInfo } = useAppSelector((state) => state.account);
 
   const columns = [
     {
-      title: "Tài khoản",
-      dataIndex: "userName",
+      title: "Tên nhóm",
+      dataIndex: "name",
       width: 90,
       render: (dom, entity) => {
         return (
@@ -55,14 +63,14 @@ function User() {
     //   },
     // },
     {
-      title: "Email",
-      dataIndex: "email",
+      title: "Code nhóm",
+      dataIndex: "roleType",
     },
     {
-      title: "Họ tên",
-      dataIndex: "firstName",
+      title: "Tiêu đề nhóm",
+      dataIndex: "description",
       hideInSearch: true,
-      renderText: (text, record) => `${record?.firstName} ${record?.lastName}`,
+      renderText: (text, record) => `${record?.description}`,
     },
     {
       title: "Nhóm",
@@ -96,31 +104,6 @@ function User() {
     //   dataIndex: 'usrDn',
     // },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
-      hideInSearch: true,
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-    },
-    {
-      title: "Ngày cập nhật",
-      hideInForm: true,
-      dataIndex: "updateAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={100} text={text} />
-      ),
-      valueType: "date",
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-      hideInSearch: true,
-    },
-    {
       title: "Hành động",
       dataIndex: "option",
       valueType: "option",
@@ -130,47 +113,42 @@ function User() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={
+              accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
+            }
             onClick={() => {
               !currentRow?.usrUid && setCurrentRow(record);
               setModalFormUserVisible(true);
             }}
           />
         </Tooltip>,
-        <Popconfirm
-          title="Xóa thông tin"
-          key={"2"}
-          onConfirm={async () => {
-            const res = await deleteUser(record?._id);
-            console.log("res:: ", res);
-            if (res?.data?.statusCode === 200) {
-              actionRef.current?.reload();
-              message.success("Xóa thành công");
-            } else {
-              message.error("Xóa không thành công");
-            }
-          }}
-        >
+        <Tooltip title="Phân quyền" key={"2"}>
           <Button
-            icon={<DeleteOutlined />}
-            danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            icon={<ControlOutlined />}
+            disabled={
+              accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
+            }
           />
-        </Popconfirm>,
+        </Tooltip>,
       ],
     },
   ] as ProColumns<any>[];
 
   return (
-    <PageContainer title={false} breadcrumbRender={false}>
+    <PageContainer
+      title={false}
+      breadcrumbRender={false}
+      style={{ padding: 0 }}
+    >
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
         rowKey="usrUid"
-        headerTitle="Danh sách người dùng"
+        headerTitle="Danh sách nhóm"
         // search={{
         //   labelWidth: 120,
         // }}
+
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
@@ -195,20 +173,20 @@ function User() {
           showTotal: (total, range) =>
             `${range[0]}-${range[1]} trên ${total} người dùng`,
         }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            danger
-            onClick={() => {
-              setModalFormUserVisible(true);
-            }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
-          >
-            <PlusOutlined /> Tạo người dùng
-          </Button>,
-        ]}
-        request={() => getUser()}
+        // toolBarRender={() => [
+        //   <Button
+        //     type="primary"
+        //     key="primary"
+        //     danger
+        //     onClick={() => {
+        //       setModalFormUserVisible(true);
+        //     }}
+        //     // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+        //   >
+        //     <PlusOutlined /> Tạo người dùng
+        //   </Button>,
+        // ]}
+        request={() => getPermission()}
         columns={columns}
         // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
         // rowSelection={{
@@ -217,7 +195,7 @@ function User() {
         //   },
         // }}
       />
-      <ModalFormUser
+      <ModalFormGroup
         visible={modalFormUserVisible}
         initiateData={currentRow}
         onVisibleChange={(visible: boolean) => {
@@ -264,4 +242,4 @@ function User() {
   );
 }
 
-export default User;
+export default Group;

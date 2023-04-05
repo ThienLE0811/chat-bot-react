@@ -1,5 +1,9 @@
 import { CopyOutlined, SearchOutlined } from "@ant-design/icons";
-import type { ActionType, ProFormInstance } from "@ant-design/pro-components";
+import {
+  ActionType,
+  ProFormInstance,
+  ProFormItem,
+} from "@ant-design/pro-components";
 import {
   ModalForm,
   ProForm,
@@ -20,10 +24,10 @@ import {
 } from "antd";
 import React, { useRef, useState } from "react";
 import {
-  createUser,
-  updateUser,
-  handleLoginApi,
-} from "../../../services/userService";
+  createEntities,
+  updateEntities,
+} from "../../../services/entitiesService";
+import { createIntent, updateIntent } from "../../../services/intentServices";
 
 export type FormValueType = {
   target?: string;
@@ -41,31 +45,32 @@ export type ModalFormUserProps = {
   onVisibleChange: (visible: boolean) => void;
 };
 
-const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
+const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
+  console.log("init:: ", initiateData);
   const actionRef = useRef<ActionType>();
   const restFormRef = useRef<ProFormInstance>();
   const handleSubmit = async (formValues: any) => {
-    console.log(formValues);
+    console.log("value::: ", formValues);
 
     try {
-      const res = initiateData?._id
-        ? await updateUser(initiateData?._id, formValues)
-        : await createUser(formValues);
-      console.log("log user:: ", res);
+      const res: any = initiateData?._id
+        ? await updateEntities(initiateData?._id, formValues)
+        : await createEntities(formValues);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
-
+        actionRef.current?.reload();
         notification.success({
-          message: initiateData?.usrUid
-            ? "Cập nhật Người dùng thành công"
-            : "Tạo mới Người dùng thành công",
+          message: initiateData?._id
+            ? "Cập nhật thực thể thành công"
+            : "Tạo mới thực thể thành công",
         });
         return Promise.resolve();
       } else {
-        onFailure?.(res?.data);
+        notification.error({ message: "Thao tác không thành công" });
+        onFailure?.(res);
         return Promise.reject();
       }
     } catch (error) {
@@ -76,42 +81,36 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
   return (
     <ModalForm
       open={visible}
-      //   request={async () =>
-      //     !initiateData?.usrUid
-      //       ? { usrStatus: "ACTIVE" }
-      //       : (await api.user.getUserById(initiateData?.usrUid)).body?.dataRes
-      //   }
+      initialValues={initiateData}
       modalProps={{
         destroyOnClose: true,
         okText: "Xác nhận",
       }}
-      initialValues={initiateData}
       className="modal-form-user"
       formRef={restFormRef}
       onFinish={handleSubmit}
       onVisibleChange={onVisibleChange}
-      title={initiateData?._id ? "Cập nhật người dùng" : "Tạo mới người dùng"}
+      title={initiateData?._id ? "Cập nhật thực thể" : "Tạo mới thực thể"}
     >
       <Row gutter={16}>
-        <Col span={8}>
+        <Col span={16}>
           <ProFormText
-            label="Tài khoản"
-            name="userName"
+            label="Tên"
             required
-            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
-          />
-        </Col>
-        <Col span={8}>
-          <ProFormText
-            label="Email"
-            name="email"
-            required
-            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
+            name="title"
+            rules={[
+              {
+                max: 100,
+                message: "Vui lòng không nhập quá 100 kí tự hoặc để trống",
+                required: true,
+              },
+            ]}
           />
         </Col>
         <Col span={8}>
           <ProFormSelect
             label="Trạng thái"
+            required
             name="usrStatus"
             allowClear={false}
             valueEnum={{
@@ -122,27 +121,33 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
             }}
           />
         </Col>
-        <Col span={8}>
-          <ProFormText
-            label="Họ"
-            name="firstName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
+        <Col span={24}>
+          <ProFormTextArea
+            label="Mô tả"
+            required
+            name="description"
+            rules={[
+              {
+                max: 1000,
+                message: "Vui lòng không nhập quá 1000 kí tự hoặc để trống",
+                required: true,
+              },
+            ]}
           />
         </Col>
-        <Col span={8}>
-          <ProFormText
-            label="Tên"
-            name="lastName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
-          />
-        </Col>
-
-        <Col span={8}>
-          <ProFormText
-            label="Vai trò"
-            name="userRoleName"
-            disabled
-            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+        <Col span={24}>
+          <ProFormSelect
+            label="Nội dung"
+            name="data"
+            // required
+            mode="tags"
+            // rules={[
+            //   {
+            //     max: 500,
+            //     message: "Vui lòng không nhập quá 500 kí tự hoặc để trống",
+            //     required: true,
+            //   },
+            // ]}
           />
         </Col>
       </Row>
@@ -150,4 +155,4 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
   );
 };
 
-export default ModalFormUser;
+export default ModalFormResponse;

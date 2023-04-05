@@ -40,12 +40,10 @@ export default () => {
       render: (dom, entity) => {
         return (
           <a
-          // onClick={() => {
-          //   if (access?.["USER_MANAGEMENT.GET_USER_BY_ID"]) {
-          //     setCurrentRow(entity);
-          //     setShowDetail(true);
-          //   }
-          // }}
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
           >
             {dom}
           </a>
@@ -70,8 +68,7 @@ export default () => {
       title: "Họ tên",
       dataIndex: "firstName",
       hideInSearch: true,
-      renderText: (text, record) =>
-        `${record?.usrFirstName} ${record?.usrLastName}`,
+      renderText: (text, record) => `${record?.firstname} ${record?.lastname}`,
     },
     {
       title: "Nhóm",
@@ -95,7 +92,7 @@ export default () => {
       //       label: value?.grpName,
       //       value: value?.grpCode,
       //     })),
-      dataIndex: "userRole",
+      dataIndex: "userRoleName",
     },
     // {
     //   title: 'Domain name',
@@ -119,7 +116,7 @@ export default () => {
     {
       title: "Ngày cập nhật",
       hideInForm: true,
-      dataIndex: "updatedAt",
+      dataIndex: "updateAt",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={200} minWidth={100} text={text} />
       ),
@@ -148,7 +145,7 @@ export default () => {
         </Tooltip>,
         <Popconfirm
           title="Xóa thông tin"
-          key={"1"}
+          key={"2"}
           onConfirm={async () => {
             const res = await 1;
             if (res) {
@@ -161,6 +158,7 @@ export default () => {
         >
           <Button
             icon={<DeleteOutlined />}
+            danger
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
           />
         </Popconfirm>,

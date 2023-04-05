@@ -22,6 +22,7 @@ import {
 import ModalFormUser from "./components/ModalFormIntent";
 import { useRef, useState } from "react";
 import {
+  BookFilled,
   BulbFilled,
   DeleteOutlined,
   EditOutlined,
@@ -32,7 +33,7 @@ import {
 import { deleteIntent, getIntent } from "../../services/intentServices";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 
-function Intent() {
+function Slots() {
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -103,98 +104,49 @@ function Intent() {
       },
       hideInSearch: true,
     },
-    {
-      title: "Hành động",
-      dataIndex: "option",
-      valueType: "option",
-      fixed: "right",
-      width: 100,
-      render: (_, record) => [
-        <Tooltip title="Sửa thông tin" key={"1"}>
-          <Button
-            icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
-            onClick={() => {
-              setCurrentRow(record);
-              setModalFormIntentVisible(true);
-            }}
-          />
-        </Tooltip>,
-        <Popconfirm
-          title="Bạn chắc chắn muốn xóa?"
-          key={"2"}
-          onConfirm={async () => {
-            const res = await deleteIntent(record?._id);
-            if (res?.data?.statusCode === 200) {
-              notification.success({ message: "Xóa thành công" });
-              actionRef.current?.reload();
-            } else {
-              notification.error({ message: "Xóa không thành công" });
-            }
-          }}
-        >
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
-          />
-        </Popconfirm>,
-      ],
-    },
+    // {
+    //   title: "Hành động",
+    //   dataIndex: "option",
+    //   valueType: "option",
+    //   fixed: "right",
+    //   width: 100,
+    //   render: (_, record) => [
+    //     <Tooltip title="Sửa thông tin" key={"1"}>
+    //       <Button
+    //         icon={<EditOutlined />}
+    //         // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+    //         onClick={() => {
+    //           setCurrentRow(record);
+    //           setModalFormIntentVisible(true);
+    //         }}
+    //       />
+    //     </Tooltip>,
+    //     <Popconfirm
+    //       title="Bạn chắc chắn muốn xóa?"
+    //       key={"2"}
+    //       onConfirm={async () => {
+    //         const res = await deleteIntent(record?._id);
+    //         if (res?.data?.statusCode === 200) {
+    //           notification.success({ message: "Xóa thành công" });
+    //           actionRef.current?.reload();
+    //         } else {
+    //           notification.error({ message: "Xóa không thành công" });
+    //         }
+    //       }}
+    //     >
+    //       <Button
+    //         icon={<DeleteOutlined />}
+    //         danger
+    //         // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+    //       />
+    //     </Popconfirm>,
+    //   ],
+    // },
   ] as ProColumns<any>[];
 
   return (
     <PageContainer title={false} breadcrumbRender={false}>
-      <ProTable
-        actionRef={actionRef}
-        // formRef={formRef}
-        rowKey="usrUid"
-        headerTitle="Danh sách ý định"
-        // search={{
-        //   labelWidth: 120,
-        // }}
-        search={false}
-        scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
-        options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
-          density: false,
-          setting: false,
-        }}
-        size="small"
-        cardProps={{
-          bodyStyle: {
-            paddingBottom: 0,
-            paddingTop: 0,
-            paddingInline: 12,
-          },
-        }}
-        pagination={{
-          defaultPageSize: 10,
-          showSizeChanger: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} ý định`,
-        }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            danger
-            onClick={() => {
-              setModalFormIntentVisible(true);
-            }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
-          >
-            <PlusOutlined /> Tạo ý định
-          </Button>,
-        ]}
-        request={(params, sort, filters) => getIntent()}
-        columns={columns}
-      />
-
-      {/* <ProList
+      <ProList
         toolBarRender={() => {
           return [
             <Button
@@ -206,7 +158,7 @@ function Intent() {
               }}
               // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
             >
-              <PlusOutlined /> Tạo ý định
+              <PlusOutlined /> Tạo slots
             </Button>,
           ];
         }}
@@ -234,9 +186,9 @@ function Intent() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} ý định`,
+            `${range[0]}-${range[1]} trên ${total} slots`,
         }}
-        headerTitle="Danh sách ý định"
+        headerTitle="Danh sách Slots"
         metas={{
           title: {
             render: (dom, entity: any) => {
@@ -248,11 +200,7 @@ function Intent() {
             search: false,
             render: (dom, entity: any) => (
               <>
-                {/* Mô tả:{" "}
-                <Tag color={entity?.actions === "ACTIVE" ? "success" : "error"}>
-                  {entity?.data}
-                </Tag> */}
-      {/* Mô tả: <Tag color="processing">{entity?.data.join(", ")}</Tag>
+                Mô tả: <Tag color="processing">{entity?.data.join(", ")}</Tag>
               </>
             ),
           },
@@ -292,13 +240,14 @@ function Intent() {
             render: () => (
               <Avatar
                 style={{ backgroundColor: "#87d068" }}
-                icon={<BulbFilled />}
+                // icon={<BulbFilled />}
+                icon={<BookFilled />}
               />
             ),
             search: false,
           },
         }}
-      /> */}
+      />
 
       <ModalFormUser
         visible={modalFormIntentVisible}
@@ -346,4 +295,4 @@ function Intent() {
   );
 }
 
-export default Intent;
+export default Slots;
