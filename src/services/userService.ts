@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import axios from "axios"
 
 const handleLoginApi = async (userName:string, password:string) => {
@@ -25,9 +26,27 @@ const handleSingUpApi = async (userName:string, password:string, email:string) =
       })
 };
 
-const getUser = async () => {
-  return await axios.get("http://localhost:8000/users/getList", {})
+// const getUser = async () => {
+//   return await axios.get("http://localhost:8000/users/getList", {})
+// };
+
+const getUser = async (): Promise<any> => {
+  try {
+    const response = await axios.get("http://localhost:8000/users/getList", {});
+    if(response?.statusText === "OK"){
+      
+      return Promise.resolve(response);
+    }
+    else {
+      notification.error({message: "Không lấy được dữ liệu"})
+      return Promise.reject()
+    }
+  } catch (error) {
+   notification.error({message: "Không lấy được dữ liệu"})
+    return Promise.reject()
+  }
 };
+
 
 const getUserId = async (userId:any) => {
   return await axios.get(`http://localhost:8000/users/${userId}`, {})

@@ -3,6 +3,7 @@ import {
   ActionType,
   ProFormInstance,
   ProFormItem,
+  ProFormList,
 } from "@ant-design/pro-components";
 import {
   ModalForm,
@@ -16,6 +17,7 @@ import {
   Badge,
   Button,
   Col,
+  Divider,
   Input,
   message,
   notification,
@@ -64,8 +66,8 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
         actionRef.current?.reload();
         notification.success({
           message: initiateData?._id
-            ? "Cập nhật thực thể thành công"
-            : "Tạo mới thực thể thành công",
+            ? "Cập nhật câu trả lời thành công"
+            : "Tạo mới câu trả lời thành công",
         });
         return Promise.resolve();
       } else {
@@ -80,6 +82,7 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
 
   return (
     <ModalForm
+      width={"50%"}
       open={visible}
       initialValues={initiateData}
       modalProps={{
@@ -90,10 +93,10 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
       formRef={restFormRef}
       onFinish={handleSubmit}
       onVisibleChange={onVisibleChange}
-      title={initiateData?._id ? "Cập nhật thực thể" : "Tạo mới thực thể"}
+      title={initiateData?._id ? "Cập nhật câu trả lời" : "Tạo mới câu trả lời"}
     >
       <Row gutter={16}>
-        <Col span={16}>
+        <Col span={24}>
           <ProFormText
             label="Tên"
             required
@@ -107,7 +110,7 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
             ]}
           />
         </Col>
-        <Col span={8}>
+        {/* <Col span={8}>
           <ProFormSelect
             label="Trạng thái"
             required
@@ -120,8 +123,8 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
               },
             }}
           />
-        </Col>
-        <Col span={24}>
+        </Col> */}
+        {/* <Col span={24}>
           <ProFormTextArea
             label="Mô tả"
             required
@@ -134,21 +137,28 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
               },
             ]}
           />
-        </Col>
+        </Col> */}
         <Col span={24}>
-          <ProFormSelect
+          <ProFormList
             label="Nội dung"
             name="data"
-            // required
-            mode="tags"
-            // rules={[
-            //   {
-            //     max: 500,
-            //     message: "Vui lòng không nhập quá 500 kí tự hoặc để trống",
-            //     required: true,
-            //   },
-            // ]}
-          />
+            // copyIconProps={{ tooltipText: "Sao chép câu hỏi này" }}
+            copyIconProps={false}
+            deleteIconProps={{ tooltipText: "Xóa  câu phản hồi này" }}
+            creatorButtonProps={{ creatorButtonText: "Thêm câu phản hồi" }}
+            style={{ padding: 2, backgroundColor: "#F1F5F8" }}
+          >
+            <Row gutter={16} style={{ paddingTop: 12, width: "100%" }}>
+              <Divider children={`Điền thông tin câu trả lời:`} />
+              <Col span={24}>
+                <ProFormText
+                  label="Text"
+                  name="text"
+                  placeholder={"Nhập câu phản hồi"}
+                ></ProFormText>
+              </Col>
+            </Row>
+          </ProFormList>
         </Col>
       </Row>
     </ModalForm>

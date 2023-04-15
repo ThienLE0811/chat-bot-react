@@ -16,12 +16,12 @@ const getCookie = function getCookie(name: any) {
     }
 
 const checkAccess = () => {
-    const userRole = getCookie("userRole");
+    const access_token= getCookie("access_token");
     const userName = getCookie("userName");
     
     
     
-    if (!userName) {
+    if (!access_token) {
       message.success("Phiên bản hết hạn vui lòng đăng nhập lại");
       window.location.href = "/auth/login";
       

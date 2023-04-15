@@ -35,6 +35,7 @@ import { connect } from "react-redux";
 import { AccountInfo } from "../redux/slices/account/data";
 import React from "react";
 import { setAccountInfo } from "../redux/slices/account";
+import NoFoundPage from "../pages/components/404";
 
 export const defaultRouter: Record<string, string> = {
   "/dialogue": "/dialogue/intents",
@@ -97,7 +98,6 @@ const filteredMenuItems: MenuDataItem = [
     path: "train",
     icon: <FileDoneOutlined />,
     hideInMenu: accountInfo.TRAIN_MANAGEMENT ? false : true,
-    element: <>train</>,
     children: [
       {
         name: "Train Model",
@@ -113,27 +113,27 @@ const filteredMenuItems: MenuDataItem = [
       },
     ],
   },
-  {
-    name: "Quản lý thành phần",
-    path: "components-management",
-    icon: <FileDoneOutlined />,
-    element: <>Quản lý ứng dụng</>,
-    hideInMenu: accountInfo.COMPONENT_MANAGEMENT ? false : true,
-    children: [
-      {
-        name: "Thành phần chat bot",
-        path: "components",
-        icon: <ClusterOutlined />,
-        element: <>Quản lý thành phần chat bot</>,
-      },
-      {
-        name: "Quản lý model",
-        path: "components-model",
-        icon: <ApartmentOutlined />,
-        element: <>Uứng dụng</>,
-      },
-    ],
-  },
+  // {
+  //   name: "Quản lý thành phần",
+  //   path: "components-management",
+  //   icon: <FileDoneOutlined />,
+  //   element: <>Quản lý ứng dụng</>,
+  //   hideInMenu: accountInfo.COMPONENT_MANAGEMENT ? false : true,
+  //   children: [
+  //     {
+  //       name: "Thành phần chat bot",
+  //       path: "components",
+  //       icon: <ClusterOutlined />,
+  //       element: <>Quản lý thành phần chat bot</>,
+  //     },
+  //     {
+  //       name: "Quản lý model",
+  //       path: "components-model",
+  //       icon: <ApartmentOutlined />,
+  //       element: <>Uứng dụng</>,
+  //     },
+  //   ],
+  // },
   {
     name: "Quản lý người dùng",
     path: "user-management",
@@ -175,7 +175,7 @@ export const routes: MenuDataItem[] | RouteObject[] = [
   {
     path: "*",
     name: "404",
-    element: <>123</>,
+    element: <NoFoundPage />,
   },
   {
     path: "/auth",

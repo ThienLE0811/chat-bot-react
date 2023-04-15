@@ -38,7 +38,6 @@ function Group() {
     {
       title: "Tên nhóm",
       dataIndex: "name",
-      width: 90,
       render: (dom, entity) => {
         return (
           <a
@@ -67,18 +66,18 @@ function Group() {
       dataIndex: "roleType",
     },
     {
-      title: "Tiêu đề nhóm",
+      title: "Nhóm",
       dataIndex: "description",
       hideInSearch: true,
       renderText: (text, record) => `${record?.description}`,
     },
     {
-      title: "Nhóm",
+      title: "Số lượng người dùng",
       renderText: (text, record) => (
         <ResponsesiveTextTable
           maxWidth={200}
-          minWidth={40}
-          text={record?.userRoleName}
+          minWidth={100}
+          text={record?.user}
         />
       ),
       ellipsis: true,
@@ -94,21 +93,14 @@ function Group() {
       //       label: value?.grpName,
       //       value: value?.grpCode,
       //     })),
-      dataIndex: "userRoleName",
+      dataIndex: "userCount",
     },
-    // {
-    //   title: 'Domain name',
-    //   render: (text) => <ResponsesiveTextTable maxWidth={200} minWidth={90} text={text} />,
-    //   ellipsis: true,
-    //   hideInSearch: true,
-    //   dataIndex: 'usrDn',
-    // },
     {
       title: "Hành động",
       dataIndex: "option",
       valueType: "option",
       fixed: "right",
-      width: 80,
+      width: 100,
       render: (_, record) => [
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
@@ -117,19 +109,22 @@ function Group() {
               accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
             }
             onClick={() => {
-              !currentRow?.usrUid && setCurrentRow(record);
+              !currentRow?._id && setCurrentRow(record);
               setModalFormUserVisible(true);
             }}
           />
         </Tooltip>,
-        <Tooltip title="Phân quyền" key={"2"}>
-          <Button
-            icon={<ControlOutlined />}
-            disabled={
-              accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
-            }
-          />
-        </Tooltip>,
+        // <Tooltip title="Phân quyền" key={"2"}>
+        //   <Button
+        //     icon={<ControlOutlined />}
+        //     disabled={
+        //       accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
+        //     }
+        //     onClick={() => {
+        //       !currentRow?._id && setModalFormUserVisible(true);
+        //     }}
+        //   />
+        // </Tooltip>,
       ],
     },
   ] as ProColumns<any>[];

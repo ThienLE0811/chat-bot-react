@@ -3,6 +3,7 @@ import { SortOrder } from "antd/es/table/interface";
 
 export interface AccountState {
   accountInfo: LoginResponseSuccessData;
+  dataModel: {}
 }
 
 export interface IRequestFetchTableData {

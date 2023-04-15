@@ -14,6 +14,7 @@ import {
   notification,
   Popconfirm,
   Switch,
+  Tag,
   Tooltip,
 } from "antd";
 import { useRef, useState } from "react";
@@ -43,9 +44,9 @@ function Response() {
         return (
           <a
             onClick={() => {
-              console.log("click");
               setCurrentRow(entity);
-              setShowDetail(true);
+              // setShowDetail(true);
+              console.log("click:: ", entity);
             }}
           >
             {dom}
@@ -75,46 +76,62 @@ function Response() {
       // render: (text, record) => (
       //   <>
       //     <ResponsesiveTextTable
-      //       maxWidth={300}
+      //       maxWidth={1300}
       //       minWidth={150}
       //       // text={text?.props?.children?.join(", ") || ""}
       //       // text={record?.data.join(", ")}
 
-      //       text={record?.dataResponse || ""}
+      //       text={
+      //         record?.data.map((value: any) => (
+      //           <Tag color={"green"} style={{ paddingRight: "10px" }}>
+      //             {value?.text}
+      //           </Tag>
+      //         )) || ""
+      //       }
       //     />
       //     {console.log("log:: ", record?.data)}
       //   </>
       // ),
-      width: 250,
-      valueType: "select",
+
+      render: (text, record) => (
+        <>
+          {record?.data.map((value: any) => (
+            <Tag color={"green"} style={{ paddingRight: "10px" }}>
+              {value?.text}
+            </Tag>
+          ))}
+        </>
+      ),
+      // width: 250,
+      valueType: "",
       ellipsis: true,
       hideInSearch: true,
       dataIndex: "data",
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
-      hideInSearch: true,
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updateAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
-      ),
-      valueType: "date",
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-      hideInSearch: true,
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   valueType: "date",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
+    //   ),
+    //   hideInSearch: true,
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    // },
+    // {
+    //   title: "Ngày cập nhật",
+    //   dataIndex: "updateAt",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
+    //   ),
+    //   valueType: "date",
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    //   hideInSearch: true,
+    // },
     {
       title: "Hành động",
       dataIndex: "option",

@@ -30,8 +30,6 @@ const getEntities = async (): Promise<any> => {
    notification.error({message: "Không lấy được dữ liệu"})
     return Promise.reject()
   }
-    
- 
 };
 
 

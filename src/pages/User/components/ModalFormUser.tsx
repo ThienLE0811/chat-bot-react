@@ -19,6 +19,7 @@ import {
   Tooltip,
 } from "antd";
 import React, { useRef, useState } from "react";
+import { getPermissionRole } from "../../../services/groupService";
 import {
   createUser,
   updateUser,
@@ -59,7 +60,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         onSuccess?.();
 
         notification.success({
-          message: initiateData?.usrUid
+          message: initiateData?._id
             ? "Cập nhật Người dùng thành công"
             : "Tạo mới Người dùng thành công",
         });
@@ -97,6 +98,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           <ProFormText
             label="Tài khoản"
             name="userName"
+            disabled
             required
             rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
           />
@@ -105,11 +107,12 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           <ProFormText
             label="Email"
             name="email"
+            disabled
             required
             rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
           />
         </Col>
-        <Col span={8}>
+        {/* <Col span={8}>
           <ProFormSelect
             label="Trạng thái"
             name="usrStatus"
@@ -121,7 +124,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
               },
             }}
           />
-        </Col>
+        </Col> */}
         <Col span={8}>
           <ProFormText
             label="Họ"
@@ -137,12 +140,22 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           />
         </Col>
 
-        <Col span={8}>
+        {/* <Col span={8}>
           <ProFormText
             label="Vai trò"
             name="userRoleName"
-            disabled
+            // disabled
             rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+          />
+        </Col> */}
+        <Col span={8}>
+          <ProFormSelect
+            label="Vai trò"
+            name="userRoleName"
+            showSearch
+            initialValue={initiateData?.userRoleName}
+            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+            request={async () => getPermissionRole()}
           />
         </Col>
       </Row>

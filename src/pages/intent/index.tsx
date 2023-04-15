@@ -15,6 +15,7 @@ import {
   message,
   notification,
   Popconfirm,
+  Space,
   Switch,
   Tag,
   Tooltip,
@@ -29,7 +30,11 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 // import columnsIntentTable from "./components/columnsIntentTable";
-import { deleteIntent, getIntent } from "../../services/intentServices";
+import {
+  deleteIntent,
+  getIntent,
+  testIntent,
+} from "../../services/intentServices";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 
 function Intent() {
@@ -41,6 +46,8 @@ function Intent() {
   // );
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
+  const [showTableAlert, setShowTableAlert] = useState(true);
+  const [dataRows, setDataRows] = useState([]);
   const [loadCheck, setLoadCheck] = useState({});
 
   const columns = [
@@ -77,32 +84,32 @@ function Intent() {
       // ),
       ellipsis: true,
       hideInSearch: true,
-      dataIndex: "data",
+      dataIndex: "examples",
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
-      hideInSearch: true,
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
-      ),
-      valueType: "date",
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-      hideInSearch: true,
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   valueType: "date",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
+    //   ),
+    //   hideInSearch: true,
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    // },
+    // {
+    //   title: "Ngày cập nhật",
+    //   dataIndex: "updatedAt",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
+    //   ),
+    //   valueType: "date",
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    //   hideInSearch: true,
+    // },
     {
       title: "Hành động",
       dataIndex: "option",
@@ -148,11 +155,58 @@ function Intent() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        bordered
+        rowKey="_id"
         headerTitle="Danh sách ý định"
         // search={{
         //   labelWidth: 120,
         // }}
+        rowSelection={{
+          getCheckboxProps: (record) => ({
+            name: record._id,
+          }),
+          onSelect: (record, selected, selectedRows: any) => {
+            setDataRows(selectedRows);
+            console.log("dataaaa:: ", selectedRows);
+          },
+        }}
+        tableAlertRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          return (
+            showTableAlert && (
+              <Space size={24}>
+                <span>Đã chọn {selectedRows.length} mục</span>
+              </Space>
+            )
+          );
+        }}
+        tableAlertOptionRender={() => {
+          const hanleDelete = () => {
+            const ids = dataRows.map((value: any) => value._id);
+            const data = { id: ids };
+            console.log("id:: ", dataRows);
+            // dispatch(deletePostsTableData(data));
+            setShowTableAlert(false);
+            console.log("Xóa ok");
+          };
+
+          return (
+            showTableAlert && (
+              <Popconfirm
+                key={1}
+                title="Bạn chắc chắn muốn xóa không?"
+                onConfirm={hanleDelete}
+              >
+                <Button key={2} ghost danger size="small">
+                  Xóa
+                </Button>
+              </Popconfirm>
+            )
+          );
+        }}
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
@@ -190,7 +244,8 @@ function Intent() {
             <PlusOutlined /> Tạo ý định
           </Button>,
         ]}
-        request={(params, sort, filters) => getIntent()}
+        // request={(params, sort, filters) => getIntent()}
+        request={(params, sort, filters) => testIntent()}
         columns={columns}
       />
 

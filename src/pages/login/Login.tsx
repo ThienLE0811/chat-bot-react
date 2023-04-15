@@ -79,8 +79,7 @@ function Login() {
     <div className="container">
       <div className="login">
         <LoginForm
-          logo="https://gogroup.vn/wp-content/uploads/2022/12/gogroup-logo.png"
-          // logo="./gogroup-logo.png"
+          logo="/logo.png"
           title="AceBot"
           subTitle="Nền tảng xây dựng chat bot"
           submitter={{

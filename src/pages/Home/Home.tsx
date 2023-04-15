@@ -48,7 +48,6 @@ function Home() {
       .catch((error) => {
         console.log(error);
       });
-    console.log("log ne");
   }, []);
   // console.log("accountInfo:: ", accountInfo);
 
@@ -81,7 +80,6 @@ function Home() {
         }}
         // navTheme="light"
         // title={"Ace Bot"}
-        // logo="https://gogroup.vn/wp-content/uploads/2022/12/gogroup-logo.png"
         // logo="/GoGroup-2.png"
         logo="/logo.png"
         logoStyle={{ width: 200 }}
@@ -144,7 +142,7 @@ function Home() {
         menuItemRender={(item, dom) => (
           <div
             onClick={() => {
-              console.log("item:: ", dom);
+              // console.log("item:: ", dom);
               navigate(item?.path || "/");
               // setPathname(item.path || "/home");
             }}

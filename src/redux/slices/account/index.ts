@@ -5,6 +5,7 @@ import { IResponseFetchData, AccountState } from "./data";
 
 const initialState: AccountState = {
   accountInfo: {},
+  dataModel: {},
 };
 
 const accountSlice = createSlice({
@@ -14,6 +15,9 @@ const accountSlice = createSlice({
     setAccountInfo(state, action) {
       state.accountInfo = action.payload;
     },
+    setDataModel(state,action) {
+      state.dataModel = action.payload;
+    }
   },
   // extraReducers: {
   //   [accountLoginData.pending.type]: (state: AccountState) => {
@@ -38,5 +42,5 @@ const accountSlice = createSlice({
 });
 
 const { actions, reducer } = accountSlice;
-export const { setAccountInfo } = actions;
+export const { setAccountInfo,setDataModel } = actions;
 export default reducer;

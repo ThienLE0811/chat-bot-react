@@ -19,11 +19,7 @@ import {
   Tooltip,
 } from "antd";
 import React, { useRef, useState } from "react";
-import {
-  createUser,
-  updateUser,
-  handleLoginApi,
-} from "../../../services/userService";
+import { updatePermission } from "../../../services/groupService";
 
 export type FormValueType = {
   target?: string;
@@ -51,17 +47,16 @@ const ModalFormGroup: React.FC<ModalFormGroupProps> = (props) => {
 
     try {
       const res = initiateData?._id
-        ? await updateUser(initiateData?._id, formValues)
-        : await createUser(formValues);
-      console.log("log user:: ", res);
+        ? await updatePermission(initiateData?._id, formValues)
+        : await Promise.reject();
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
 
         notification.success({
-          message: initiateData?.usrUid
-            ? "Cập nhật Người dùng thành công"
-            : "Tạo mới Người dùng thành công",
+          message: initiateData?._id
+            ? "Cập nhật nhóm thành công"
+            : "Tạo mới nhóm thành công",
         });
         return Promise.resolve();
       } else {
@@ -81,6 +76,7 @@ const ModalFormGroup: React.FC<ModalFormGroupProps> = (props) => {
       //       ? { usrStatus: "ACTIVE" }
       //       : (await api.user.getUserById(initiateData?.usrUid)).body?.dataRes
       //   }
+      width={"50%"}
       modalProps={{
         destroyOnClose: true,
         okText: "Xác nhận",
@@ -90,59 +86,31 @@ const ModalFormGroup: React.FC<ModalFormGroupProps> = (props) => {
       formRef={restFormRef}
       onFinish={handleSubmit}
       onVisibleChange={onVisibleChange}
-      title={initiateData?._id ? "Cập nhật người dùng" : "Tạo mới người dùng"}
+      title={initiateData?._id ? "Cập nhật nhóm" : "Tạo mới nhóm"}
     >
       <Row gutter={16}>
-        <Col span={8}>
+        <Col span={12}>
           <ProFormText
-            label="Tài khoản"
-            name="userName"
+            label="Tên nhóm"
+            name="name"
             required
             rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
           />
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <ProFormText
-            label="Email"
-            name="email"
+            label="Code nhóm"
+            name="roleType"
             required
-            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
-          />
-        </Col>
-        <Col span={8}>
-          <ProFormSelect
-            label="Trạng thái"
-            name="usrStatus"
-            allowClear={false}
-            valueEnum={{
-              ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-              INACTIVE: {
-                text: <Badge status="error" text="Không hoạt động" />,
-              },
-            }}
-          />
-        </Col>
-        <Col span={8}>
-          <ProFormText
-            label="Họ"
-            name="firstName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
-          />
-        </Col>
-        <Col span={8}>
-          <ProFormText
-            label="Tên"
-            name="lastName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
-          />
-        </Col>
-
-        <Col span={8}>
-          <ProFormText
-            label="Vai trò"
-            name="userRole"
             disabled
-            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormText
+            label="Nhóm"
+            name="description"
+            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
           />
         </Col>
       </Row>

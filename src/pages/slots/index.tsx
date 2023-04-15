@@ -11,7 +11,9 @@ import Home from "../Home/Home";
 import {
   Avatar,
   Button,
+  Divider,
   Drawer,
+  List,
   message,
   notification,
   Popconfirm,
@@ -19,7 +21,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import ModalFormUser from "./components/ModalFormIntent";
+import ModalFormSlots from "./components/ModalFormSlots";
 import { useRef, useState } from "react";
 import {
   BookFilled,
@@ -30,7 +32,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 // import columnsIntentTable from "./components/columnsIntentTable";
-import { deleteIntent, getIntent } from "../../services/intentServices";
+import { deleteSlots, getSlots } from "../../services/slotsService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 
 function Slots() {
@@ -47,7 +49,7 @@ function Slots() {
   const columns = [
     {
       title: "Tên",
-      dataIndex: "title",
+      dataIndex: "nameSlot",
       width: 120,
       render: (dom, entity) => {
         return (
@@ -64,46 +66,84 @@ function Slots() {
       },
     },
     {
-      title: "Mô tả",
+      title: "mapping",
       valueType: "treeSelect",
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       text={record?.data.join(", ")}
-      //     />
-      //   </>
-      // ),
+      render: (text, record) => (
+        // <>
+        //   {record?.data?.mapping.map((value: any) => `type: ${value.type}`)}
+        //   <br />
+        //   {record?.data?.mapping.map((value: any) => value.type)}
+        // </>
+        <List
+          itemLayout="horizontal"
+          dataSource={record?.mapping}
+          style={{ width: 400 }}
+          renderItem={(item: any, index) => (
+            <List.Item>
+              <List.Item.Meta
+                // avatar={
+                //   <Avatar
+                //     src={`https://joesch.moe/api/v1/random?key=${index}`}
+                //   />
+                // }
+                title={item?.value}
+                description={`entity: ${item?.entity}
+                 - type: ${item?.type}`}
+              />
+            </List.Item>
+          )}
+        />
+      ),
       ellipsis: true,
       hideInSearch: true,
-      dataIndex: "data",
+      // dataIndex: "data",
     },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
+      title: "type",
+      dataIndex: "type",
+      render: (text, record) => (
+        <ResponsesiveTextTable
+          maxWidth={200}
+          minWidth={70}
+          text={record?.type}
+        />
       ),
-      hideInSearch: true,
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
     },
     {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
+      title: "auto fill",
+      // dataIndex: "type",
+      render: (text, record) => (
+        <ResponsesiveTextTable
+          maxWidth={200}
+          minWidth={70}
+          text={record?.autoFill ? "true" : "false"}
+        />
       ),
-      valueType: "date",
-      fieldProps: {
-        format: "DD/MM/YYYY",
-      },
-      hideInSearch: true,
     },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   valueType: "date",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
+    //   ),
+    //   hideInSearch: true,
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    // },
+    // {
+    //   title: "Ngày cập nhật",
+    //   dataIndex: "updatedAt",
+    //   render: (text) => (
+    //     <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
+    //   ),
+    //   valueType: "date",
+    //   fieldProps: {
+    //     format: "DD/MM/YYYY",
+    //   },
+    //   hideInSearch: true,
+    // },
     // {
     //   title: "Hành động",
     //   dataIndex: "option",
@@ -181,7 +221,7 @@ function Slots() {
           setting: false,
         }}
         rowKey="_id"
-        request={(params, sort, filters) => getIntent()}
+        request={(params, sort, filters) => getSlots()}
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,
@@ -192,17 +232,25 @@ function Slots() {
         metas={{
           title: {
             render: (dom, entity: any) => {
-              console.log("123: ", dom);
-              return <div>{entity?.title}</div>;
+              return <div>{entity?.nameSlot}</div>;
             },
           },
           description: {
             search: false,
-            render: (dom, entity: any) => (
+            render: (dom, entity: any) => [
               <>
-                Mô tả: <Tag color="processing">{entity?.data.join(", ")}</Tag>
-              </>
-            ),
+                Type: <Tag color="processing">{entity?.type}</Tag>
+              </>,
+              <>
+                auto fill:{" "}
+                <Tag color="processing">
+                  {entity?.autoFill === true ? "true" : "false"}
+                </Tag>
+              </>,
+              <>
+                mapping: <Tag color="processing">{entity?.mapping.length}</Tag>
+              </>,
+            ],
           },
 
           actions: {
@@ -222,7 +270,7 @@ function Slots() {
                   title="Bạn chắc chắn muốn xóa?"
                   key={"2"}
                   onConfirm={async () => {
-                    const res = await deleteIntent(entity?._id);
+                    const res = await deleteSlots(entity?._id);
                     if (res?.data?.statusCode === 200) {
                       notification.success({ message: "Xóa thành công" });
                       actionRef.current?.reload();
@@ -249,7 +297,7 @@ function Slots() {
         }}
       />
 
-      <ModalFormUser
+      <ModalFormSlots
         visible={modalFormIntentVisible}
         initiateData={currentRow}
         onVisibleChange={(visible) => {
@@ -275,8 +323,8 @@ function Slots() {
       >
         {/* {currentRow?.usrUid && ( */}
         <ProDescriptions<any>
-          column={{ xl: 2, sm: 1 }}
-          title={`Thông tin chi tiết: ${currentRow?.title}`}
+          column={{ xl: 1, sm: 1, xs: 1, md: 1 }}
+          title={`Thông tin chi tiết của slots: ${currentRow?.nameSlot}`}
           dataSource={currentRow}
           // request={async () => ({
           //   data: userInfo || {},

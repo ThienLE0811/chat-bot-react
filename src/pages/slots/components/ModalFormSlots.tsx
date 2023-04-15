@@ -3,6 +3,8 @@ import {
   ActionType,
   ProFormInstance,
   ProFormItem,
+  ProFormList,
+  ProFormSwitch,
 } from "@ant-design/pro-components";
 import {
   ModalForm,
@@ -16,6 +18,7 @@ import {
   Badge,
   Button,
   Col,
+  Divider,
   Input,
   message,
   notification,
@@ -24,6 +27,7 @@ import {
 } from "antd";
 import React, { useRef, useState } from "react";
 import { createIntent, updateIntent } from "../../../services/intentServices";
+import { createSlots, updateSlots } from "../../../services/slotsService";
 
 export type FormValueType = {
   target?: string;
@@ -41,7 +45,7 @@ export type ModalFormUserProps = {
   onVisibleChange: (visible: boolean) => void;
 };
 
-const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
+const ModalFormSlots: React.FC<ModalFormUserProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
   console.log("init:: ", initiateData);
@@ -52,8 +56,8 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
 
     try {
       const res: any = initiateData?._id
-        ? await updateIntent(initiateData?._id, formValues)
-        : await createIntent(formValues);
+        ? await updateSlots(initiateData?._id, formValues)
+        : await createSlots(formValues);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
@@ -89,11 +93,11 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
       title={initiateData?._id ? "Cập nhật slots" : "Tạo mới slots"}
     >
       <Row gutter={16}>
-        <Col span={16}>
+        <Col span={8}>
           <ProFormText
             label="Tên"
             required
-            name="title"
+            name="nameSlot"
             rules={[
               {
                 max: 100,
@@ -103,38 +107,76 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
             ]}
           />
         </Col>
+
         <Col span={8}>
-          <ProFormSelect
-            label="Trạng thái"
-            required
-            name="usrStatus"
-            allowClear={false}
-            valueEnum={{
-              ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-              INACTIVE: {
-                text: <Badge status="error" text="Không hoạt động" />,
-              },
-            }}
-          />
-        </Col>
-        <Col span={24}>
-          <ProFormSelect
-            label="Nội dung"
-            name="data"
+          <ProFormText
+            label="Kiểu"
             // required
-            mode="tags"
+            name="type"
             // rules={[
             //   {
-            //     max: 500,
-            //     message: "Vui lòng không nhập quá 500 kí tự hoặc để trống",
+            //     max: 100,
+            //     message: "Vui lòng không nhập quá 100 kí tự hoặc để trống",
             //     required: true,
             //   },
             // ]}
           />
+        </Col>
+        <Col span={8}>
+          {/* <ProFormSelect
+            label="auto Fill"
+            name="autoFill"
+            allowClear={false}
+            initialValue={initiateData?.autoFill}
+            valueEnum={{
+              true: { text: <Badge status="success" text="True" /> },
+              false: {
+                text: <Badge status="error" text="False" />,
+              },
+            }}
+          /> */}
+          <ProFormSwitch name="autoFill" label="auto Fill" />
+        </Col>
+        <Col span={24}>
+          <ProFormList
+            label="Mapping"
+            name="mapping"
+            max={5}
+            // copyIconProps={{ tooltipText: "Sao chép câu hỏi này" }}
+            copyIconProps={false}
+            deleteIconProps={{ tooltipText: "Xóa mapping này" }}
+            creatorButtonProps={{ creatorButtonText: "Thêm mapping" }}
+            style={{ padding: 2, backgroundColor: "#F1F5F8" }}
+          >
+            <Row gutter={16} style={{ paddingTop: 12 }}>
+              <Divider children={`Điền thông tin mapping:`} />
+              <Col span={8}>
+                <ProFormText
+                  label="Kiểu"
+                  name="type"
+                  placeholder={"Nhập kiểu"}
+                ></ProFormText>
+              </Col>
+              <Col span={8}>
+                <ProFormText
+                  label="Giá trị tương ứng"
+                  name="value"
+                  placeholder={"Nhập giá trị tương ứng"}
+                ></ProFormText>
+              </Col>
+              <Col span={8}>
+                <ProFormText
+                  label="Thực thể tương ứng"
+                  name="entity"
+                  placeholder={"Nhập thực thể tương ứng"}
+                ></ProFormText>
+              </Col>
+            </Row>
+          </ProFormList>
         </Col>
       </Row>
     </ModalForm>
   );
 };
 
-export default ModalFormUser;
+export default ModalFormSlots;

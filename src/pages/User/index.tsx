@@ -14,6 +14,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import columnsUserTable from "./components/columnsUserTable";
 import { deleteUser, getUser } from "../../services/userService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import { useAppSelector } from "../../hooks/redux";
 
 function User() {
   const [modalFormUserVisible, setModalFormUserVisible] =
@@ -25,6 +26,8 @@ function User() {
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const [loadCheck, setLoadCheck] = useState({});
+  const { accountInfo } = useAppSelector((state) => state.account);
+  console.log("accountInfo:: ", accountInfo);
 
   const columns = [
     {
@@ -70,7 +73,7 @@ function User() {
         <ResponsesiveTextTable
           maxWidth={200}
           minWidth={40}
-          text={record?.userRoleName}
+          text={record?.userGroup}
         />
       ),
       ellipsis: true,
@@ -86,7 +89,7 @@ function User() {
       //       label: value?.grpName,
       //       value: value?.grpCode,
       //     })),
-      dataIndex: "userRoleName",
+      dataIndex: "userGroup",
     },
     // {
     //   title: 'Domain name',
@@ -130,7 +133,7 @@ function User() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            // disabled={accountInfo?.USER_MANAGEMENT.UPDATE_USER ? false : true}
             onClick={() => {
               !currentRow?.usrUid && setCurrentRow(record);
               setModalFormUserVisible(true);
@@ -138,16 +141,16 @@ function User() {
           />
         </Tooltip>,
         <Popconfirm
-          title="Xóa thông tin"
+          title="Xóa nguời dùng"
           key={"2"}
           onConfirm={async () => {
             const res = await deleteUser(record?._id);
             console.log("res:: ", res);
             if (res?.data?.statusCode === 200) {
               actionRef.current?.reload();
-              message.success("Xóa thành công");
+              message.success("Xóa người dùng thành công");
             } else {
-              message.error("Xóa không thành công");
+              message.error("Xóa người dùng không thành công");
             }
           }}
         >
