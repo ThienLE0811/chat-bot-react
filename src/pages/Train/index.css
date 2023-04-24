@@ -11,3 +11,13 @@
 .train-list-header{
     
 }
+
+.view-train {
+    /* height: 100%; */
+    height: 100%;
+    background-color: #FFF;
+}
+
+.img-train {
+    text-align: center;
+}

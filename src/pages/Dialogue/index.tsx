@@ -24,7 +24,14 @@ function Dialogue() {
   const [loadCheck, setLoadCheck] = useState({});
 
   return (
-    <PageContainer title={false} breadcrumbRender={false}>
+    <PageContainer
+      title={false}
+      breadcrumbRender={false}
+      childrenContentStyle={{
+        paddingInline: 8,
+        paddingBlock: 0,
+      }}
+    >
       <ProTable
         // actionRef={actionRef}
         // formRef={formRef}

@@ -165,7 +165,14 @@ function User() {
   ] as ProColumns<any>[];
 
   return (
-    <PageContainer title={false} breadcrumbRender={false}>
+    <PageContainer
+      title={false}
+      breadcrumbRender={false}
+      childrenContentStyle={{
+        paddingInline: 8,
+        paddingBlock: 4,
+      }}
+    >
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}

@@ -62,6 +62,7 @@ function Login() {
         saveCredentialCookie(loginData);
         dispatch(setAccountInfo(loginData?.userInfo));
         await checkUser(response);
+        message.success("Đăng nhập thành công");
         console.log("account:: ", accountInfo?.userRoleName);
         console.log("data login:: ", loginData?.userInfo?.userRoleName);
         accountInfo?.userRoleName !== loginData?.userInfo?.userRoleName &&
@@ -69,9 +70,9 @@ function Login() {
       } else {
         message.error("Đăng nhập thất bại");
       }
-    } catch (error) {
-      message.error("Đăng nhập thất bại");
-      console.log(error);
+    } catch (error: any) {
+      message.error(error?.response?.data?.message || "Đăng nhập thất bại");
+      console.log("error", error);
     }
   };
 

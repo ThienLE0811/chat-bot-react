@@ -151,7 +151,14 @@ function Intent() {
   ] as ProColumns<any>[];
 
   return (
-    <PageContainer title={false} breadcrumbRender={false}>
+    <PageContainer
+      title={false}
+      breadcrumbRender={false}
+      childrenContentStyle={{
+        paddingInline: 8,
+        paddingBlock: 4,
+      }}
+    >
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
@@ -244,8 +251,8 @@ function Intent() {
             <PlusOutlined /> Tạo ý định
           </Button>,
         ]}
-        // request={(params, sort, filters) => getIntent()}
-        request={(params, sort, filters) => testIntent()}
+        request={(params, sort, filters) => getIntent()}
+        // request={(params, sort, filters) => testIntent()}
         columns={columns}
       />
 

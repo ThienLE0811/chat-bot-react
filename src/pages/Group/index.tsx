@@ -133,7 +133,10 @@ function Group() {
     <PageContainer
       title={false}
       breadcrumbRender={false}
-      style={{ padding: 0 }}
+      childrenContentStyle={{
+        paddingInline: 8,
+        paddingBlock: 4,
+      }}
     >
       <ProTable
         actionRef={actionRef}

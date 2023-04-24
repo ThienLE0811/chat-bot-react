@@ -31,9 +31,9 @@ export const newStructureRoutesProLayout = (
     expires: 3000,
   });
 
-  // Cookies.set("userName", data?.userInfo?.userName || "", {
-  //   expires: 3000,
-  // });
+  Cookies.set("userName", data?.userInfo?.userName || "", {
+    expires: 3000,
+  });
 
   Cookies.set("_id", data?.userInfo?._id || "", {
     expires: 3000,
@@ -61,7 +61,7 @@ export const newStructureRoutesProLayout = (
 
 export const clearCredentialCookie = () => {
   // Cookies.remove("userRoleName", { path: "/" });
-  // Cookies.remove("userName", { path: "/" });
+  Cookies.remove("userName", { path: "/" });
   // Cookies.remove("firstName", { path: "/" });
   // Cookies.remove("lastName", { path: "/" });
   // Cookies.remove("userInfo", { path: "/" });

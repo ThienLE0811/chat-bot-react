@@ -3,6 +3,7 @@ import { RouteObject } from "react-router-dom";
 import {
   ApartmentOutlined,
   ClusterOutlined,
+  CreditCardOutlined,
   FileDoneOutlined,
   FolderOpenOutlined,
   GatewayOutlined,
@@ -89,6 +90,12 @@ const filteredMenuItems: MenuDataItem = [
         name: "Kho hội thoại",
         path: "stories",
         icon: <HddOutlined />,
+        element: <>123321</>,
+      },
+      {
+        name: "Nlu",
+        path: "nlu",
+        icon: <CreditCardOutlined />,
         element: <>123321</>,
       },
     ],

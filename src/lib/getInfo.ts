@@ -21,7 +21,7 @@ const checkAccess = () => {
     
     
     
-    if (!access_token) {
+    if (!access_token || !userName) {
       message.success("Phiên bản hết hạn vui lòng đăng nhập lại");
       window.location.href = "/auth/login";
       

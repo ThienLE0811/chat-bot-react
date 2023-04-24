@@ -61,6 +61,7 @@ function Home() {
         location={{
           pathname,
         }}
+        style={{ padding: 0 }}
         token={{
           header: {
             heightLayoutHeader: 40,

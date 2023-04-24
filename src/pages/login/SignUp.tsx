@@ -24,14 +24,15 @@ function SingUp() {
   const navigate = useNavigate();
   const handleSignUp = async (values: any) => {
     console.log("values:: ", values);
-    const { username, password, email } = values;
+    const { userName, password, email } = values;
     try {
-      const res = await handleSingUpApi(username, password, email);
+      const res = await handleSingUpApi(userName, password, email);
       console.log(res?.data);
       message.success("Đăng ký thành công");
       navigate("/auth/login");
-    } catch (err) {
-      message.error("Đăng ký thất bại");
+    } catch (err: any) {
+      message.error(err?.response?.data?.message);
+      // console.log("err:: ", err?.response?.data?.message);
     }
   };
 
