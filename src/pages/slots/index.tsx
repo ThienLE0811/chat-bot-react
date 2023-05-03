@@ -109,17 +109,17 @@ function Slots() {
         />
       ),
     },
-    {
-      title: "auto fill",
-      // dataIndex: "type",
-      render: (text, record) => (
-        <ResponsesiveTextTable
-          maxWidth={200}
-          minWidth={70}
-          text={record?.autoFill ? "true" : "false"}
-        />
-      ),
-    },
+    // {
+    //   title: "auto fill",
+    //   // dataIndex: "type",
+    //   render: (text, record) => (
+    //     <ResponsesiveTextTable
+    //       maxWidth={200}
+    //       minWidth={70}
+    //       text={record?.autoFill ? "true" : "false"}
+    //     />
+    //   ),
+    // },
     // {
     //   title: "Ngày tạo",
     //   dataIndex: "createdAt",
@@ -248,12 +248,12 @@ function Slots() {
               <>
                 Type: <Tag color="processing">{entity?.type}</Tag>
               </>,
-              <>
-                auto fill:{" "}
-                <Tag color="processing">
-                  {entity?.autoFill === true ? "true" : "false"}
-                </Tag>
-              </>,
+              // <>
+              //   auto fill:{" "}
+              //   <Tag color="processing">
+              //     {entity?.autoFill === true ? "true" : "false"}
+              //   </Tag>
+              // </>,
               <>
                 mapping: <Tag color="processing">{entity?.mapping.length}</Tag>
               </>,

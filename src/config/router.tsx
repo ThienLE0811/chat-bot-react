@@ -37,6 +37,7 @@ import { AccountInfo } from "../redux/slices/account/data";
 import React from "react";
 import { setAccountInfo } from "../redux/slices/account";
 import NoFoundPage from "../pages/components/404";
+import Stories from "../pages/Stories";
 
 export const defaultRouter: Record<string, string> = {
   "/dialogue": "/dialogue/intents",
@@ -90,7 +91,7 @@ const filteredMenuItems: MenuDataItem = [
         name: "Kho hội thoại",
         path: "stories",
         icon: <HddOutlined />,
-        element: <>123321</>,
+        element: <Stories />,
       },
       {
         name: "Nlu",

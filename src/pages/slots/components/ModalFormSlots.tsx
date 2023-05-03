@@ -122,21 +122,10 @@ const ModalFormSlots: React.FC<ModalFormUserProps> = (props) => {
             // ]}
           />
         </Col>
-        <Col span={8}>
-          {/* <ProFormSelect
-            label="auto Fill"
-            name="autoFill"
-            allowClear={false}
-            initialValue={initiateData?.autoFill}
-            valueEnum={{
-              true: { text: <Badge status="success" text="True" /> },
-              false: {
-                text: <Badge status="error" text="False" />,
-              },
-            }}
-          /> */}
+        {/* <Col span={8}>
+          
           <ProFormSwitch name="autoFill" label="auto Fill" />
-        </Col>
+        </Col> */}
         <Col span={24}>
           <ProFormList
             label="Mapping"
@@ -150,21 +139,21 @@ const ModalFormSlots: React.FC<ModalFormUserProps> = (props) => {
           >
             <Row gutter={16} style={{ paddingTop: 12 }}>
               <Divider children={`Điền thông tin mapping:`} />
-              <Col span={8}>
+              <Col span={12}>
                 <ProFormText
                   label="Kiểu"
                   name="type"
                   placeholder={"Nhập kiểu"}
                 ></ProFormText>
               </Col>
-              <Col span={8}>
+              {/* <Col span={8}>
                 <ProFormText
                   label="Giá trị tương ứng"
                   name="value"
                   placeholder={"Nhập giá trị tương ứng"}
                 ></ProFormText>
-              </Col>
-              <Col span={8}>
+              </Col> */}
+              <Col span={12}>
                 <ProFormText
                   label="Thực thể tương ứng"
                   name="entity"
