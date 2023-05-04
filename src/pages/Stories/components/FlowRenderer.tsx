@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import ReactFlow, {
   addEdge,
-  MiniMap,
+  MiniMap ,
   Controls,
   Background,
   useNodesState,
@@ -13,9 +13,11 @@ import {
   edges as initialEdges,
 } from "./initial-elements";
 import CustomNode from "./CustomNode";
-
+import defaultNodes from './nodes';
+import defaultEdges from './edges';
 import "reactflow/dist/style.css";
 import "./overview.css";
+import "./index.css"
 
 const nodeTypes = {
   custom: CustomNode,
@@ -29,47 +31,39 @@ const onInit = (reactFlowInstance: any) =>
   console.log("flow loaded:", reactFlowInstance);
 
 const OverviewFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
-    []
-  );
 
-  // we are using a bit of a shortcut here to adjust the edge type
-  // this could also be done with a custom edge for example
-  const edgesWithUpdatedTypes = edges.map((edge) => {
-    if (edge.sourceHandle) {
-      const customNode = nodes.find((node) => node.type === "custom");
-      if (customNode) {
-        const edgeType = customNode.data.selects[edge.sourceHandle];
-        edge.type = edgeType;
-      }
-
-      //   const edgeType = nodes.find((node) => node.type === "custom").data
-      //     .selects[edge.sourceHandle];
-      //   edge.type = edgeType;
-      // }
+  const nodeColor = (node:any) => {
+    switch (node.type) {
+      case 'input':
+        return '#6ede87';
+      case 'output':
+        return '#6865A5';
+      default:
+        return '#ff0072';
     }
-    return edge;
-  });
+  };
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edgesWithUpdatedTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onInit={onInit}
-      fitView
-      attributionPosition="top-right"
-      nodeTypes={nodeTypes}
-    >
-      <MiniMap style={minimapStyle} zoomable pannable />
-      <Controls />
+    // <ReactFlow
+    //   nodes={nodes}
+    //   edges={edgesWithUpdatedTypes}
+    //   onNodesChange={onNodesChange}
+    //   onEdgesChange={onEdgesChange}
+    //   onConnect={onConnect}
+    //   onInit={onInit}
+    //   fitView
+    //   attributionPosition="top-right"
+    //   nodeTypes={nodeTypes}
+    // >
+    //   <MiniMap style={minimapStyle} zoomable pannable />
+    //   <Controls />
+    //   <Background color="#aaa" gap={16} />
+    // </ReactFlow>
+    <ReactFlow defaultNodes={defaultNodes} defaultEdges={defaultEdges} fitView className="editor">
+      <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable />
       <Background color="#aaa" gap={16} />
-    </ReactFlow>
+      <Controls />
+  </ReactFlow>
   );
 };
 
