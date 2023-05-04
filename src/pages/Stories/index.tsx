@@ -78,6 +78,7 @@ const Stories = () => {
             />
           </Form.Item>
           <Button.Group>
+            <Button type="primary">Update</Button>
             <Button danger onClick={() => remove(index)}>
               Delete
             </Button>
@@ -86,13 +87,6 @@ const Stories = () => {
       ),
     },
   ];
-
-  // onDragEnd(fromIndex, toIndex) {
-  //   const data = [...that.state.data];
-  //   const item = data.splice(fromIndex, 1)[0];
-  //   data.splice(toIndex, 0, item);
-  //   that.setState({ data });
-  // },
 
   return (
     // <div style={{ height: "max-content" }}>
@@ -117,37 +111,22 @@ const Stories = () => {
     >
       <div>
         <Form form={form}>
-          {/* <Table
+          <ReactDragListView
+            onDragEnd={(oldIndex: number, newIndex: number) =>
+              move(oldIndex, newIndex)
+            }
+            handleSelector={'span[aria-label="drag"]'}
+          >
+            <Table
               columns={columns}
               dataSource={list}
               rowKey="_id"
-              handleSelector={'span[aria-label="drag"]'}
               pagination={false}
-            /> */}
-          {list.map((val, key) => (
-            <ReactDragListView
-              onDragEnd={(oldIndex: number, newIndex: number) => {
-                move(oldIndex, newIndex);
-                console.log("oldIndex:: ", oldIndex);
-              }}
-              handleSelector={".drag"}
-              nodeSelector="div"
-            >
-              <div>
-                <DragOutlined
-                  style={{ cursor: "move", marginRight: 8 }}
-                  className="drag"
-                />{" "}
-                {val?.name}
-              </div>
-              <div>{val?.age}</div>
-              <div>{val?.memo}</div>
-            </ReactDragListView>
-          ))}
+            />
+          </ReactDragListView>
         </Form>
         <Button
           style={{ marginTop: 8 }}
-          // style={{ margin: "16px 50%" }}
           block
           type="dashed"
           onClick={() => push({ name: "new row", age: "25" })}
@@ -157,7 +136,6 @@ const Stories = () => {
         <Button
           type="primary"
           style={{ marginTop: 16 }}
-          // style={{ margin: "16px auto" }}
           onClick={() => {
             form
               .validateFields()
@@ -172,19 +150,10 @@ const Stories = () => {
           Submit
         </Button>
         <div style={{ whiteSpace: "pre" }}>
-          {result && `Thông tin stories: ${result}`}
+          {result && `content: ${result}`}
         </div>
       </div>
     </PageContainer>
-    // <ProCard
-    //   headStyle={{ padding: 0, margin: 0 }}
-    //   bodyStyle={{ height: "100%", padding: 0, margin: 0 }}
-    //   style={{ height: "100%" }}
-    // >
-    //   <div style={{ minHeight: "800px", height: "100%" }}>
-    //     <OverviewFlow />
-    //   </div>
-    // </ProCard>
   );
 };
 
