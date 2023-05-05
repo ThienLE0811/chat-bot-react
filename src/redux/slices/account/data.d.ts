@@ -3,7 +3,9 @@ import { SortOrder } from "antd/es/table/interface";
 
 export interface AccountState {
   accountInfo: LoginResponseSuccessData;
-  dataModel: {}
+  dataModel: {};
+  storiesData: {};
+  showDataStories: boolean;
 }
 
 export interface IRequestFetchTableData {
@@ -22,48 +24,47 @@ export interface IResponseFetchData<T> {
 }
 
 export interface AccountInfo {
-        email: string,
-        createdAt: Date,
-        updateAt: Date,
-        firstName:  string,
-        lastName:  string,
-        userName:  string,
-        userRoleName:  string,
-        userRole: {} 
+  email: string;
+  createdAt: Date;
+  updateAt: Date;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  userRoleName: string;
+  userRole: {};
 }
 
-
 export interface LoginResponseSuccessData {
-    /**
-     * token user
-     * @type {string}
-     * @memberof LoginResponseSuccessData
-     */
-    'accessToken'?: string;
-    /**
-     * userId của người dùng
-     * @type {string}
-     * @memberof LoginResponseSuccessData
-     */
-    'userId'?: string;
-    /**
-     * Refresh token
-     * @type {string}
-     * @memberof LoginResponseSuccessData
-     */
-    'refreshToken'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof LoginResponseSuccessData
-     */
-    'tokenType'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof LoginResponseSuccessData
-     */
-    'expires'?: number;
+  /**
+   * token user
+   * @type {string}
+   * @memberof LoginResponseSuccessData
+   */
+  accessToken?: string;
+  /**
+   * userId của người dùng
+   * @type {string}
+   * @memberof LoginResponseSuccessData
+   */
+  userId?: string;
+  /**
+   * Refresh token
+   * @type {string}
+   * @memberof LoginResponseSuccessData
+   */
+  refreshToken?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof LoginResponseSuccessData
+   */
+  tokenType?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof LoginResponseSuccessData
+   */
+  expires?: number;
 }
 
 export interface IResponseFetchAccountData<T> {

@@ -201,7 +201,7 @@ function Entities() {
             }}
             // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
           >
-            <PlusOutlined /> Tạo ý định
+            <PlusOutlined /> Tạo thực thể
           </Button>,
         ]}
         request={(params, sort, filters) => getEntities()}

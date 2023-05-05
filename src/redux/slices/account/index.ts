@@ -6,6 +6,8 @@ import { IResponseFetchData, AccountState } from "./data";
 const initialState: AccountState = {
   accountInfo: {},
   dataModel: {},
+  storiesData: {},
+  showDataStories: false,
 };
 
 const accountSlice = createSlice({
@@ -15,9 +17,15 @@ const accountSlice = createSlice({
     setAccountInfo(state, action) {
       state.accountInfo = action.payload;
     },
-    setDataModel(state,action) {
+    setDataModel(state, action) {
       state.dataModel = action.payload;
-    }
+    },
+    setStoriesData(state, action) {
+      state.storiesData = action.payload;
+    },
+    setShowDataStories(state, action) {
+      state.showDataStories = action.payload;
+    },
   },
   // extraReducers: {
   //   [accountLoginData.pending.type]: (state: AccountState) => {
@@ -42,5 +50,10 @@ const accountSlice = createSlice({
 });
 
 const { actions, reducer } = accountSlice;
-export const { setAccountInfo,setDataModel } = actions;
+export const {
+  setAccountInfo,
+  setDataModel,
+  setStoriesData,
+  setShowDataStories,
+} = actions;
 export default reducer;

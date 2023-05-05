@@ -223,7 +223,7 @@ function Response() {
             }}
             // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
           >
-            <PlusOutlined /> Tạo ý định
+            <PlusOutlined /> Tạo phản hồi
           </Button>,
         ]}
         request={(params, sort, filters) => getResponse()}

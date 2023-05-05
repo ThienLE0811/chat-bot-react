@@ -34,6 +34,7 @@ import {
 // import columnsIntentTable from "./components/columnsIntentTable";
 import { deleteSlots, getSlots } from "../../services/slotsService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import Link from "antd/es/typography/Link";
 
 function Slots() {
   const [modalFormIntentVisible, setModalFormIntentVisible] =
@@ -53,7 +54,7 @@ function Slots() {
       width: 120,
       render: (dom, entity) => {
         return (
-          <a
+          <Link
             onClick={() => {
               console.log("click");
               setCurrentRow(entity);
@@ -61,7 +62,7 @@ function Slots() {
             }}
           >
             {dom}
-          </a>
+          </Link>
         );
       },
     },
