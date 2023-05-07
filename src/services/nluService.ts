@@ -14,12 +14,9 @@ import axios from "axios";
 
 // };
 
-const getEntities = async (): Promise<any> => {
+const getNlu = async (): Promise<any> => {
   try {
-    const response = await axios.get(
-      "http://localhost:8000/entities/getList",
-      {}
-    );
+    const response = await axios.get("http://localhost:8000/nlu/getList", {});
     console.log("res:: ", response);
     if (response?.statusText === "OK") {
       return Promise.resolve(response);
@@ -33,19 +30,16 @@ const getEntities = async (): Promise<any> => {
   }
 };
 
-const createEntities = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/entities/create`, formValues);
+const createNlu = async (formValues: any) => {
+  return await axios.post(`http://localhost:8000/nlu/create`, formValues);
 };
 
-const updateEntities = async (id: string, formValues: any) => {
-  return await axios.put(
-    `http://localhost:8000/entities/update/${id}`,
-    formValues
-  );
+const updateNlu = async (id: string, formValues: any) => {
+  return await axios.put(`http://localhost:8000/nlu/update/${id}`, formValues);
 };
 
-const deleteEntities = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/entities/delete/${id}`, {});
+const deleteNlu = async (id: String) => {
+  return await axios.delete(`http://localhost:8000/nlu/delete/${id}`, {});
 };
 
-export { getEntities, updateEntities, deleteEntities, createEntities };
+export { getNlu, updateNlu, deleteNlu, createNlu };

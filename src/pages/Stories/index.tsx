@@ -160,7 +160,7 @@ function Stories() {
       />
 
       <Drawer
-        width={"50%"}
+        width={"70%"}
         open={showDataStories}
         title={false}
         headerStyle={{

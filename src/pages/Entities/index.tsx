@@ -155,14 +155,14 @@ function Entities() {
       title={false}
       breadcrumbRender={false}
       childrenContentStyle={{
-        paddingInline: 8,
+        paddingInline: 12,
         paddingBlock: 4,
       }}
     >
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        rowKey="_id"
         headerTitle="Danh sách thực thể"
         // search={{
         //   labelWidth: 120,

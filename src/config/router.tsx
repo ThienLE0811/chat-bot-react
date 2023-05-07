@@ -38,6 +38,7 @@ import React from "react";
 import { setAccountInfo } from "../redux/slices/account";
 import NoFoundPage from "../pages/components/404";
 import Stories from "../pages/Stories";
+import Nlu from "../pages/Nlu";
 
 export const defaultRouter: Record<string, string> = {
   "/dialogue": "/dialogue/intents",
@@ -97,7 +98,7 @@ const filteredMenuItems: MenuDataItem = [
         name: "Nlu",
         path: "nlu",
         icon: <CreditCardOutlined />,
-        element: <>123321</>,
+        element: <Nlu />,
       },
     ],
   },

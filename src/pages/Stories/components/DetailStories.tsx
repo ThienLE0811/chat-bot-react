@@ -144,8 +144,14 @@ const DetailStories = ({ initData }: any) => {
               columns={columns}
               dataSource={list}
               rowKey="_id"
-              pagination={false}
+              // pagination={false}
               tableLayout="fixed"
+              pagination={{
+                defaultPageSize: 10,
+                showSizeChanger: true,
+                showTotal: (total, range) =>
+                  `${range[0]}-${range[1]} trên ${total} thực thể`,
+              }}
             />
           </ReactDragListView>
         </Form>

@@ -14,18 +14,17 @@ import {
   notification,
   Popconfirm,
   Switch,
-  Tag,
   Tooltip,
 } from "antd";
 import { useRef, useState } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-// import columnsResponseTable from "./components/columnsResponseTable";
-import { deleteResponse, getResponse } from "../../services/responseService";
+// import columnsEntitiesTable from "./components/columnsEntitiesTable";
+import { deleteNlu, getNlu } from "../../services/nluService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
-import ModalFormResponse from "./components/ModalFormResponse";
+import ModalFormNlu from "./components/ModalFormNlu";
 
-function Response() {
-  const [modalFormResponseVisible, setModalFormResponseVisible] =
+function Nlu() {
+  const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
@@ -37,16 +36,16 @@ function Response() {
 
   const columns = [
     {
-      title: "Tên câu trả lời",
-      dataIndex: "title",
+      title: "Tên intent",
+      dataIndex: "intent",
       width: 120,
       render: (dom, entity) => {
         return (
           <a
             onClick={() => {
+              console.log("click");
               setCurrentRow(entity);
-              // setShowDetail(true);
-              console.log("click:: ", entity);
+              setShowDetail(true);
             }}
           >
             {dom}
@@ -54,84 +53,46 @@ function Response() {
         );
       },
     },
-    // {
-    //   title: "Tên câu trả lời",
-    //   dataIndex: "dataResponse",
-    //   valueType: "treeSelect",
-    //   render: (text, record) => (
-    //     <>
-    //       <ResponsesiveTextTable
-    //         maxWidth={300}
-    //         minWidth={150}
-    //         // text={text?.props?.children?.join(", ") || ""}
-    //         // text={record?.data.join(", ")}
-
-    //         text={record?.data.map((value: any) => value.name_data)}
-    //       />
-    //     </>
-    //   ),
-    // },
     {
-      title: "Nội dung",
+      title: "Examples",
+      dataIndex: "examples",
+      valueType: "treeSelect",
       // render: (text, record) => (
       //   <>
       //     <ResponsesiveTextTable
-      //       maxWidth={1300}
+      //       maxWidth={300}
       //       minWidth={150}
       //       // text={text?.props?.children?.join(", ") || ""}
       //       // text={record?.data.join(", ")}
-
-      //       text={
-      //         record?.data.map((value: any) => (
-      //           <Tag color={"green"} style={{ paddingRight: "10px" }}>
-      //             {value?.text}
-      //           </Tag>
-      //         )) || ""
-      //       }
+      //       text={record?.dataEntities.join(", ")}
       //     />
-      //     {console.log("log:: ", record?.data)}
       //   </>
       // ),
-
-      render: (text, record) => (
-        <>
-          {record?.data.map((value: any) => (
-            <Tag color={"green"} style={{ paddingRight: "10px" }}>
-              {value?.text}
-            </Tag>
-          ))}
-        </>
-      ),
-      // width: 250,
-      valueType: "",
-      ellipsis: true,
-      hideInSearch: true,
-      dataIndex: "data",
     },
-    // {
-    //   title: "Ngày tạo",
-    //   dataIndex: "createdAt",
-    //   valueType: "date",
-    //   render: (text) => (
-    //     <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-    //   ),
-    //   hideInSearch: true,
-    //   fieldProps: {
-    //     format: "DD/MM/YYYY",
-    //   },
-    // },
-    // {
-    //   title: "Ngày cập nhật",
-    //   dataIndex: "updateAt",
-    //   render: (text) => (
-    //     <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
-    //   ),
-    //   valueType: "date",
-    //   fieldProps: {
-    //     format: "DD/MM/YYYY",
-    //   },
-    //   hideInSearch: true,
-    // },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      valueType: "date",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
+      ),
+      hideInSearch: true,
+      fieldProps: {
+        format: "DD/MM/YYYY",
+      },
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
+      ),
+      valueType: "date",
+      fieldProps: {
+        format: "DD/MM/YYYY",
+      },
+      hideInSearch: true,
+    },
     {
       title: "Hành động",
       dataIndex: "option",
@@ -145,7 +106,7 @@ function Response() {
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
             onClick={() => {
               setCurrentRow(record);
-              setModalFormResponseVisible(true);
+              setModalFormEntitiesVisible(true);
             }}
           />
         </Tooltip>,
@@ -153,7 +114,7 @@ function Response() {
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
-            const res = await deleteResponse(record?._id);
+            const res = await deleteNlu(record?._id);
             if (res?.data?.statusCode === 200) {
               notification.success({ message: "Xóa thành công" });
               actionRef.current?.reload();
@@ -172,6 +133,12 @@ function Response() {
     },
   ] as ProColumns<any>[];
 
+  const handleSearch = (value: any) => {
+    console.log("Kết quả tìm kiếm:", value);
+    // Thực hiện xử lý tìm kiếm dữ liệu theo giá trị `value`
+    // Ví dụ: gán dữ liệu đã lọc vào một biến state
+  };
+
   return (
     <PageContainer
       title={false}
@@ -184,20 +151,23 @@ function Response() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="_id"
-        headerTitle="Danh sách câu trả lời"
-        // search={{
-        //   labelWidth: 120,
-        // }}
-        search={false}
+        rowKey="usrUid"
+        headerTitle="Danh sách NLU"
+        search={{
+          // labelWidth: 120,
+          filterType: "light",
+          resetText: "Reset",
+        }}
+        // search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
+          // search: {
+          //   placeholder: "Nhập từ khoá để tìm kiếm...",
+          //   style: { width: 300 },
+          // },
           density: false,
           setting: false,
+          search: false,
         }}
         size="small"
         cardProps={{
@@ -211,7 +181,7 @@ function Response() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} câu trả lời`,
+            `${range[0]}-${range[1]} trên ${total} thực thể`,
         }}
         toolBarRender={() => [
           <Button
@@ -219,23 +189,28 @@ function Response() {
             key="primary"
             danger
             onClick={() => {
-              setModalFormResponseVisible(true);
+              setModalFormEntitiesVisible(true);
             }}
             // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
           >
-            <PlusOutlined /> Tạo phản hồi
+            <PlusOutlined /> Tạo mới
           </Button>,
         ]}
-        request={(params, sort, filters) => getResponse()}
+        request={(params, sort, filters) => getNlu()}
         columns={columns}
+        // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
+        // rowSelection={{
+        //   onChange: (_, selectedRows) => {
+        //     setSelectedRows(selectedRows);
+        //   },
+        // }}
       />
-
-      <ModalFormResponse
-        visible={modalFormResponseVisible}
+      <ModalFormNlu
+        visible={modalFormEntitiesVisible}
         initiateData={currentRow}
         onVisibleChange={(visible) => {
           if (!visible && !showDetail) setCurrentRow(undefined);
-          setModalFormResponseVisible(visible);
+          setModalFormEntitiesVisible(visible);
         }}
         onSuccess={() => actionRef.current?.reload()}
       />
@@ -257,7 +232,7 @@ function Response() {
         {/* {currentRow?.usrUid && ( */}
         <ProDescriptions<any>
           column={{ xl: 2, sm: 1 }}
-          title={`Thông tin chi tiết: ${currentRow?.nameResponse}`}
+          title={`Thông tin chi tiết: ${currentRow?.nameEntities}`}
           dataSource={currentRow}
           // request={async () => ({
           //   data: userInfo || {},
@@ -276,4 +251,4 @@ function Response() {
   );
 }
 
-export default Response;
+export default Nlu;

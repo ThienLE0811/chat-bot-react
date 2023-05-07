@@ -28,14 +28,14 @@ function Dialogue() {
       title={false}
       breadcrumbRender={false}
       childrenContentStyle={{
-        paddingInline: 8,
-        paddingBlock: 0,
+        paddingInline: 12,
+        paddingBlock: 4,
       }}
     >
       <ProTable
-        // actionRef={actionRef}
+        actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        rowKey="_id"
         headerTitle="Danh sách ý định"
         // search={{
         //   labelWidth: 120,

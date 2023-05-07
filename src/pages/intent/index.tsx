@@ -155,7 +155,7 @@ function Intent() {
       title={false}
       breadcrumbRender={false}
       childrenContentStyle={{
-        paddingInline: 8,
+        paddingInline: 12,
         paddingBlock: 4,
       }}
     >
