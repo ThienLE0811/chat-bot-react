@@ -10,6 +10,7 @@ import {
   ProFormCheckbox,
   ProFormText,
   ProConfigProvider,
+  FooterToolbar,
 } from "@ant-design/pro-components";
 import { message, Space, Tabs } from "antd";
 import { CSSProperties, useEffect, useState } from "react";
@@ -24,6 +25,7 @@ import { saveCredentialCookie } from "../../utils";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { LoginResponseSuccessData } from "../../services/data";
 import { setAccountInfo } from "../../redux/slices/account";
+import { Footer } from "antd/es/layout/layout";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -93,15 +95,15 @@ function Login() {
               Bạn chưa có tài khoản?
               <a href="/singup">Đăng ký</a>
             </Space>,
-            <div className="footer-text">
-              <p
-                style={{
-                  textAlign: "center",
-                }}
-              >
-                Công ty cổ phần công nghệ AceSoft
-              </p>
-            </div>,
+            // <div className="footer-text">
+            //   <p
+            //     style={{
+            //       textAlign: "center",
+            //     }}
+            //   >
+            //     Công ty cổ phần công nghệ AceSoft
+            //   </p>
+            // </div>,
           ]}
           onFinish={handleLogin}
         >
@@ -159,6 +161,9 @@ function Login() {
             </a>
           </div>
         </LoginForm>
+
+        {/* <div className="form-login">
+        </div> */}
       </div>
     </div>
   );
