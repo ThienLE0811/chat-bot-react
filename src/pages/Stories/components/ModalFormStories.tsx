@@ -28,6 +28,7 @@ import {
 import React, { useRef, useState } from "react";
 import { createIntent, updateIntent } from "../../../services/intentServices";
 import { createSlots, updateSlots } from "../../../services/slotsService";
+import { createStories, updateStories } from "../../../services/stories";
 
 export type FormValueType = {
   target?: string;
@@ -56,16 +57,16 @@ const ModalFormStories: React.FC<ModalFormUserProps> = (props) => {
 
     try {
       const res: any = initiateData?._id
-        ? await updateSlots(initiateData?._id, formValues)
-        : await createSlots(formValues);
+        ? await updateStories(initiateData?._id, formValues)
+        : await createStories(formValues);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
         actionRef.current?.reload();
         notification.success({
           message: initiateData?._id
-            ? "Cập nhật slots thành công"
-            : "Tạo mới slots thành công",
+            ? "Cập nhật stories thành công"
+            : "Tạo mới stories thành công",
         });
         return Promise.resolve();
       } else {

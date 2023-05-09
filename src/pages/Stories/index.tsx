@@ -21,7 +21,10 @@ import { deleteSlots, getSlots } from "../../services/slotsService";
 import DetailStories from "./components/DetailStories";
 import ModalFormStories from "./components/ModalFormStories";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { setShowDataStories } from "../../redux/slices/account";
+import { setShowDataStories } from "../../redux/slices/stories";
+import { getStories } from "../../services/stories";
+import { fetchStoriesTableData } from "../../redux/slices/stories/action";
+import { StoriesData } from "../../redux/slices/stories/data";
 
 function Stories() {
   const [modalFormIntentVisible, setModalFormIntentVisible] =
@@ -33,7 +36,12 @@ function Stories() {
   const dispatch = useAppDispatch();
   // const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  const { showDataStories } = useAppSelector((state) => state.account);
+  const { showDataStories, dataStories } = useAppSelector(
+    (state) => state.stories
+  );
+  console.log("dataStories: ", dataStories);
+
+  const column = [{ title: "name" }];
 
   return (
     <PageContainer
@@ -83,7 +91,10 @@ function Stories() {
           setting: false,
         }}
         rowKey="_id"
-        request={(params, sort, filters) => getSlots()}
+        dataSource={dataStories}
+        request={async (params, sort, filters) =>
+          await dispatch(fetchStoriesTableData({}))
+        }
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,
@@ -93,8 +104,8 @@ function Stories() {
         headerTitle="Danh sách Stories"
         metas={{
           title: {
-            render: (dom, entity: any) => {
-              return <div>{entity?.nameSlot}</div>;
+            render: (dom: any, entity: any) => {
+              return <div>{entity?.story}</div>;
             },
           },
           actions: {

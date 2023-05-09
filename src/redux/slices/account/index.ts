@@ -7,7 +7,7 @@ const initialState: AccountState = {
   accountInfo: {},
   dataModel: {},
   storiesData: {},
-  showDataStories: false,
+  // showDataStories: false,
 };
 
 const accountSlice = createSlice({
@@ -23,9 +23,9 @@ const accountSlice = createSlice({
     setStoriesData(state, action) {
       state.storiesData = action.payload;
     },
-    setShowDataStories(state, action) {
-      state.showDataStories = action.payload;
-    },
+    // setShowDataStories(state, action) {
+    //   state.showDataStories = action.payload;
+    // },
   },
   // extraReducers: {
   //   [accountLoginData.pending.type]: (state: AccountState) => {
@@ -50,10 +50,5 @@ const accountSlice = createSlice({
 });
 
 const { actions, reducer } = accountSlice;
-export const {
-  setAccountInfo,
-  setDataModel,
-  setStoriesData,
-  setShowDataStories,
-} = actions;
+export const { setAccountInfo, setDataModel, setStoriesData } = actions;
 export default reducer;

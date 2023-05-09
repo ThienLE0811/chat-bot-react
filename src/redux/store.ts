@@ -1,17 +1,13 @@
-
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
-
-
+import storiesSlice from "./slices/stories";
 import accountSlice from "./slices/account";
-
 
 const rootReducer = combineReducers({
   // posts: postsSlice,
- 
-  // users: userSlice,
+
+  stories: storiesSlice,
   account: accountSlice,
-  
 });
 
 const store = configureStore({

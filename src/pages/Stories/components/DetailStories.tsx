@@ -1,12 +1,14 @@
 import { PageContainer, ProCard } from "@ant-design/pro-components";
 import { CloseOutlined, DragOutlined } from "@ant-design/icons";
-import { Button, Drawer, Form, Input, Space, Table } from "antd";
+import { Button, Drawer, Form, Input, Space, Table, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import ReactDragListView from "react-drag-listview";
 import { useDynamicList } from "ahooks";
 import { getSlots } from "../../../services/slotsService";
-import { setShowDataStories } from "../../../redux/slices/account";
+import { setShowDataStories } from "../../../redux/slices/stories";
 import { useAppDispatch } from "../../../hooks/redux";
+import { updateStories } from "../../../services/stories";
+import { updateStoriesData } from "../../../redux/slices/stories/action";
 
 interface Item {
   name?: string;
@@ -16,29 +18,52 @@ interface Item {
 
 const DetailStories = ({ initData }: any) => {
   console.log("initdata:: ", initData);
-  const { list, remove, getKey, move, push, sortList } = useDynamicList<any>([
-    initData,
-  ]);
+  const { list, remove, getKey, move, push, sortList } = useDynamicList<any>(
+    initData?.steps
+  );
   const dispatch = useAppDispatch();
 
   const [form] = Form.useForm();
 
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<any>();
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "nameSlot",
-      key: "nameSlot",
+      title: "intent",
+      dataIndex: "intent",
+      key: "intent",
       render: (text: string, row: Item, index: number) => (
         <>
           <DragOutlined style={{ cursor: "move", marginRight: 8 }} />
           <Form.Item
-            name={["params", getKey(index), "nameSlot"]}
+            name={["params", getKey(index), "intent"]}
             initialValue={text}
             noStyle
           >
-            <Input style={{ width: 120, marginRight: 16 }} placeholder="name" />
+            <Input
+              style={{ width: "max-content", marginRight: 16 }}
+              placeholder="name"
+            />
+          </Form.Item>
+        </>
+      ),
+    },
+    {
+      title: "action",
+      dataIndex: "action",
+      key: "action",
+      render: (text: string, row: Item, index: number) => (
+        <>
+          <DragOutlined style={{ cursor: "move", marginRight: 8 }} />
+          <Form.Item
+            name={["params", getKey(index), "action"]}
+            initialValue={text}
+            noStyle
+          >
+            <Input
+              style={{ width: "max-content", marginRight: 16 }}
+              placeholder="name"
+            />
           </Form.Item>
         </>
       ),
@@ -46,11 +71,11 @@ const DetailStories = ({ initData }: any) => {
     {
       key: "option",
       title: "Hành động",
-      dataIndex: "memo",
+      dataIndex: "",
       render: (text: string, row: Item, index: number) => (
         <>
           <Form.Item
-            name={["params", getKey(index), "memo"]}
+            // name={["params", getKey(index), ""]}
             initialValue={text}
             noStyle
           ></Form.Item>
@@ -65,6 +90,8 @@ const DetailStories = ({ initData }: any) => {
     },
   ];
 
+  console.log(" init data:: ", initData);
+
   return (
     // <div style={{ height: "max-content" }}>
     //   <h2>React Flow Renderer</h2>
@@ -74,7 +101,7 @@ const DetailStories = ({ initData }: any) => {
     // </div>
 
     <ProCard
-      title={`Thông tin chi tiết stories: ${initData?.nameSlot}`}
+      title={`Thông tin chi tiết stories: ${initData?.story}`}
       bodyStyle={{
         paddingInline: 16,
         paddingBlock: 2,
@@ -106,10 +133,40 @@ const DetailStories = ({ initData }: any) => {
             onClick={() => {
               form
                 .validateFields()
-                .then((val) => {
+                .then(async (val) => {
                   console.log(val, val.params);
-                  const sortedResult = sortList(val.params);
-                  setResult(JSON.stringify(sortedResult, null, 2));
+                  const sortedResult: any = sortList(val.params);
+                  const data = {
+                    steps: sortedResult,
+                    story: initData?.story,
+                  };
+                  const transformData = {
+                    id: initData?._id,
+                    data: data,
+                  };
+                  console.log("sortedResult:: ", sortedResult);
+                  // setResult(JSON.stringify(sortedResult, null, 2));
+                  setResult(sortedResult);
+                  // try {
+                  //   const res: any = await updateStories(initData?._id, data);
+                  //   if (res?.data?.statusCode === 200) {
+                  //     // onVisibleChange(false);
+                  //     // onSuccess?.();
+                  //     // actionRef.current?.reload();
+                  //     notification.success({
+                  //       message: "Cập nhật stories thành công",
+                  //     });
+                  //     return Promise.resolve();
+                  //   } else {
+                  //     notification.error({
+                  //       message: "Thao tác không thành công",
+                  //     });
+                  //     return Promise.reject();
+                  //   }
+                  // } catch (error) {
+                  //   console.log(error);
+                  // }
+                  dispatch(updateStoriesData(transformData));
                 })
                 .catch(() => {});
             }}
@@ -144,14 +201,14 @@ const DetailStories = ({ initData }: any) => {
               columns={columns}
               dataSource={list}
               rowKey="_id"
-              // pagination={false}
+              pagination={false}
               tableLayout="fixed"
-              pagination={{
-                defaultPageSize: 10,
-                showSizeChanger: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} trên ${total} thực thể`,
-              }}
+              // pagination={{
+              //   defaultPageSize: 10,
+              //   showSizeChanger: true,
+              //   showTotal: (total, range) =>
+              //     `${range[0]}-${range[1]} trên ${total} thực thể`,
+              // }}
             />
           </ReactDragListView>
         </Form>

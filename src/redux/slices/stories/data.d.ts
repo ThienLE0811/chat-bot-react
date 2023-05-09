@@ -1,10 +1,11 @@
 import { LoginResponseSuccessData } from "#/lib/openapi";
 import { SortOrder } from "antd/es/table/interface";
 
-export interface AccountState {
-  accountInfo: LoginResponseSuccessData;
+export interface StoriesState {
+  dataStories: T[];
   dataModel: {};
   storiesData: {};
+  showDataStories: boolean;
 }
 
 export interface IRequestFetchTableData {
@@ -22,15 +23,9 @@ export interface IResponseFetchData<T> {
   success: boolean;
 }
 
-export interface AccountInfo {
-  email: string;
-  createdAt: Date;
-  updateAt: Date;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  userRoleName: string;
-  userRole: {};
+export interface StoriesData {
+  intent?: string;
+  steps?: [];
 }
 
 export interface LoginResponseSuccessData {
