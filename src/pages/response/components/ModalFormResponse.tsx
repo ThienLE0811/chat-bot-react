@@ -30,6 +30,10 @@ import {
   updateEntities,
 } from "../../../services/entitiesService";
 import { createIntent, updateIntent } from "../../../services/intentServices";
+import {
+  createResponse,
+  updateResponse,
+} from "../../../services/responseService";
 
 export type FormValueType = {
   target?: string;
@@ -54,12 +58,13 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
   const actionRef = useRef<ActionType>();
   const restFormRef = useRef<ProFormInstance>();
   const handleSubmit = async (formValues: any) => {
-    console.log("value::: ", formValues);
+    console.log("value e::: ", formValues);
 
     try {
       const res: any = initiateData?._id
-        ? await updateEntities(initiateData?._id, formValues)
-        : await createEntities(formValues);
+        ? await updateResponse(initiateData?._id, formValues)
+        : await createResponse(formValues);
+      console.log("response:: ", res);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
@@ -107,6 +112,12 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
                 message: "Vui lòng không nhập quá 100 kí tự hoặc để trống",
                 required: true,
               },
+              {
+                whitespace: true,
+                message:
+                  "Vui lòng không nhập kí tự khoảng trắng ở đầu và cuối câu!",
+                required: true,
+              },
             ]}
           />
         </Col>
@@ -144,7 +155,7 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
             name="data"
             // copyIconProps={{ tooltipText: "Sao chép câu hỏi này" }}
             copyIconProps={false}
-            deleteIconProps={{ tooltipText: "Xóa  câu phản hồi này" }}
+            deleteIconProps={{ tooltipText: "Xóa câu phản hồi này" }}
             creatorButtonProps={{ creatorButtonText: "Thêm câu phản hồi" }}
             style={{ padding: 2, backgroundColor: "#F1F5F8" }}
           >
@@ -155,6 +166,14 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
                   label="Text"
                   name="text"
                   placeholder={"Nhập câu phản hồi"}
+                  rules={[
+                    {
+                      whitespace: true,
+                      message:
+                        "Vui lòng không nhập kí tự khoảng trắng ở đầu và cuối câu!",
+                      required: true,
+                    },
+                  ]}
                 ></ProFormText>
               </Col>
             </Row>

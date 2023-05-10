@@ -20,6 +20,22 @@ const getStories = async (): Promise<any> => {
   }
 };
 
+const getOneStories = async (id: string): Promise<any> => {
+  try {
+    const response = await axios.get(`http://localhost:8000/stories/${id}`, {});
+    console.log("res:: ", response);
+    if (response?.statusText === "OK") {
+      return Promise.resolve(response);
+    } else {
+      notification.error({ message: "Không lấy được dữ liệu" });
+      return Promise.reject();
+    }
+  } catch (error) {
+    notification.error({ message: "Không lấy được dữ liệu" });
+    return Promise.reject();
+  }
+};
+
 const createStories = async (formValues: any) => {
   return await axios.post(`http://localhost:8000/stories/create`, formValues);
 };
@@ -36,4 +52,10 @@ const deleteStories = async (id: string) => {
   return await axios.delete(`http://localhost:8000/stories/delete/${id}`, {});
 };
 
-export { getStories, updateStories, deleteStories, createStories };
+export {
+  getStories,
+  updateStories,
+  deleteStories,
+  createStories,
+  getOneStories,
+};

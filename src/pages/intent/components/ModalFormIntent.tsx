@@ -103,7 +103,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
             ]}
           />
         </Col>
-        <Col span={8}>
+        {/* <Col span={8}>
           <ProFormSelect
             label="Trạng thái"
             required
@@ -116,11 +116,11 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
               },
             }}
           />
-        </Col>
+        </Col> */}
         <Col span={24}>
           <ProFormSelect
             label="Nội dung"
-            name="data"
+            name="examples"
             // required
             mode="tags"
             // rules={[
