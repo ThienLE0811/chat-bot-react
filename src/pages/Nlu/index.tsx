@@ -56,7 +56,9 @@ function Nlu() {
     {
       title: "Examples",
       dataIndex: "examples",
+      ellipsis: true,
       valueType: "treeSelect",
+
       // render: (text, record) => (
       //   <>
       //     <ResponsesiveTextTable

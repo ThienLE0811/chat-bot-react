@@ -22,7 +22,7 @@ import DetailStories from "./components/DetailStories";
 import ModalFormStories from "./components/ModalFormStories";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setShowDataStories } from "../../redux/slices/stories";
-import { getStories } from "../../services/stories";
+import { deleteStories, getStories } from "../../services/stories";
 import { fetchStoriesTableData } from "../../redux/slices/stories/action";
 import { StoriesData } from "../../redux/slices/stories/data";
 
@@ -133,7 +133,7 @@ function Stories() {
                   title="Bạn chắc chắn muốn xóa?"
                   key={"3"}
                   onConfirm={async () => {
-                    const res = await deleteSlots(entity?._id);
+                    const res = await deleteStories(entity?._id);
                     if (res?.data?.statusCode === 200) {
                       notification.success({ message: "Xóa thành công" });
                       actionRef.current?.reload();

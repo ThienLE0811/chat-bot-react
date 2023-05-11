@@ -335,6 +335,7 @@ const DetailStories = ({ initData }: any) => {
             id: initData?._id,
             data: data,
           };
+          console.log("transdata:: ", transformData);
           // await dispatch(updateStoriesData(transformData));
           try {
             const res = await dispatch(updateStoriesData(transformData));

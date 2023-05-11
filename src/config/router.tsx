@@ -47,7 +47,7 @@ export const defaultRouter: Record<string, string> = {
 };
 
 const accountInfo: any = JSON.parse(
-  sessionStorage.getItem("accountInfo") || "123"
+  sessionStorage.getItem("accountInfo") as any
 );
 
 console.log("accountInfo:: ", accountInfo);
@@ -61,7 +61,7 @@ const filteredMenuItems: MenuDataItem = [
     name: "Dialogue",
     path: "dialogue",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo.DIALOGUE_MANAGEMENT ? false : true,
+    hideInMenu: accountInfo?.DIALOGUE_MANAGEMENT ? false : true,
     // element: <PostPage />,
     children: [
       {
@@ -106,7 +106,7 @@ const filteredMenuItems: MenuDataItem = [
     name: "Train",
     path: "train",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo.TRAIN_MANAGEMENT ? false : true,
+    hideInMenu: accountInfo?.TRAIN_MANAGEMENT ? false : true,
     children: [
       {
         name: "Train Model",
@@ -147,7 +147,7 @@ const filteredMenuItems: MenuDataItem = [
     name: "Quản lý người dùng",
     path: "user-management",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo.USER_MANAGEMENT ? false : true,
+    hideInMenu: accountInfo?.USER_MANAGEMENT ? false : true,
     children: [
       {
         name: "Người dùng",
