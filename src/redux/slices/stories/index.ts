@@ -40,6 +40,7 @@ const storiesSlice = createSlice({
         const updatedData = state.dataStories.map((stories: any) =>
           stories._id === newId ? updateStoriesData : stories
         );
+        console.log("update:: ", updatedData);
         state.dataStories = updatedData;
       });
   },

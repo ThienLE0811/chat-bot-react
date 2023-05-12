@@ -40,10 +40,13 @@ interface Item {
 
 const DetailStories = ({ initData }: any) => {
   const actionRef = useRef<ActionType>();
+  const tableRef = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState(undefined);
   const [defaultValue, setDefaultValue] = useState(undefined);
   const [valueUpdate, setValueUpdate] = useState(undefined);
+  const [checkUpdate, setCheckUpdate] = useState<boolean>(false);
+  const [indexUpdate, setIndexUpdate] = useState<number>(0);
   const dispatch = useAppDispatch();
   const _ = require("lodash");
   const [initialData, setInitialData] = useState<any>(initData);
@@ -57,12 +60,12 @@ const DetailStories = ({ initData }: any) => {
     };
     getData();
   }, []);
-  console.log("initialData", initialData?.steps);
-  console.log("initdata ", initData?.steps);
-  const { list, remove, getKey, move, push, sortList } = useDynamicList<any>(
-    initialData?.steps
-  );
+  // console.log("initialData", initialData?.steps);
+  // console.log("initdata ", initData?.steps);
 
+  let { list, resetList, remove, getKey, move, push, sortList } =
+    useDynamicList<any>(initialData?.steps);
+  console.log("list sau nè:: ", list);
   const columns = [
     {
       title: "intent",
@@ -103,6 +106,7 @@ const DetailStories = ({ initData }: any) => {
               disabled
             />
           </Form.Item>
+          {console.log("text:: ", text)}
         </>
       ),
     },
@@ -122,10 +126,11 @@ const DetailStories = ({ initData }: any) => {
               type="primary"
               onClick={() => {
                 setShowModal(true);
-
+                console.log("index", index);
                 const obj = text;
                 const key: any = Object.keys(obj)[0];
                 const value: any = Object.values(obj)[0];
+                setIndexUpdate(index);
                 setCurrentRow(key);
                 setDefaultValue(value);
                 setValueUpdate(obj);
@@ -147,7 +152,7 @@ const DetailStories = ({ initData }: any) => {
         key="1"
         icon={<ProfileOutlined />}
         onClick={() => {
-          push({ name: "new row", age: "25" });
+          push({ intent: "" });
         }}
       >
         Intent
@@ -157,7 +162,7 @@ const DetailStories = ({ initData }: any) => {
       <Menu.Item
         key="3"
         onClick={() => {
-          push({ name: "new row", age: "25" });
+          push({ action: "" });
         }}
         icon={<InteractionOutlined />}
       >
@@ -176,6 +181,7 @@ const DetailStories = ({ initData }: any) => {
     <>
       <ProCard
         title={`Thông tin chi tiết stories: ${initData?.story}`}
+        ref={tableRef}
         bodyStyle={{
           paddingInline: 16,
           paddingBlock: 2,
@@ -192,13 +198,6 @@ const DetailStories = ({ initData }: any) => {
         style={{ height: "100%", width: "100%" }}
         extra={
           <Space>
-            {/* <Button
-            size="small"
-            key={1}
-            onClick={() => push({ name: "new row", age: "25" })}
-          >
-            + Add row
-          </Button> */}
             <Button size="small" key={1}>
               <Dropdown overlay={menu} trigger={["hover"]}>
                 <span
@@ -223,7 +222,7 @@ const DetailStories = ({ initData }: any) => {
                 form
                   .validateFields()
                   .then(async (val) => {
-                    console.log(val, val.params);
+                    // console.log(val, val.params);
                     const sortedResult: any = sortList(val.params);
                     const data = {
                       steps: sortedResult,
@@ -236,25 +235,6 @@ const DetailStories = ({ initData }: any) => {
                     console.log("sortedResult:: ", sortedResult);
                     // setResult(JSON.stringify(sortedResult, null, 2));
                     setResult(sortedResult);
-                    // try {
-                    //   const res: any = await updateStories(initData?._id, data);
-                    //   if (res?.data?.statusCode === 200) {
-                    //     // onVisibleChange(false);
-                    //     // onSuccess?.();
-                    //     // actionRef.current?.reload();
-                    //     notification.success({
-                    //       message: "Cập nhật stories thành công",
-                    //     });
-                    //     return Promise.resolve();
-                    //   } else {
-                    //     notification.error({
-                    //       message: "Thao tác không thành công",
-                    //     });
-                    //     return Promise.reject();
-                    //   }
-                    // } catch (error) {
-                    //   console.log(error);
-                    // }
                     dispatch(updateStoriesData(transformData));
                   })
                   .catch(() => {});
@@ -292,13 +272,7 @@ const DetailStories = ({ initData }: any) => {
                 rowKey="_id"
                 pagination={false}
                 tableLayout="fixed"
-
-                // pagination={{
-                //   defaultPageSize: 10,
-                //   showSizeChanger: true,
-                //   showTotal: (total, range) =>
-                //     `${range[0]}-${range[1]} trên ${total} thực thể`,
-                // }}
+                ref={tableRef}
               />
             </ReactDragListView>
           </Form>
@@ -318,15 +292,31 @@ const DetailStories = ({ initData }: any) => {
 
           setShowModal(open);
         }}
-        title={"Cập nhật ::"}
+        title={`Cập nhật ${currentRow}:  ${
+          defaultValue !== undefined ? defaultValue : ""
+        }`}
         width={"40%"}
         onFinish={async (values) => {
-          const filteredData = initData?.steps.filter(
-            (item: any) => !_.isEqual(item, valueUpdate)
-          );
-          console.log(" filteredData:: ", filteredData);
-          filteredData.push(values);
-          console.log(" filteredData:: ", filteredData);
+          // const filteredData = initialData?.steps.filter(
+          //   (item: any) => !_.isEqual(item, valueUpdate)
+          // );
+          // const filteredData = initialData?.steps.filter(
+          //   (item: any, index: number) => console.log("index:: ", index)
+          // );
+          const filteredData = list.map((item: any, index: number) => {
+            if (indexUpdate === index) {
+              console.log("item:: ", item);
+              item = values;
+              // Thay đổi giá trị của phần tử "b" cuối cùng
+            }
+            return item; // Giữ nguyên các phần tử khác
+          });
+
+          console.log("filteredData::: ", filteredData);
+          console.log("log::: ", indexUpdate);
+          const value: any = Object.values(values)[0];
+          setDefaultValue(value);
+
           const data = {
             steps: filteredData,
             story: initData?.story,
@@ -335,16 +325,20 @@ const DetailStories = ({ initData }: any) => {
             id: initData?._id,
             data: data,
           };
-          console.log("transdata:: ", transformData);
-          // await dispatch(updateStoriesData(transformData));
+          // console.log("transdata:: ", transformData);
+
           try {
             const res = await dispatch(updateStoriesData(transformData));
-            console.log("res:: ", res);
+            // console.log("res:: ", res);
             if (res?.meta?.requestStatus === "fulfilled") {
               setShowModal(false);
+              // setCheckUpdate(!checkUpdate);
               const res = await getOneStories(initData?._id);
               setInitialData(res?.data);
-              actionRef.current?.reload();
+              resetList(res?.data?.steps);
+              // list = res?.data?.steps;
+              // console.log("list đây:: ", list);
+              tableRef.current?.reload();
             }
           } catch (error) {}
         }}
