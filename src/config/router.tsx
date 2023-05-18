@@ -39,6 +39,7 @@ import { setAccountInfo } from "../redux/slices/account";
 import NoFoundPage from "../pages/components/404";
 import Stories from "../pages/Stories";
 import Nlu from "../pages/Nlu";
+import Rules from "../pages/Rules";
 
 export const defaultRouter: Record<string, string> = {
   "/dialogue": "/dialogue/intents",
@@ -88,17 +89,24 @@ const filteredMenuItems: MenuDataItem = [
         icon: <TableOutlined />,
         element: <Slots />,
       },
-      {
-        name: "Kho hội thoại",
-        path: "stories",
-        icon: <HddOutlined />,
-        element: <Stories />,
-      },
+
       {
         name: "Nlu",
         path: "nlu",
         icon: <CreditCardOutlined />,
         element: <Nlu />,
+      },
+      {
+        name: "Rules",
+        path: "rules",
+        icon: <ApartmentOutlined />,
+        element: <Rules />,
+      },
+      {
+        name: "Kho hội thoại",
+        path: "stories",
+        icon: <HddOutlined />,
+        element: <Stories />,
       },
     ],
   },
