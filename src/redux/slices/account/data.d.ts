@@ -5,6 +5,9 @@ export interface AccountState {
   accountInfo: LoginResponseSuccessData;
   dataModel: {};
   storiesData: {};
+  train: boolean;
+  showTrain: boolean;
+  loadingTrain: boolean;
 }
 
 export interface IRequestFetchTableData {

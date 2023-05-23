@@ -27,10 +27,15 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRef, useState } from "react";
-import { useAppDispatch } from "../../hooks/redux";
-import { setDataModel } from "../../redux/slices/account";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import {
+  setDataModel,
+  setLoadingTrain,
+  setShowTrain,
+  setTrain,
+} from "../../redux/slices/account";
 import { getIntent } from "../../services/intentServices";
-import { parseMessage } from "../../services/trainService";
+import { parseMessage, trainModel } from "../../services/trainService";
 import ViewTrain from "./components/ViewTrain";
 import "./index.css";
 
@@ -61,13 +66,22 @@ const columns: any = [
 function Train() {
   const [showTableAlert, setShowTableAlert] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
+
   const actionRef = useRef<ActionType>();
 
   const dispatch = useAppDispatch();
-  const [hello, setHello] = useState("ok");
-  setTimeout(() => {
-    setHello("no");
-  }, 10000);
+  const { train, showTrain, loadingTrain } = useAppSelector(
+    (state) => state.account
+  );
+
+  const hanldeTrainBot = async () => {
+    const res = await trainModel();
+    console.log("data:: ", res);
+    if (res) {
+      dispatch(setLoadingTrain(false));
+      dispatch(setTrain(false));
+    }
+  };
 
   return (
     // <PageContainer
@@ -266,33 +280,58 @@ function Train() {
                 icon={<RocketOutlined />}
                 shape="circle"
                 size="large"
-                // onClick={() => parseMessage()}
+                disabled={train}
+                onClick={() => {
+                  dispatch(setTrain(true));
+                  dispatch(setShowTrain(true));
+                  if (loadingTrain === false) {
+                    dispatch(setLoadingTrain(true));
+                  }
+                  hanldeTrainBot();
+                }}
               ></Button>
             </Tooltip>
           </Space>
         }
       >
-        {hello === "ok" ? (
-          <Result
-            icon={<LoadingOutlined />}
-            title="Đang trong quá trình đào tạo model của bạn!"
-            subTitle="Quá trình đào tạo có thể mất vài phút, vui lòng đợi."
-            extra={<Button type="primary">OK</Button>}
-          />
+        {showTrain ? (
+          loadingTrain ? (
+            <Result
+              icon={<LoadingOutlined />}
+              title="Đang trong quá trình đào tạo model của bạn!"
+              subTitle="Quá trình đào tạo có thể mất vài phút, vui lòng đợi."
+              // extra={<Button type="primary">OK</Button>}
+            />
+          ) : (
+            <Result
+              status="success"
+              title="Model của bạn đã được đào tạo thành công, hãy cùng trải nghiệm nhé!"
+              subTitle="Bạn có thể kiểm tra độ chính xác của model bạn vừa đào tạo."
+              extra={[
+                <Button
+                  type="primary"
+                  key="console"
+                  onClick={() => parseMessage()}
+                >
+                  Kiểm tra
+                </Button>,
+              ]}
+            />
+          )
         ) : (
           <Result
-            status="success"
-            title="Model của bạn đã được đào tạo thành công, hãy cùng trải nghiệm nhé!"
-            subTitle="Bạn có thể kiểm tra độ chính xác của model bạn vừa đào tạo."
-            extra={[
-              <Button
-                type="primary"
-                key="console"
-                onClick={() => parseMessage()}
-              >
-                Kiểm tra
-              </Button>,
-            ]}
+            icon={<SmileOutlined />}
+            title="Dù cuộc sống có khó khăn đến đâu, 
+            Chatbot sẽ luôn đồng hành cùng bạn, sẵn sàng giúp đỡ và mang đến sự thoải mái trong mỗi cuộc trò chuyện."
+            // extra={[
+            //   <Button
+            //     type="primary"
+            //     key="console"
+            //     onClick={() => parseMessage()}
+            //   >
+            //     Kiểm tra
+            //   </Button>,
+            // ]}
           />
         )}
         <div className="img-train">

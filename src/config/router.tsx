@@ -40,6 +40,8 @@ import NoFoundPage from "../pages/components/404";
 import Stories from "../pages/Stories";
 import Nlu from "../pages/Nlu";
 import Rules from "../pages/Rules";
+import History from "../pages/History";
+import HistoryTrain from "../pages/History";
 
 export const defaultRouter: Record<string, string> = {
   "/dialogue": "/dialogue/intents",
@@ -126,7 +128,7 @@ const filteredMenuItems: MenuDataItem = [
         name: "Lịch sử train",
         path: "history-train",
         icon: <HistoryOutlined />,
-        element: <>Người dùng</>,
+        element: <HistoryTrain />,
       },
     ],
   },
