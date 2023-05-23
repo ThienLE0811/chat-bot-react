@@ -54,7 +54,7 @@ function Entities() {
       },
     },
     {
-      title: "Loại",
+      title: "Giá trị",
       dataIndex: "dataEntities",
       valueType: "treeSelect",
       // render: (text, record) => (
