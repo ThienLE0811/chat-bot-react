@@ -51,18 +51,18 @@ export type ModalFormUserProps = {
 const ModalFormRules: React.FC<ModalFormUserProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
-  const [check, setCheck] = useState<number>(initiateData?._id ? 3 : 4);
-  console.log("check:: ", check);
+  // const [check, setCheck] = useState<number>(initiateData?._id ? 3 : 4);
+  // console.log("check:: ", check);
   const actionRef = useRef<ActionType>();
   const restFormRef = useRef<ProFormInstance>();
   const handleSubmit = async (formValues: any) => {
-    formValues.steps.map((value: any) => value.intent.trim());
-
+    // formValues.steps.map((value: any) => value.intent.trim());
+    console.log("2112");
     console.log("value::: ", formValues);
     try {
-      const res: any = initiateData?._id;
-      // ? await updateRules(initiateData?._id, formValues)
-      // : await createRules(formValues);
+      const res: any = initiateData?._id
+        ? await updateRules(initiateData?._id, formValues)
+        : await createRules(formValues);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
@@ -128,7 +128,7 @@ const ModalFormRules: React.FC<ModalFormUserProps> = (props) => {
             alwaysShowItemLabel
             creatorButtonProps={{
               creatorButtonText: "Thêm step",
-              onChange: () => setCheck(1),
+              // onChange: () => setCheck(1),
             }}
             style={{ padding: 2, backgroundColor: "#F1F5F8" }}
             children={(item, value, values) => (

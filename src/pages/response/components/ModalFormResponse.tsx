@@ -162,7 +162,7 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
             <Row gutter={16} style={{ paddingTop: 12, width: "100%" }}>
               <Divider children={`Điền thông tin câu trả lời:`} />
               <Col span={24}>
-                <ProFormText
+                <ProFormTextArea
                   label="Text"
                   name="text"
                   placeholder={"Nhập câu phản hồi"}
@@ -174,7 +174,7 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
                       required: true,
                     },
                   ]}
-                ></ProFormText>
+                ></ProFormTextArea>
               </Col>
             </Row>
           </ProFormList>
