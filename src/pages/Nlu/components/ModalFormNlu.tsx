@@ -1,4 +1,4 @@
-import { CopyOutlined, SearchOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
 import {
   ActionType,
   ProFormInstance,
@@ -23,7 +23,11 @@ import {
   Tooltip,
 } from "antd";
 import React, { useRef, useState } from "react";
-import { createNlu, updateNlu } from "../../../services/nluService";
+import {
+  createNlu,
+  getListIntent,
+  updateNlu,
+} from "../../../services/nluService";
 
 export type FormValueType = {
   target?: string;
@@ -45,6 +49,7 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
   console.log("init:: ", initiateData);
+  // const delayedGetListIntent = debounce(getListIntent, 3000);
   const actionRef = useRef<ActionType>();
   const restFormRef = useRef<ProFormInstance>();
   const handleSubmit = async (formValues: any) => {
@@ -73,6 +78,7 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
         return Promise.reject();
       }
     } catch (error) {
+      notification.error({ message: "Ý định đã được sử dụng!" });
       console.log(error);
     }
   };
@@ -92,7 +98,7 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
       title={initiateData?._id ? "Cập nhật Nlu" : "Tạo mới Nlu"}
     >
       <Row gutter={16}>
-        <Col span={16}>
+        {/* <Col span={16}>
           <ProFormText
             label="Tên intent"
             required
@@ -104,6 +110,17 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
                 required: true,
               },
             ]}
+          />
+        </Col> */}
+        <Col span={16}>
+          <ProFormSelect
+            label="Tên intent"
+            name="intent"
+            showSearch
+            initialValue={initiateData?.userRoleName}
+            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+            // request={async () => delayedGetListIntent()}
+            request={async () => getListIntent()}
           />
         </Col>
         <Col span={24}>

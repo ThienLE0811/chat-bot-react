@@ -8,25 +8,35 @@ import {
 } from "@ant-design/pro-components";
 import Home from "../Home/Home";
 import {
+  Avatar,
   Button,
   Drawer,
+  List,
   message,
   notification,
   Popconfirm,
   Switch,
+  Tag,
   Tooltip,
 } from "antd";
 import { useRef, useState } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 // import columnsEntitiesTable from "./components/columnsEntitiesTable";
 import { deleteNlu, getNlu } from "../../services/nluService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import ModalFormNlu from "./components/ModalFormNlu";
+import Link from "antd/es/typography/Link";
 
 function Nlu() {
   const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
+  const [hiddenView, setHiddenView] = useState<boolean>(false);
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
   //   []
   // );
@@ -38,10 +48,10 @@ function Nlu() {
     {
       title: "Tên intent",
       dataIndex: "intent",
-      width: 120,
+      // width: 120,
       render: (dom, entity) => {
         return (
-          <a
+          <Link
             onClick={() => {
               console.log("click");
               setCurrentRow(entity);
@@ -49,7 +59,7 @@ function Nlu() {
             }}
           >
             {dom}
-          </a>
+          </Link>
         );
       },
     },
@@ -58,18 +68,27 @@ function Nlu() {
       dataIndex: "examples",
       ellipsis: true,
       valueType: "treeSelect",
-
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       // text={record?.data.join(", ")}
-      //       text={record?.dataEntities.join(", ")}
-      //     />
-      //   </>
-      // ),
+      hideInTable: true,
+      width: 500,
+      render: (text, record) => (
+        <List
+          itemLayout="horizontal"
+          dataSource={record?.examples}
+          renderItem={(item: any, index) => (
+            <List.Item>
+              <List.Item.Meta
+                avatar={
+                  <Avatar
+                    src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`}
+                  />
+                }
+                title={<Tag color={"green"}>{item}</Tag>}
+                // description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+              />
+            </List.Item>
+          )}
+        />
+      ),
     },
     {
       title: "Ngày tạo",
@@ -102,10 +121,23 @@ function Nlu() {
       fixed: "right",
       width: 100,
       render: (_, record) => [
+        <Button
+          icon={<EyeOutlined />}
+          // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+          key={1}
+          style={{ display: hiddenView ? "none" : "" }}
+          onClick={() => {
+            console.log("click");
+            setCurrentRow(record);
+            setShowDetail(true);
+            setHiddenView(true);
+          }}
+        />,
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            key={2}
             onClick={() => {
               setCurrentRow(record);
               setModalFormEntitiesVisible(true);
@@ -128,6 +160,8 @@ function Nlu() {
           <Button
             icon={<DeleteOutlined />}
             danger
+            key={3}
+            style={{ display: hiddenView ? "none" : "" }}
             // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
           />
         </Popconfirm>,
@@ -217,7 +251,7 @@ function Nlu() {
         onSuccess={() => actionRef.current?.reload()}
       />
       <Drawer
-        width={"60%"}
+        width={"70%"}
         open={showDetail}
         onClose={() => {
           setShowDetail(false);
@@ -227,14 +261,15 @@ function Nlu() {
             // fetchUserInfo(currentRow?.usrUid);
           } else {
             setCurrentRow(undefined);
+            setHiddenView(false);
           }
         }}
         closable={false}
       >
         {/* {currentRow?.usrUid && ( */}
         <ProDescriptions<any>
-          column={{ xl: 2, sm: 1 }}
-          title={`Thông tin chi tiết: ${currentRow?.nameEntities}`}
+          column={1}
+          title={`Thông tin chi tiết: ${currentRow?.intent}`}
           dataSource={currentRow}
           // request={async () => ({
           //   data: userInfo || {},

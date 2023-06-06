@@ -26,7 +26,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 // import columnsEntitiesTable from "./components/columnsEntitiesTable";
-import { deleteEntities, getEntities } from "../../services/entitiesService";
+import { getHistory } from "../../services/historyService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import Link from "antd/es/typography/Link";
 
@@ -210,9 +210,9 @@ function HistoryTrain() {
         //     <PlusOutlined /> Tạo thực thể
         //   </Button>,
         // ]}
-        // request={(params, sort, filters) => getEntities()}
+        request={(params, sort, filters) => getHistory()}
         columns={columns}
-        dataSource={dataSource}
+        // dataSource={dataSource}
         // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
         // rowSelection={{
         //   onChange: (_, selectedRows) => {

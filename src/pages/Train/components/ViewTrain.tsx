@@ -26,7 +26,7 @@ const ViewTrain = () => {
               icon={<RocketOutlined />}
               shape="circle"
               size="large"
-              onClick={() => parseMessage()}
+              // onClick={() => parseMessage()}
             ></Button>
           </Tooltip>
         </Space>

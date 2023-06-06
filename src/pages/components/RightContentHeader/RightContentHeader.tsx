@@ -4,7 +4,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Menu } from "antd";
+import { Avatar, Button, Dropdown, Menu, MenuProps } from "antd";
 import { ItemType } from "antd/es/menu/hooks/useItems";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../hooks/redux";
@@ -15,29 +15,42 @@ function RightContentHeader() {
   const navigate = useNavigate();
   const { accountInfo } = useAppSelector((state) => state.account);
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="0" icon={<ProfileOutlined />}>
-        Profile
-      </Menu.Item>
+  // const menu = (
+  //   <Menu>
+  //     <Menu.Item key="0" icon={<ProfileOutlined />}>
+  //       Profile
+  //     </Menu.Item>
 
-      <Menu.Divider />
-      <Menu.Item
-        key="2"
-        onClick={async () => {
-          await handleLogoutApi();
-          clearCredentialCookie();
-          navigate("/auth/login");
-        }}
-        icon={<LogoutOutlined />}
-      >
-        Đăng xuất
-      </Menu.Item>
-    </Menu>
-  );
+  //     <Menu.Divider />
+  //     <Menu.Item
+  //       key="2"
+  //       onClick={async () => {
+  //         await handleLogoutApi();
+  //         clearCredentialCookie();
+  //         navigate("/auth/login");
+  //       }}
+  //       icon={<LogoutOutlined />}
+  //     >
+  //       Đăng xuất
+  //     </Menu.Item>
+  //   </Menu>
+  // );
+
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      icon: <LogoutOutlined />,
+      label: "Đăng xuất",
+      onClick: async () => {
+        await handleLogoutApi();
+        clearCredentialCookie();
+        navigate("/auth/login");
+      },
+    },
+  ];
 
   return (
-    <Dropdown overlay={menu} trigger={["hover"]}>
+    <Dropdown menu={{ items }} trigger={["hover"]}>
       <span
         style={{ display: "flex", alignItems: "center" }}
         className={`action account`}

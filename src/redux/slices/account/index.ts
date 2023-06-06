@@ -9,8 +9,10 @@ const initialState: AccountState = {
   storiesData: {},
   train: false,
   showTrain: false,
+  showError: false,
   loadingTrain: true,
   // showDataStories: false,
+  currentParse: {},
 };
 
 const accountSlice = createSlice({
@@ -34,6 +36,12 @@ const accountSlice = createSlice({
     },
     setLoadingTrain(state, action) {
       state.loadingTrain = action.payload;
+    },
+    setCurrentParse(state, action) {
+      state.currentParse = action.payload;
+    },
+    setShowError(state, action) {
+      state.showError = action.payload;
     },
     // setShowDataStories(state, action) {
     //   state.showDataStories = action.payload;
@@ -69,5 +77,7 @@ export const {
   setTrain,
   setShowTrain,
   setLoadingTrain,
+  setCurrentParse,
+  setShowError,
 } = actions;
 export default reducer;

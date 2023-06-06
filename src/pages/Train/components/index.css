@@ -1,5 +1,8 @@
-
 .view-train {
-    height: 1000px;
-    background-color: #F7F7F8;
+  height: fit-content;
+  /* background-color: #f7f7f8; */
+}
+
+.ant-tabs-content-holder {
+  padding: 12px;
 }

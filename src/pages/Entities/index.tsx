@@ -109,6 +109,7 @@ function Entities() {
         format: "DD/MM/YYYY",
       },
       hideInSearch: true,
+      hideInTable: true,
     },
     {
       title: "Hành động",
@@ -170,10 +171,11 @@ function Entities() {
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
+          // search: {
+          //   placeholder: "Nhập từ khoá để tìm kiếm...",
+          //   style: { width: 300 },
+          // },
+          search: false,
           density: false,
           setting: false,
         }}

@@ -60,8 +60,8 @@ function Intent() {
           <a
             onClick={() => {
               console.log("click");
-              setCurrentRow(entity);
-              setShowDetail(true);
+              // setCurrentRow(entity);
+              // setShowDetail(true);
             }}
           >
             {dom}
@@ -168,59 +168,69 @@ function Intent() {
         // search={{
         //   labelWidth: 120,
         // }}
-        rowSelection={{
-          getCheckboxProps: (record) => ({
-            name: record._id,
-          }),
-          onSelect: (record, selected, selectedRows: any) => {
-            setDataRows(selectedRows);
-            console.log("dataaaa:: ", selectedRows);
-          },
-        }}
-        tableAlertRender={({
-          selectedRowKeys,
-          selectedRows,
-          onCleanSelected,
-        }) => {
-          return (
-            showTableAlert && (
-              <Space size={24}>
-                <span>Đã chọn {selectedRows.length} mục</span>
-              </Space>
-            )
-          );
-        }}
-        tableAlertOptionRender={() => {
-          const hanleDelete = () => {
-            const ids = dataRows.map((value: any) => value._id);
-            const data = { id: ids };
-            console.log("id:: ", dataRows);
-            // dispatch(deletePostsTableData(data));
-            setShowTableAlert(false);
-            console.log("Xóa ok");
-          };
+        // rowSelection={{
+        //   getCheckboxProps: (record) => ({
+        //     name: record._id,
+        //   }),
+        //   onSelect: (record, selected, selectedRows: any) => {
+        //     setDataRows(selectedRows);
+        //     console.log("dataaaa:: ", selectedRows);
+        //   },
+        // }}
+        // tableAlertRender={({
+        //   selectedRowKeys,
+        //   selectedRows,
+        //   onCleanSelected,
+        // }) => {
+        //   return (
+        //     showTableAlert && (
+        //       <Space size={24}>
+        //         <span>Đã chọn {selectedRows.length} mục</span>
+        //       </Space>
+        //     )
+        //   );
+        // }}
+        // tableAlertOptionRender={() => {
+        //   const hanleDelete = () => {
+        //     const ids = dataRows.map((value: any) => value._id);
+        //     const data = { id: ids };
+        //     console.log("id:: ", dataRows);
+        //     // dispatch(deletePostsTableData(data));
+        //     setShowTableAlert(false);
+        //     console.log("Xóa ok");
+        //   };
 
-          return (
-            showTableAlert && (
-              <Popconfirm
-                key={1}
-                title="Bạn chắc chắn muốn xóa không?"
-                onConfirm={hanleDelete}
-              >
-                <Button key={2} ghost danger size="small">
-                  Xóa
-                </Button>
-              </Popconfirm>
-            )
-          );
+        //   return (
+        //     showTableAlert && (
+        //       <Popconfirm
+        //         key={1}
+        //         title="Bạn chắc chắn muốn xóa không?"
+        //         onConfirm={hanleDelete}
+        //       >
+        //         <Button key={2} ghost danger size="small">
+        //           Xóa
+        //         </Button>
+        //       </Popconfirm>
+        //     )
+        //   );
+        // }}
+        // search={false}
+        search={{
+          labelWidth: 120,
+          // filterType: "light",
+          resetText: "Làm lại",
+          style: { padding: 8 },
         }}
-        search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
+        request={(params, current, filters) =>
+          getIntent(params, current, filters)
+        }
         options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
+          // search: {
+          //   placeholder: "Nhập từ khoá để tìm kiếm...",
+          //   style: { width: 300 },
+          // },
+          search: false,
           density: false,
           setting: false,
         }}
@@ -251,7 +261,7 @@ function Intent() {
             <PlusOutlined /> Tạo ý định
           </Button>,
         ]}
-        request={(params, sort, filters) => getIntent()}
+        // request={(params, sort, filters) => getIntent(filters)}
         // request={(params, sort, filters) => testIntent()}
         columns={columns}
       />

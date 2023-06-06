@@ -1,5 +1,6 @@
 import {
   LoadingOutlined,
+  MessageOutlined,
   RocketOutlined,
   SmileOutlined,
   SyncOutlined,
@@ -24,6 +25,7 @@ import {
   Tag,
   Image,
   Tooltip,
+  Drawer,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRef, useState } from "react";
@@ -31,11 +33,14 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import {
   setDataModel,
   setLoadingTrain,
+  setShowError,
   setShowTrain,
   setTrain,
 } from "../../redux/slices/account";
 import { getIntent } from "../../services/intentServices";
 import { parseMessage, trainModel } from "../../services/trainService";
+import ModalFormTrain from "./components/ModalFormTrain";
+import TabsTrain from "./components/TabsTrain";
 import ViewTrain from "./components/ViewTrain";
 import "./index.css";
 
@@ -66,18 +71,26 @@ const columns: any = [
 function Train() {
   const [showTableAlert, setShowTableAlert] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
-
+  const [modalFormUserVisible, setModalFormUserVisible] =
+    useState<boolean>(false);
+  const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
+  const [err, setErr] = useState<string>("");
 
   const dispatch = useAppDispatch();
-  const { train, showTrain, loadingTrain } = useAppSelector(
+  const { train, showTrain, loadingTrain, showError } = useAppSelector(
     (state) => state.account
   );
 
   const hanldeTrainBot = async () => {
-    const res = await trainModel();
+    const res: any = await trainModel();
     console.log("data:: ", res);
-    if (res) {
+    if (res.filename) {
+      dispatch(setLoadingTrain(false));
+      dispatch(setTrain(false));
+    } else {
+      setErr(res.message);
+      dispatch(setShowError(true));
       dispatch(setLoadingTrain(false));
       dispatch(setTrain(false));
     }
@@ -264,19 +277,22 @@ function Train() {
         className="view-train"
         extra={
           <Space>
-            {/* <Tooltip title="Đang train">
+            <Tooltip title="Kiểm tra">
               <Button
                 key={1}
                 shape="circle"
                 size="large"
-                loading
+                icon={<MessageOutlined />}
                 style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setModalFormUserVisible(true);
+                }}
               ></Button>
-            </Tooltip> */}
+            </Tooltip>
 
             <Tooltip title="Train Bot">
               <Button
-                key="1"
+                key={2}
                 icon={<RocketOutlined />}
                 shape="circle"
                 size="large"
@@ -284,6 +300,7 @@ function Train() {
                 onClick={() => {
                   dispatch(setTrain(true));
                   dispatch(setShowTrain(true));
+                  dispatch(setShowError(false));
                   if (loadingTrain === false) {
                     dispatch(setLoadingTrain(true));
                   }
@@ -302,6 +319,24 @@ function Train() {
               subTitle="Quá trình đào tạo có thể mất vài phút, vui lòng đợi."
               // extra={<Button type="primary">OK</Button>}
             />
+          ) : showError ? (
+            <Result
+              status="error"
+              title="Model của bạn đã được đào tạo không thành công!"
+              subTitle={`Lỗi: ${err}`}
+
+              // extra={[
+              //   <Button
+              //     type="primary"
+              //     key="console"
+              //     onClick={() => {
+              //       setModalFormUserVisible(true);
+              //     }}
+              //   >
+              //     Kiểm tra
+              //   </Button>,
+              // ]}
+            />
           ) : (
             <Result
               status="success"
@@ -311,7 +346,9 @@ function Train() {
                 <Button
                   type="primary"
                   key="console"
-                  onClick={() => parseMessage()}
+                  onClick={() => {
+                    setModalFormUserVisible(true);
+                  }}
                 >
                   Kiểm tra
                 </Button>,
@@ -343,6 +380,24 @@ function Train() {
           />
         </div>
       </Card>
+
+      {/* <ModalFormTrain
+        visible={modalFormUserVisible}
+        onVisibleChange={(visible: boolean) => {
+          if (!visible) setModalFormUserVisible(visible);
+        }}
+        onSuccess={() => actionRef.current?.reload()}
+      /> */}
+      <Drawer
+        width={"50%"}
+        title="Kiểm tra độ chính xác"
+        headerStyle={{ padding: 2 }}
+        open={modalFormUserVisible}
+        destroyOnClose
+        onClose={() => setModalFormUserVisible(false)}
+      >
+        <TabsTrain />
+      </Drawer>
     </PageContainer>
   );
 }

@@ -7,7 +7,9 @@ export interface AccountState {
   storiesData: {};
   train: boolean;
   showTrain: boolean;
+  showError: boolean;
   loadingTrain: boolean;
+  currentParse: any;
 }
 
 export interface IRequestFetchTableData {

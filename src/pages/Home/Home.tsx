@@ -35,8 +35,8 @@ function Home() {
   const [visible, setVisible] = useState(false);
   const { accountInfo } = useAppSelector((state) => state.account);
 
-  checkAccess();
   useEffect(() => {
+    checkAccess();
     getUserId(userInfo()._id || "")
       .then((response) => {
         dispatch(setAccountInfo(response.data));

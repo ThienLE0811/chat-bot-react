@@ -4,6 +4,7 @@ import {
   PageContainer,
   ProCard,
   ProForm,
+  ProFormSelect,
   ProFormText,
 } from "@ant-design/pro-components";
 import {
@@ -31,6 +32,8 @@ import { setShowDataStories } from "../../../redux/slices/stories";
 import { useAppDispatch } from "../../../hooks/redux";
 import { getOneStories, updateStories } from "../../../services/stories";
 import { updateStoriesData } from "../../../redux/slices/stories/action";
+import { getListIntent } from "../../../services/nluService";
+import { getListResponse } from "../../../services/responseService";
 
 interface Item {
   name?: string;
@@ -343,7 +346,19 @@ const DetailStories = ({ initData }: any) => {
           } catch (error) {}
         }}
       >
-        <ProFormText name={currentRow} initialValue={defaultValue} />
+        {/* <ProFormText name={currentRow} initialValue={defaultValue} /> */}
+        <ProFormSelect
+          name={currentRow}
+          showSearch
+          initialValue={defaultValue}
+          // initialValue={initiateData?.userRoleName}
+          rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
+          request={
+            currentRow === "intent"
+              ? async () => getListIntent()
+              : async () => getListResponse()
+          }
+        />
       </ModalForm>
     </>
   );

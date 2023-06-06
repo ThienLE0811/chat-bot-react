@@ -92,17 +92,16 @@ function Response() {
       //     {console.log("log:: ", record?.data)}
       //   </>
       // ),
-
       render: (text, record) => (
         <>
-          {record?.data.map((value: any) => (
-            <Tag color={"green"} style={{ paddingRight: "10px" }}>
+          {record?.data.map((value: any, index: number) => (
+            <Tag color={"green"} style={{ paddingRight: "10px" }} key={index}>
               {value?.text}
             </Tag>
           ))}
         </>
       ),
-      // width: 250,
+      width: 250,
       valueType: "",
       ellipsis: true,
       hideInSearch: true,
@@ -134,7 +133,7 @@ function Response() {
     // },
     {
       title: "Hành động",
-      dataIndex: "option",
+      // dataIndex: "option",
       valueType: "option",
       fixed: "right",
       width: 100,
