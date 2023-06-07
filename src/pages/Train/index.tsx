@@ -389,7 +389,7 @@ function Train() {
         onSuccess={() => actionRef.current?.reload()}
       /> */}
       <Drawer
-        width={"50%"}
+        width={"60%"}
         title="Kiểm tra độ chính xác"
         headerStyle={{ padding: 2 }}
         open={modalFormUserVisible}

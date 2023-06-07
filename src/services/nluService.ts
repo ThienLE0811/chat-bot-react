@@ -14,9 +14,13 @@ import axios from "axios";
 
 // };
 
-const getNlu = async (): Promise<any> => {
+const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
+  console.log("params:: ", params);
+  console.log("filter:: ", filters);
   try {
-    const response = await axios.get("http://localhost:8000/nlu/getList", {});
+    const response = await axios.get("http://localhost:8000/nlu/getList", {
+      params: { filters: params.intent },
+    });
     console.log("res:: ", response);
     if (response?.statusText === "OK") {
       return Promise.resolve(response);
@@ -31,7 +35,11 @@ const getNlu = async (): Promise<any> => {
 };
 
 const createNlu = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/nlu/create`, formValues);
+  try {
+    return await axios.post(`http://localhost:8000/nlu/create`, formValues);
+  } catch (error) {
+    notification.error({ message: "Tạo mới không thành công!" });
+  }
 };
 
 const updateNlu = async (id: string, formValues: any) => {

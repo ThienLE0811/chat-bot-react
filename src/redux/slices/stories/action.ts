@@ -18,9 +18,9 @@ import { getStories, updateStories } from "../../../services/stories";
 
 export const fetchStoriesTableData = createAsyncThunk<any, any>(
   "storiesData",
-  async () => {
+  async ({ params, sort, filters }) => {
     try {
-      const res = await getStories();
+      const res = await getStories(params, sort, filters);
       console.log("res:: ", res);
 
       if (res.status === 200) {

@@ -112,6 +112,8 @@ const ModalFormSlots: React.FC<ModalFormUserProps> = (props) => {
           <ProFormText
             label="Kiểu"
             // required
+            disabled
+            initialValue={"any"}
             name="type"
             // rules={[
             //   {
@@ -143,6 +145,8 @@ const ModalFormSlots: React.FC<ModalFormUserProps> = (props) => {
                 <ProFormText
                   label="Kiểu"
                   name="type"
+                  disabled
+                  initialValue={"from_entity"}
                   placeholder={"Nhập kiểu"}
                 ></ProFormText>
               </Col>

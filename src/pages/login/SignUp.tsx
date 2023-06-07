@@ -11,6 +11,7 @@ import { CSSProperties, useEffect, useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { handleSingUpApi } from "../../services/userService";
+import Link from "antd/es/typography/Link";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -47,6 +48,23 @@ function SingUp() {
             searchConfig: { submitText: "Đăng ký" },
           }}
           onFinish={handleSignUp}
+          actions={[
+            // </Space> //   <GoogleOutlined style={iconStyles} /> //   {/* <FacebookOutlined style={iconStyles} /> */} //   Đăng nhập với // <Space>
+            <Space>
+              Bạn đã có tài khoản?
+              {/* <a href="/singup">Đăng ký</a> */}
+              <Link onClick={() => navigate("/auth/login")}>Đăng nhập</Link>
+            </Space>,
+            // <div className="footer-text">
+            //   <p
+            //     style={{
+            //       textAlign: "center",
+            //     }}
+            //   >
+            //     Công ty cổ phần công nghệ AceSoft
+            //   </p>
+            // </div>,
+          ]}
         >
           <Tabs centered>
             <Tabs.TabPane key={"account"} tab={"Đăng ký tài khoản"} />

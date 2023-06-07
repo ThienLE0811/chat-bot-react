@@ -69,6 +69,7 @@ function Nlu() {
       ellipsis: true,
       valueType: "treeSelect",
       hideInTable: true,
+      hideInSearch: true,
       width: 500,
       render: (text, record) => (
         <List
@@ -232,7 +233,7 @@ function Nlu() {
             <PlusOutlined /> Tạo mới
           </Button>,
         ]}
-        request={(params, sort, filters) => getNlu()}
+        request={(params, sort, filters) => getNlu(params, sort, filters)}
         columns={columns}
         // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
         // rowSelection={{

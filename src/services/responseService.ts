@@ -14,11 +14,15 @@ import axios from "axios";
 
 // };
 
-const getResponse = async (): Promise<any> => {
+const getResponse = async (
+  params: any,
+  sort: any,
+  filters: any
+): Promise<any> => {
   try {
     const response = await axios.get(
       "http://localhost:8000/responses/getList",
-      {}
+      { params: { filters: params.title } }
     );
     console.log("res:: ", response);
     if (response?.statusText === "OK") {
@@ -34,7 +38,14 @@ const getResponse = async (): Promise<any> => {
 };
 
 const createResponse = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/responses/create`, formValues);
+  try {
+    return await axios.post(
+      `http://localhost:8000/responses/create`,
+      formValues
+    );
+  } catch (error) {
+    notification.error({ message: "Tạo mới không thành công!" });
+  }
 };
 
 const updateResponse = async (id: string, formValues: any) => {

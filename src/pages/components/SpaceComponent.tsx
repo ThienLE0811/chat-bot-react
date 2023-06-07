@@ -1,4 +1,4 @@
-import { ProCard } from "@ant-design/pro-components";
+import { PageContainer, ProCard } from "@ant-design/pro-components";
 import RcResizeObserver from "rc-resize-observer";
 import { useState } from "react";
 import { Card, Button, notification, Row, Col } from "antd";
@@ -6,7 +6,7 @@ import { SmileOutlined } from "@ant-design/icons";
 import { Column } from "@ant-design/charts";
 
 const { Meta } = Card;
-export default () => {
+const SpaceComponent = () => {
   const [responsive, setResponsive] = useState(false);
 
   const showModal = () => {
@@ -87,65 +87,80 @@ export default () => {
     //     </ProCard>
     //   </ProCard>
     // </RcResizeObserver>
-    <Card>
-      <Row>
-        <Col span={24}>
-          <div className={""}>123</div>
-        </Col>
-        <Col span={24}>
-          <div className={""}>
-            <Column
-              height={400}
-              // loading={loadingChart}
-              isGroup={true}
-              data={
-                // chartData.filter(
-                //   (predicate) => predicate?.status !== "Tổng số"
-                // ) as any
-                // api data
-                []
-              }
-              seriesField="typeBusiness"
-              xField="status"
-              yField="ticket"
-              marginRatio={0}
-              label={{
-                position: "middle",
-                layout: [
-                  {
-                    type: "interval-adjust-position",
-                  },
-                  {
-                    type: "interval-hide-overlap",
-                  },
-                  {
-                    type: "adjust-color",
-                  },
-                ],
-              }}
-              xAxis={{
-                // visible: true,
-                title: {
-                  text: "Trạng thái",
-                  // visible: false,
-                },
-              }}
-              yAxis={{
-                // visible: true,
-                title: {
-                  text: "chatbot",
-                  // visible: false,
-                },
-              }}
-              // meta={{
-              //     y: {
-              //         alias: 'Số lượng',
-              //     },
-              // }}
-            />
-          </div>
-        </Col>
-      </Row>
-    </Card>
+    // <Card>
+    //   <Row>
+    //     <Col span={24}>
+    //       <div className={""}>123</div>
+    //     </Col>
+    //     <Col span={24}>
+    //       <div className={""}>
+    //         <Column
+    //           height={400}
+    //           // loading={loadingChart}
+    //           isGroup={true}
+    //           data={
+    //             // chartData.filter(
+    //             //   (predicate) => predicate?.status !== "Tổng số"
+    //             // ) as any
+    //             // api data
+    //             []
+    //           }
+    //           seriesField="typeBusiness"
+    //           xField="status"
+    //           yField="ticket"
+    //           marginRatio={0}
+    //           label={{
+    //             position: "middle",
+    //             layout: [
+    //               {
+    //                 type: "interval-adjust-position",
+    //               },
+    //               {
+    //                 type: "interval-hide-overlap",
+    //               },
+    //               {
+    //                 type: "adjust-color",
+    //               },
+    //             ],
+    //           }}
+    //           xAxis={{
+    //             // visible: true,
+    //             title: {
+    //               text: "Trạng thái",
+    //               // visible: false,
+    //             },
+    //           }}
+    //           yAxis={{
+    //             // visible: true,
+    //             title: {
+    //               text: "chatbot",
+    //               // visible: false,
+    //             },
+    //           }}
+    //           // meta={{
+    //           //     y: {
+    //           //         alias: 'Số lượng',
+    //           //     },
+    //           // }}
+    //         />
+    //       </div>
+    //     </Col>
+    //   </Row>
+    // </Card>
+    <PageContainer
+      childrenContentStyle={{
+        padding: 0,
+      }}
+    >
+      <img
+        alt="example"
+        srcSet="./Header_gif_assembly-1.gif"
+        // srcSet="./chatbot-gif.gif"
+        // srcSet="./side-img-1.gif"
+        style={{ width: "100%", height: "150%" }}
+      />
+    </PageContainer>
   );
 };
+
+export default SpaceComponent;

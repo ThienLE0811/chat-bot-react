@@ -195,6 +195,7 @@ function Slots() {
       }}
     >
       <ProList
+        size="small"
         toolBarRender={() => {
           return [
             <Button
@@ -220,16 +221,16 @@ function Slots() {
           };
         }}
         options={{
-          // search: {
-          //   placeholder: "Nhập từ khoá để tìm kiếm...",
-          //   style: { width: 300 },
-          // },
-          search: false,
+          search: {
+            placeholder: "Nhập từ khoá để tìm kiếm...",
+            style: { width: 300 },
+          },
+          // search: false,
           density: false,
           setting: false,
         }}
         rowKey="_id"
-        request={(params, sort, filters) => getSlots()}
+        request={(params, sort, filters) => getSlots(params, sort, filters)}
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,

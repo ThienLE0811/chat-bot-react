@@ -57,6 +57,7 @@ function Stories() {
       style={{ height: "100%", width: "100%" }}
     >
       <ProList
+        size="small"
         toolBarRender={() => {
           return [
             <Button
@@ -82,19 +83,25 @@ function Stories() {
           };
         }}
         options={{
-          // search: {
-          //   placeholder: "Nhập từ khoá để tìm kiếm...",
-          //   style: { width: 300 },
-          // },
-          search: false,
+          search: {
+            placeholder: "Nhập từ khoá để tìm kiếm...",
+            style: { width: 300 },
+          },
+          // search: false,
           density: false,
           setting: false,
         }}
         rowKey="_id"
         dataSource={dataStories}
         request={async (params, sort, filters) =>
-          await dispatch(fetchStoriesTableData({}))
+          await dispatch(fetchStoriesTableData({ params, sort, filters }))
         }
+        // search={{
+        //   // labelWidth: 120,
+        //   filterType: "light",
+        //   resetText: "Reset",
+
+        // }}
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,

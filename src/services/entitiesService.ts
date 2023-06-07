@@ -14,12 +14,15 @@ import axios from "axios";
 
 // };
 
-const getEntities = async (): Promise<any> => {
+const getEntities = async (
+  params: any,
+  sort: any,
+  filters: any
+): Promise<any> => {
   try {
-    const response = await axios.get(
-      "http://localhost:8000/entities/getList",
-      {}
-    );
+    const response = await axios.get("http://localhost:8000/entities/getList", {
+      params: { filters: params.keyword },
+    });
     console.log("res:: ", response);
     if (response?.statusText === "OK") {
       return Promise.resolve(response);
@@ -34,7 +37,14 @@ const getEntities = async (): Promise<any> => {
 };
 
 const createEntities = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/entities/create`, formValues);
+  try {
+    return await axios.post(
+      `http://localhost:8000/entities/create`,
+      formValues
+    );
+  } catch (error) {
+    notification.error({ message: "Tạo mới không thành công!" });
+  }
 };
 
 const updateEntities = async (id: string, formValues: any) => {

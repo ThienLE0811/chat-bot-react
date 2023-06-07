@@ -127,17 +127,14 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
           <ProFormSelect
             label="Examples"
             name="examples"
-            // required
+            required
             mode="tags"
-            rules={
-              [
-                // {
-                //   max: 500,
-                //   message: "Vui lòng không nhập quá 500 kí tự hoặc để trống",
-                //   required: true,
-                // },
-              ]
-            }
+            rules={[
+              {
+                message: "Vui lòng không để trống",
+                required: true,
+              },
+            ]}
           />
         </Col>
       </Row>

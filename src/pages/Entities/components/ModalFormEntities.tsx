@@ -107,20 +107,6 @@ const ModalFormEntities: React.FC<ModalFormUserProps> = (props) => {
             ]}
           />
         </Col>
-        <Col span={8}>
-          <ProFormSelect
-            label="Trạng thái"
-            required
-            name="usrStatus"
-            allowClear={false}
-            valueEnum={{
-              ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-              INACTIVE: {
-                text: <Badge status="error" text="Không hoạt động" />,
-              },
-            }}
-          />
-        </Col>
         <Col span={24}>
           <ProFormTextArea
             label="Mô tả"

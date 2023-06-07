@@ -26,6 +26,9 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { LoginResponseSuccessData } from "../../services/data";
 import { setAccountInfo } from "../../redux/slices/account";
 import { Footer } from "antd/es/layout/layout";
+import SingUp from "./SignUp";
+import SingUp2 from "./SignUp2";
+import Link from "antd/es/typography/Link";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -93,7 +96,8 @@ function Login() {
             // </Space> //   <GoogleOutlined style={iconStyles} /> //   {/* <FacebookOutlined style={iconStyles} /> */} //   Đăng nhập với // <Space>
             <Space>
               Bạn chưa có tài khoản?
-              <a href="/singup">Đăng ký</a>
+              {/* <a href="/singup">Đăng ký</a> */}
+              <Link onClick={() => navigate("/singup")}>Đăng ký</Link>
             </Space>,
             // <div className="footer-text">
             //   <p
@@ -109,6 +113,11 @@ function Login() {
         >
           <Tabs centered>
             <Tabs.TabPane key={"account"} tab={"Đăng nhập tài khoản"} />
+            {/* <Tabs.TabPane
+              key={"signup"}
+              tab={"Đăng kí tài khoản"}
+              children={<SingUp2 />}
+        /> */}
           </Tabs>
 
           <>
@@ -152,13 +161,13 @@ function Login() {
             <ProFormCheckbox noStyle name="autoLogin">
               Nhớ mật khẩu
             </ProFormCheckbox>
-            <a
+            {/* <a
               style={{
                 float: "right",
               }}
             >
               Quên mật khẩu
-            </a>
+            </a> */}
           </div>
         </LoginForm>
 

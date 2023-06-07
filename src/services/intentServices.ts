@@ -69,7 +69,11 @@ const getIntent = async (
 };
 
 const createIntent = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/intents/create`, formValues);
+  try {
+    return await axios.post(`http://localhost:8000/intents/create`, formValues);
+  } catch (error) {
+    notification.error({ message: "Tạo mới không thành công!" });
+  }
 };
 
 const updateIntent = async (id: string, formValues: any) => {

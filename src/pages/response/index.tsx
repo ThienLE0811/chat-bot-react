@@ -188,13 +188,14 @@ function Response() {
         // search={{
         //   labelWidth: 120,
         // }}
-        search={false}
+
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
+          // search: {
+          //   placeholder: "Nhập từ khoá để tìm kiếm...",
+          //   style: { width: 300 },
+          // },
+          search: false,
           density: false,
           setting: false,
         }}
@@ -205,6 +206,11 @@ function Response() {
             paddingTop: 0,
             paddingInline: 12,
           },
+        }}
+        search={{
+          // labelWidth: 120,
+          filterType: "light",
+          resetText: "Reset",
         }}
         pagination={{
           defaultPageSize: 10,
@@ -225,7 +231,7 @@ function Response() {
             <PlusOutlined /> Tạo phản hồi
           </Button>,
         ]}
-        request={(params, sort, filters) => getResponse()}
+        request={(params, sort, filters) => getResponse(params, sort, filters)}
         columns={columns}
       />
 

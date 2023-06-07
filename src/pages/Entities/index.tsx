@@ -171,11 +171,11 @@ function Entities() {
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
-          // search: {
-          //   placeholder: "Nhập từ khoá để tìm kiếm...",
-          //   style: { width: 300 },
-          // },
-          search: false,
+          search: {
+            placeholder: "Nhập từ khoá để tìm kiếm...",
+            style: { width: 300 },
+          },
+          // search: false,
           density: false,
           setting: false,
         }}
@@ -206,7 +206,7 @@ function Entities() {
             <PlusOutlined /> Tạo thực thể
           </Button>,
         ]}
-        request={(params, sort, filters) => getEntities()}
+        request={(params, sort, filters) => getEntities(params, sort, filters)}
         columns={columns}
         // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
         // rowSelection={{
