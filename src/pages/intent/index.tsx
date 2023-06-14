@@ -162,6 +162,7 @@ function Intent() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
+        size="small"
         bordered
         rowKey="_id"
         headerTitle="Danh sách ý định"
@@ -234,7 +235,6 @@ function Intent() {
           density: false,
           setting: false,
         }}
-        size="small"
         cardProps={{
           bodyStyle: {
             paddingBottom: 0,

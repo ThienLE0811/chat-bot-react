@@ -10,7 +10,7 @@ import { Button, message, Space, Tabs } from "antd";
 import { CSSProperties, useEffect, useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { handleSingUpApi } from "../../services/userService";
+import { handleLoginApi, handleSingUpApi } from "../../services/userService";
 
 const iconStyles: CSSProperties = {
   marginInlineStart: "16px",
@@ -26,7 +26,7 @@ function SingUp2() {
     console.log("values:: ", values);
     const { userName, password, email } = values;
     try {
-      const res = await handleSingUpApi(userName, password, email);
+      const res = await handleLoginApi(userName, password);
       console.log(res?.data);
       message.success("Đăng ký thành công");
       navigate("/auth/login");

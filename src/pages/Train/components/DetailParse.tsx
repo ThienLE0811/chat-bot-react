@@ -24,7 +24,7 @@ const DetailParse = () => {
           {intent?.confidence}
         </ProDescriptions.Item>
         <ProDescriptions.Item label="Thực thể">
-          {currentParse?.entities.map((value: any) => (
+          {currentParse?.entities?.map((value: any) => (
             <>
               {value?.entity} - {value?.value}
               <br />

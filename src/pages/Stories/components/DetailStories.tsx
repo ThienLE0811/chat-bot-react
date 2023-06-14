@@ -173,7 +173,7 @@ const DetailStories = ({ initData }: any) => {
       </Menu.Item>
     </Menu>
   );
-
+  console.log("currentRow:: ", currentRow);
   return (
     // <div style={{ height: "max-content" }}>
     //   <h2>React Flow Renderer</h2>

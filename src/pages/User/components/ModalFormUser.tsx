@@ -24,6 +24,7 @@ import {
   createUser,
   updateUser,
   handleLoginApi,
+  handleSingUpApi,
 } from "../../../services/userService";
 
 export type FormValueType = {
@@ -53,7 +54,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
     try {
       const res = initiateData?._id
         ? await updateUser(initiateData?._id, formValues)
-        : await createUser(formValues);
+        : await handleSingUpApi(formValues);
       console.log("log user:: ", res);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
@@ -98,18 +99,36 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           <ProFormText
             label="Tài khoản"
             name="userName"
-            disabled
+            disabled={initiateData?._id ? true : false}
             required
-            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
+            rules={[
+              { max: 100, message: "Vui lòng không nhập quá 100 kí tự" },
+              { required: true, message: "Vui lòng không bỏ trống" },
+            ]}
           />
         </Col>
         <Col span={8}>
           <ProFormText
             label="Email"
             name="email"
-            disabled
+            disabled={initiateData?._id ? true : false}
             required
-            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
+            rules={[
+              { max: 100, message: "Vui lòng không nhập quá 100 kí tự" },
+              { required: true, message: "Vui lòng không bỏ trống" },
+            ]}
+          />
+        </Col>
+        <Col span={8}>
+          <ProFormText
+            label="Mật khẩu"
+            name="password"
+            disabled={initiateData?._id ? true : false}
+            required
+            rules={[
+              // { max: 20, message: "Vui lòng không nhập quá 20 kí tự" },
+              { required: true, message: "Vui lòng không bỏ trống" },
+            ]}
           />
         </Col>
         {/* <Col span={8}>
