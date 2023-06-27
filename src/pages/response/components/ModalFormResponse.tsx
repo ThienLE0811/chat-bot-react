@@ -157,7 +157,10 @@ const ModalFormResponse: React.FC<ModalFormUserProps> = (props) => {
             copyIconProps={false}
             deleteIconProps={{ tooltipText: "Xóa câu phản hồi này" }}
             creatorButtonProps={{ creatorButtonText: "Thêm câu phản hồi" }}
-            style={{ padding: 2, backgroundColor: "#F1F5F8" }}
+            style={{
+              padding: 2,
+              backgroundColor: "#F1F5F8",
+            }}
           >
             <Row gutter={16} style={{ paddingTop: 12, width: "100%" }}>
               <Divider children={`Điền thông tin câu trả lời:`} />

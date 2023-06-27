@@ -84,30 +84,34 @@ const ModalFormTrain: React.FC = () => {
   };
 
   return (
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
-      initialValues={{ remember: true }}
-      onFinish={handleSubmit}
-      //   onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item
-        label="Text"
-        name="text"
-        rules={[{ required: true, message: "Vui lòng không để trống!" }]}
-      >
-        <Input />
-      </Form.Item>
+    <Row>
+      <Col span={24}>
+        <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
+          onFinish={handleSubmit}
+          //   onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item
+            label="Text"
+            name="text"
+            rules={[{ required: true, message: "Vui lòng không để trống!" }]}
+          >
+            <Input />
+          </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
-          Xác nhận
-        </Button>
-      </Form.Item>
-    </Form>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Xác nhận
+            </Button>
+          </Form.Item>
+        </Form>
+      </Col>
+    </Row>
   );
 };
 

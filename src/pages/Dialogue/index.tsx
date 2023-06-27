@@ -40,6 +40,7 @@ function Dialogue() {
         // search={{
         //   labelWidth: 120,
         // }}
+
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
         options={{
