@@ -103,7 +103,7 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
             required
             rules={[
               { max: 100, message: "Vui lòng không nhập quá 100 kí tự" },
-              { required: true, message: "Vui lòng không bỏ trống" },
+              { required: true, message: "Vui lòng không bỏ trống!" },
             ]}
           />
         </Col>
