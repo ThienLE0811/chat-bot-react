@@ -1,21 +1,7 @@
-import { message, notification } from "antd";
+import { notification } from "antd";
 import axios from "axios";
 
-// const getEntities = async () => {
-//     const response = await axios.get("http://localhost:8000/entities/getList", {});
-//     console.log("res:: ",response)
-//     if(response.statusText === "OK"){
-//       return response;
-//     }
-//     else {
-//       message.error("Không lấy được dữ liệu")
-//       return response
-//     }
-
-// };
-
 const getRules = async (): Promise<any> => {
-  console.log("log:: ", process.env);
   try {
     const response = await axios.get(`http://localhost:8000/rules/getList`, {});
     console.log("res:: ", response);

@@ -22,10 +22,6 @@ const handleSingUpApi = async (data: any) => {
   return await axios.post("http://localhost:8000/users/register", data);
 };
 
-// const getUser = async () => {
-//   return await axios.get("http://localhost:8000/users/getList", {})
-// };
-
 const getUser = async (): Promise<any> => {
   try {
     const response = await axios.get("http://localhost:8000/users/getList", {});

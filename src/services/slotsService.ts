@@ -1,18 +1,5 @@
-import { message, notification } from "antd";
+import { notification } from "antd";
 import axios from "axios";
-
-// const getResponse = async () => {
-//     const response = await axios.get("http://localhost:8000/responses/getList", {});
-//     console.log("res:: ",response)
-//     if(response.statusText === "OK"){
-//       return response;
-//     }
-//     else {
-//       message.error("Không lấy được dữ liệu")
-//       return response
-//     }
-
-// };
 
 const getSlots = async (params: any, sort: any, filters: any): Promise<any> => {
   try {
