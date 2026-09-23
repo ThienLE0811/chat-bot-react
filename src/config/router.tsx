@@ -22,7 +22,7 @@ import Train from "../pages/Train";
 import Dialogue from "../pages/Dialogue";
 import Login from "../pages/login/Login";
 import User from "../pages/User";
-import SpaceComponent from "../pages/components/SpaceComponent";
+import Welcome from "../pages/Welcome";
 import Intent from "../pages/intent";
 import SingUp from "../pages/login/SignUp";
 import { message } from "antd";
@@ -58,7 +58,7 @@ console.log("accountInfo:: ", accountInfo);
 const filteredMenuItems: MenuDataItem = [
   {
     path: "",
-    element: <SpaceComponent />,
+    element: <Welcome />,
   },
   {
     name: "Dialogue",
