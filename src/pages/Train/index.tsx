@@ -1,400 +1,339 @@
 import {
-  LoadingOutlined,
   MessageOutlined,
   RocketOutlined,
-  SmileOutlined,
-  SyncOutlined,
+  SafetyCertificateOutlined,
 } from "@ant-design/icons";
+import { PageContainer } from "@ant-design/pro-components";
 import {
-  ActionType,
-  PageContainer,
-  ProColumns,
-  ProTable,
-} from "@ant-design/pro-components";
-import {
-  Avatar,
+  Alert,
   Button,
   Card,
-  Divider,
-  List,
-  notification,
-  Popconfirm,
-  Result,
+  Col,
+  Drawer,
+  Empty,
+  Row,
   Space,
+  Statistic,
   Table,
   Tag,
-  Image,
   Tooltip,
-  Drawer,
+  Typography,
+  notification,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useCallback, useEffect, useState } from "react";
 import {
-  setDataModel,
-  setLoadingTrain,
-  setShowError,
-  setShowTrain,
-  setTrain,
-} from "../../redux/slices/account";
-import { getIntent } from "../../services/intentServices";
-import { parseMessage, trainModel } from "../../services/trainService";
-import ModalFormTrain from "./components/ModalFormTrain";
+  TrainJob,
+  TrainingDataStats,
+  ValidationReport,
+  getModels,
+  getTrainJobs,
+  isTerminal,
+  startTrain,
+  validateTrainingData,
+} from "../../services/trainService";
 import TabsTrain from "./components/TabsTrain";
-import ViewTrain from "./components/ViewTrain";
+import TrainLog from "./components/TrainLog";
+import TrainStatusTag, { formatDuration } from "./components/TrainStatusTag";
+import TrainTimeline from "./components/TrainTimeline";
+import ValidationPanel from "./components/ValidationPanel";
+import { useTrainJob } from "./useTrainJob";
 import "./index.css";
 
-interface DataType {
-  title: string;
-  data: string;
-}
-
-const columns: any = [
-  {
-    title: "id",
-    dataIndex: "_id",
-    hideInSearch: true,
-    hideInTable: true,
-  },
-  {
-    title: "Tên",
-    dataIndex: "title",
-  },
-  {
-    title: "Mô tả",
-    dataIndex: "examples",
-    valueType: "treeSelect",
-    hideInSearch: true,
-  },
+const STAT_LABELS: [keyof TrainingDataStats, string][] = [
+  ["intents", "Ý định"],
+  ["examples", "Câu mẫu"],
+  ["responses", "Phản hồi"],
+  ["stories", "Story"],
+  ["rules", "Rule"],
+  ["slots", "Slot"],
 ];
 
-function Train() {
-  const [showTableAlert, setShowTableAlert] = useState(true);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [modalFormUserVisible, setModalFormUserVisible] =
-    useState<boolean>(false);
-  const [showDetail, setShowDetail] = useState<boolean>(false);
-  const actionRef = useRef<ActionType>();
-  const [err, setErr] = useState<string>("");
+/** Re-renders every second while `active`, for the elapsed-time counter. */
+function useNow(active: boolean) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    if (!active) return;
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [active]);
+  return now;
+}
 
-  const dispatch = useAppDispatch();
-  const { train, showTrain, loadingTrain, showError } = useAppSelector(
-    (state) => state.account
+const ActiveModelTag = ({
+  reachable,
+  model,
+}: {
+  reachable: boolean;
+  model: string | null;
+}) => {
+  if (!reachable) return <Tag color="red">Không kết nối được Rasa</Tag>;
+  if (!model) return <Tag>Chưa có</Tag>;
+  return <Tag color="green">{model}</Tag>;
+};
+
+function Train() {
+  const [selectedJobId, setSelectedJobId] = useState<string>();
+  const [recentJobs, setRecentJobs] = useState<TrainJob[]>([]);
+  const [activeModel, setActiveModel] = useState<string | null>(null);
+  const [rasaReachable, setRasaReachable] = useState(true);
+  const [starting, setStarting] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [dryRun, setDryRun] = useState<
+    (ValidationReport & { stats: TrainingDataStats }) | null
+  >(null);
+  const [parseDrawerOpen, setParseDrawerOpen] = useState(false);
+
+  const refresh = useCallback(async () => {
+    const [jobs, models] = await Promise.allSettled([
+      getTrainJobs(10),
+      getModels(),
+    ]);
+    if (jobs.status === "fulfilled") setRecentJobs(jobs.value.items);
+    if (models.status === "fulfilled") {
+      setActiveModel(models.value.activeModel);
+      setRasaReachable(models.value.rasaReachable);
+    }
+    return jobs.status === "fulfilled" ? jobs.value.items : [];
+  }, []);
+
+  useEffect(() => {
+    refresh().then((jobs) => {
+      if (jobs[0]) setSelectedJobId((current) => current ?? jobs[0]._id);
+    });
+  }, [refresh]);
+
+  const handleDone = useCallback(
+    (finished: TrainJob) => {
+      refresh();
+      if (finished.status === "loaded") {
+        notification.success({
+          message: "Train thành công",
+          description: `Model ${finished.modelFile} đang chạy.`,
+        });
+      } else {
+        notification.error({
+          message: "Train thất bại",
+          description: finished.error?.message,
+        });
+      }
+    },
+    [refresh]
   );
 
-  const hanldeTrainBot = async () => {
-    const res: any = await trainModel();
-    console.log("data:: ", res);
-    if (res.filename) {
-      dispatch(setLoadingTrain(false));
-      dispatch(setTrain(false));
-    } else {
-      setErr(res.message);
-      dispatch(setShowError(true));
-      dispatch(setLoadingTrain(false));
-      dispatch(setTrain(false));
+  const { job, connected } = useTrainJob(selectedJobId, handleDone);
+  const running = !!job && !isTerminal(job.status);
+  const now = useNow(running);
+
+  const handleTrain = async () => {
+    setStarting(true);
+    try {
+      const { jobId, alreadyRunning } = await startTrain();
+      if (alreadyRunning) {
+        notification.info({
+          message: "Đang có phiên train chạy",
+          description: "Đang hiển thị tiến độ của phiên đó.",
+        });
+      }
+      setDryRun(null);
+      setSelectedJobId(jobId);
+      refresh();
+    } catch (error: any) {
+      notification.error({ message: error.message });
+    } finally {
+      setStarting(false);
     }
   };
 
+  const handleValidate = async () => {
+    setChecking(true);
+    try {
+      setDryRun(await validateTrainingData());
+    } catch {
+      notification.error({ message: "Không kiểm tra được dữ liệu" });
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const validation = dryRun ?? job?.validation;
+  const stats = dryRun?.stats ?? job?.stats;
+  const elapsed = job?.startedAt
+    ? Math.max(
+        (job.finishedAt ? new Date(job.finishedAt).getTime() : now) -
+          new Date(job.startedAt).getTime(),
+        0
+      )
+    : undefined;
+  // The list is fetched once; show the followed job's live status in it.
+  const jobRows = recentJobs.map((row) =>
+    job && row._id === job._id ? { ...row, ...job } : row
+  );
+
   return (
-    // <PageContainer
-    //   breadcrumbRender={false}
-    //   header={{
-    //     title: "Train",
-
-    //     extra: [
-    //       <Tooltip title="Train Bot">
-    //         <Button
-    //           key="1"
-    //           icon={<RocketOutlined />}
-    //           shape="circle"
-    //           size="large"
-    //         ></Button>
-    //       </Tooltip>,
-    //     ],
-    //   }}
-    //   tabList={[
-    //     {
-    //       tab: <span className="train-list-header">Ý định</span>,
-    //       key: "1",
-    //       animated: true,
-    //       children: (
-    //         <div>
-    //           <ProTable
-    //             actionRef={actionRef}
-    //             bordered
-    //             className="train-list"
-    //             rowSelection={{
-    //               onSelect: (record, selected, selectedRows: any) => {
-    //                 setSelectedRows(selectedRows);
-    //               },
-    //               alwaysShowAlert: true,
-    //             }}
-    //             tableAlertRender={({
-    //               selectedRowKeys,
-    //               selectedRows,
-    //               onCleanSelected,
-    //             }) => {
-    //               return (
-    //                 <Space size={24}>
-    //                   <span className="train-list-header">
-    //                     Đã chọn {selectedRows.length} mục
-    //                   </span>
-    //                 </Space>
-    //               );
-    //             }}
-    //             tableAlertOptionRender={() => {
-    //               const handleCreate = () => {
-    //                 const data = selectedRows.map((value: any) => value);
-
-    //                 console.log("data:: ", data);
-
-    //                 dispatch(setDataModel(data));
-
-    //                 // setSelectedRows([]);
-    //                 // actionRef.current?.reload();
-    //               };
-
-    //               return (
-    //                 <Popconfirm
-    //                   key={1}
-    //                   title="Bạn chắc chắn muốn thêm dữ liệu cho model không?"
-    //                   onConfirm={handleCreate}
-    //                 >
-    //                   <Button
-    //                     key={2}
-    //                     type="primary"
-    //                     size="middle"
-    //                     color="green"
-    //                   >
-    //                     Thêm
-    //                   </Button>
-    //                 </Popconfirm>
-    //               );
-    //             }}
-    //             pagination={{
-    //               defaultPageSize: 10,
-    //               showSizeChanger: true,
-    //               showTotal: (total, range) =>
-    //                 `${range[0]}-${range[1]} trên ${total} ý định`,
-    //             }}
-    //             options={false}
-    //             request={() => getIntent()}
-    //             columns={columns}
-    //             rowKey="_id"
-    //           />
-    //         </div>
-    //       ),
-    //     },
-    //     {
-    //       tab: <span className="train-list-header">Phản hồi</span>,
-    //       key: "2",
-    //       animated: true,
-    //       children: <Table bordered className="train-list" />,
-    //     },
-    //     {
-    //       tab: <span className="train-list-header">Thực thể</span>,
-    //       key: "3",
-    //       animated: true,
-    //       children: <Table bordered className="train-list" />,
-    //     },
-    //     {
-    //       tab: <span className="train-list-header">Slots</span>,
-    //       key: "4",
-    //       animated: true,
-    //       children: <Table bordered className="train-list" />,
-    //     },
-    //     {
-    //       tab: <span className="train-list-header">Kho hội thoại</span>,
-    //       key: "5",
-    //       animated: true,
-    //       children: <Table bordered className="train-list" />,
-    //     },
-    //   ]}
-    // ></PageContainer>
-
     <PageContainer
       breadcrumbRender={false}
-      // header={{
-      //   title: false,
-      //   extra: [
-      //     <Tooltip title="Train Bot">
-      //       <Button
-      //         key="1"
-      //         icon={<RocketOutlined />}
-      //         shape="circle"
-      //         size="large"
-      //       ></Button>
-      //     </Tooltip>,
-      //   ],
-      // }}
-
-      childrenContentStyle={{
-        paddingInline: 0,
-        paddingBlock: 0,
-        borderRadius: 0,
-        height: "100%",
-        backgroundColor: "white",
-      }}
       title={false}
+      childrenContentStyle={{ paddingInline: 12, paddingBlock: 8 }}
     >
-      {/* <ProTable
-        headerTitle="Train Bot"
-        style={{ width: "100%", padding: 0, height: "100%" }}
-        options={false}
-        search={false}
-        defaultSize="small"
-        toolBarRender={() => [
-          // <Button
-          // >
-          //   Choose Connector
-          // </Button>,
-
-          // <Tag color={"processing"}>{<SyncOutlined spin />}</Tag>,
-          <Tooltip title="Đang train">
-            <Button
-              key={1}
-              shape="circle"
-              size="large"
-              loading
-              style={{ cursor: "pointer" }}
-            ></Button>
-          </Tooltip>,
-          <Tooltip title="Train Bot">
-            <Button
-              key="2"
-              icon={<RocketOutlined />}
-              shape="circle"
-              size="large"
-              onClick={() => parseMessage()}
-            ></Button>
-          </Tooltip>,
-        ]}
-        tableViewRender={() => <ViewTrain />}
-      /> */}
       <Card
-        title="Train"
-        className="view-train"
+        title="Train model"
+        className="train-page__card"
         extra={
-          <Space>
-            <Tooltip title="Kiểm tra">
+          <Space wrap>
+            <Tooltip title="Kiểm tra dữ liệu mà không train">
               <Button
-                key={1}
-                shape="circle"
-                size="large"
-                icon={<MessageOutlined />}
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  setModalFormUserVisible(true);
-                }}
-              ></Button>
+                icon={<SafetyCertificateOutlined />}
+                loading={checking}
+                onClick={handleValidate}
+              >
+                Kiểm tra dữ liệu
+              </Button>
             </Tooltip>
-
-            <Tooltip title="Train Bot">
-              <Button
-                key={2}
-                icon={<RocketOutlined />}
-                shape="circle"
-                size="large"
-                disabled={train}
-                onClick={() => {
-                  dispatch(setTrain(true));
-                  dispatch(setShowTrain(true));
-                  dispatch(setShowError(false));
-                  if (loadingTrain === false) {
-                    dispatch(setLoadingTrain(true));
-                  }
-                  hanldeTrainBot();
-                }}
-              ></Button>
-            </Tooltip>
+            <Button
+              icon={<MessageOutlined />}
+              onClick={() => setParseDrawerOpen(true)}
+            >
+              Thử câu
+            </Button>
+            <Button
+              type="primary"
+              icon={<RocketOutlined />}
+              loading={starting || running}
+              onClick={handleTrain}
+            >
+              {running ? "Đang train" : "Train"}
+            </Button>
           </Space>
         }
       >
-        {showTrain ? (
-          loadingTrain ? (
-            <Result
-              icon={<LoadingOutlined />}
-              title="Đang trong quá trình đào tạo model của bạn!"
-              subTitle="Quá trình đào tạo có thể mất vài phút, vui lòng đợi."
-              // extra={<Button type="primary">OK</Button>}
-            />
-          ) : showError ? (
-            <Result
-              status="error"
-              title="Model của bạn đã được đào tạo không thành công!"
-              subTitle={`Lỗi: ${err}`}
+        <Space wrap size={[16, 8]} className="train-page__summary">
+          <span>
+            Model đang chạy:{" "}
+            <ActiveModelTag reachable={rasaReachable} model={activeModel} />
+          </span>
+          {job && (
+            <>
+              <span>
+                Phiên hiện tại: <TrainStatusTag status={job.status} />
+              </span>
+              <span>Thời gian: {formatDuration(elapsed)}</span>
+              {running && (
+                <Tag color={connected ? "blue" : "orange"}>
+                  {connected ? "Đang nhận tiến độ trực tiếp" : "Đang kết nối lại…"}
+                </Tag>
+              )}
+            </>
+          )}
+        </Space>
 
-              // extra={[
-              //   <Button
-              //     type="primary"
-              //     key="console"
-              //     onClick={() => {
-              //       setModalFormUserVisible(true);
-              //     }}
-              //   >
-              //     Kiểm tra
-              //   </Button>,
-              // ]}
-            />
-          ) : (
-            <Result
-              status="success"
-              title="Model của bạn đã được đào tạo thành công, hãy cùng trải nghiệm nhé!"
-              subTitle="Bạn có thể kiểm tra độ chính xác của model bạn vừa đào tạo."
-              extra={[
-                <Button
-                  type="primary"
-                  key="console"
-                  onClick={() => {
-                    setModalFormUserVisible(true);
-                  }}
-                >
-                  Kiểm tra
-                </Button>,
-              ]}
-            />
-          )
+        {job ? (
+          <>
+            <div className="train-page__timeline">
+              <TrainTimeline job={job} />
+            </div>
+            {job.status === "failed" && job.error && (
+              <Alert
+                type="error"
+                showIcon
+                style={{ marginBottom: 16 }}
+                message="Train thất bại"
+                description={job.error.message}
+              />
+            )}
+          </>
         ) : (
-          <Result
-            icon={<SmileOutlined />}
-            title="Dù cuộc sống có khó khăn đến đâu, 
-            Chatbot sẽ luôn đồng hành cùng bạn, sẵn sàng giúp đỡ và mang đến sự thoải mái trong mỗi cuộc trò chuyện."
-            // extra={[
-            //   <Button
-            //     type="primary"
-            //     key="console"
-            //     onClick={() => parseMessage()}
-            //   >
-            //     Kiểm tra
-            //   </Button>,
-            // ]}
+          <Empty
+            style={{ margin: "24px 0" }}
+            description="Chưa có phiên train nào. Bấm Train để bắt đầu."
           />
         )}
-        <div className="img-train">
-          <Image
-            width={280}
-            src="/avatarChatbot.jpg"
-            sizes="large"
-            preview={false}
-          />
-        </div>
+
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={15}>
+            <Typography.Title level={5}>Log</Typography.Title>
+            <TrainLog logs={job?.logs ?? []} live={running} />
+          </Col>
+          <Col xs={24} lg={9}>
+            <Typography.Title level={5}>
+              Dữ liệu {dryRun && <Tag>kết quả kiểm tra thử</Tag>}
+            </Typography.Title>
+            {stats && (
+              <Row gutter={[8, 8]} style={{ marginBottom: 12 }}>
+                {STAT_LABELS.map(([key, label]) => (
+                  <Col span={8} key={key}>
+                    <Statistic title={label} value={stats[key]} />
+                  </Col>
+                ))}
+              </Row>
+            )}
+            {validation ? (
+              <ValidationPanel report={validation} />
+            ) : (
+              <Typography.Text type="secondary">
+                Kết quả kiểm tra dữ liệu sẽ hiện ở đây.
+              </Typography.Text>
+            )}
+          </Col>
+        </Row>
       </Card>
 
-      {/* <ModalFormTrain
-        visible={modalFormUserVisible}
-        onVisibleChange={(visible: boolean) => {
-          if (!visible) setModalFormUserVisible(visible);
-        }}
-        onSuccess={() => actionRef.current?.reload()}
-      /> */}
+      <Card title="Các phiên gần đây" style={{ marginTop: 12 }}>
+        <Table<TrainJob>
+          size="small"
+          rowKey="_id"
+          pagination={false}
+          dataSource={jobRows}
+          scroll={{ x: "max-content" }}
+          rowClassName={(record) =>
+            record._id === selectedJobId ? "train-page__row--selected" : ""
+          }
+          onRow={(record) => ({
+            onClick: () => {
+              setDryRun(null);
+              setSelectedJobId(record._id);
+            },
+            style: { cursor: "pointer" },
+          })}
+          columns={[
+            {
+              title: "Bắt đầu",
+              dataIndex: "createdAt",
+              render: (value: string) =>
+                new Date(value).toLocaleString("vi-VN"),
+            },
+            {
+              title: "Trạng thái",
+              dataIndex: "status",
+              render: (status) => <TrainStatusTag status={status} />,
+            },
+            {
+              title: "Thời lượng",
+              dataIndex: "durationMs",
+              render: (value?: number) => formatDuration(value),
+            },
+            {
+              title: "Model",
+              dataIndex: "modelFile",
+              render: (value?: string) => value ?? "—",
+            },
+            {
+              title: "Lỗi",
+              dataIndex: ["error", "message"],
+              ellipsis: true,
+              render: (value?: string) => value ?? "",
+            },
+          ]}
+        />
+      </Card>
+
       <Drawer
-        width={"60%"}
+        width="60%"
         title="Kiểm tra độ chính xác"
         headerStyle={{ padding: 2 }}
-        open={modalFormUserVisible}
+        open={parseDrawerOpen}
         destroyOnClose
-        onClose={() => setModalFormUserVisible(false)}
+        onClose={() => setParseDrawerOpen(false)}
       >
         <TabsTrain />
       </Drawer>
