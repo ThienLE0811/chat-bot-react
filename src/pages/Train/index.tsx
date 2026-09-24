@@ -106,7 +106,12 @@ function Train() {
   const handleDone = useCallback(
     (finished: TrainJob) => {
       refresh();
-      if (finished.status === "loaded") {
+      if (finished.status === "loaded" && finished.reusedModel) {
+        notification.info({
+          message: "Dữ liệu không thay đổi",
+          description: `Bỏ qua train, model ${finished.modelFile} vẫn đang chạy.`,
+        });
+      } else if (finished.status === "loaded") {
         notification.success({
           message: "Train thành công",
           description: `Model ${finished.modelFile} đang chạy.`,

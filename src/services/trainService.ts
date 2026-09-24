@@ -52,6 +52,8 @@ export interface TrainJob {
   stats?: TrainingDataStats;
   dataHash?: string;
   modelFile?: string;
+  /** Data matched the running model, so training was skipped. */
+  reusedModel?: boolean;
   error?: { message: string; stage: TrainStatus; details?: unknown };
   createdAt: string;
   startedAt?: string;
