@@ -4,6 +4,7 @@ import {
   ApartmentOutlined,
   ClusterOutlined,
   CommentOutlined,
+  MessageOutlined,
   CreditCardOutlined,
   FileDoneOutlined,
   FolderOpenOutlined,
@@ -21,6 +22,7 @@ import {
 import Home from "../pages/Home/Home";
 import Train from "../pages/Train";
 import ChatTest from "../pages/ChatTest";
+import Conversations from "../pages/Conversations";
 import Dialogue from "../pages/Dialogue";
 import Login from "../pages/login/Login";
 import User from "../pages/User";
@@ -131,6 +133,12 @@ const filteredMenuItems: MenuDataItem = [
         path: "chat-test",
         icon: <CommentOutlined />,
         element: <ChatTest />,
+      },
+      {
+        name: "Hội thoại thật",
+        path: "conversations",
+        icon: <MessageOutlined />,
+        element: <Conversations />,
       },
       {
         name: "Lịch sử train",

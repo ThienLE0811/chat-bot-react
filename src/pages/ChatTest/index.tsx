@@ -21,7 +21,7 @@ import {
 } from "../../services/chatTestService";
 import { getModels } from "../../services/trainService";
 import TurnInspector from "./components/TurnInspector";
-import { IntentTag } from "./components/confidence";
+import { IntentTag } from "../components/IntentConfidence";
 import "./index.css";
 
 type ChatEntry =

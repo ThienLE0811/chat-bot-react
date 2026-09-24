@@ -10,7 +10,7 @@ import {
   closeRunnerUp,
   confidenceLevel,
   formatPercent,
-} from "./confidence";
+} from "../../components/IntentConfidence";
 
 const MAX_RANKING = 10;
 

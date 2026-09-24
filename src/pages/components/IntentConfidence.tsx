@@ -1,5 +1,5 @@
 import { Tag, Tooltip } from "antd";
-import { IntentScore } from "../../../services/chatTestService";
+import { IntentScore } from "../../services/chatTestService";
 
 /** Intent Rasa's FallbackClassifier predicts when no intent is confident enough. */
 export const FALLBACK_INTENT = "nlu_fallback";
@@ -56,7 +56,7 @@ export const IntentTag = ({ intent }: { intent: IntentScore | null }) => {
   const level = confidenceLevel(intent);
   return (
     <Tooltip title="Ý định và độ tin cậy">
-      <Tag color={LEVEL_TAG_COLORS[level]} className="chat-test__intent-tag">
+      <Tag color={LEVEL_TAG_COLORS[level]} style={{ marginInlineEnd: 0 }}>
         {intent.name} · {formatPercent(intent.confidence)}
       </Tag>
     </Tooltip>
