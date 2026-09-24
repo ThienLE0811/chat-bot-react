@@ -3,6 +3,7 @@ import { RouteObject } from "react-router-dom";
 import {
   ApartmentOutlined,
   ClusterOutlined,
+  CommentOutlined,
   CreditCardOutlined,
   FileDoneOutlined,
   FolderOpenOutlined,
@@ -19,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import Home from "../pages/Home/Home";
 import Train from "../pages/Train";
+import ChatTest from "../pages/ChatTest";
 import Dialogue from "../pages/Dialogue";
 import Login from "../pages/login/Login";
 import User from "../pages/User";
@@ -123,6 +125,12 @@ const filteredMenuItems: MenuDataItem = [
         path: "train-model",
         icon: <GatewayOutlined />,
         element: <Train></Train>,
+      },
+      {
+        name: "Chat thử",
+        path: "chat-test",
+        icon: <CommentOutlined />,
+        element: <ChatTest />,
       },
       {
         name: "Lịch sử train",
