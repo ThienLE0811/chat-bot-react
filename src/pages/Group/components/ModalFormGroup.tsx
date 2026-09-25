@@ -5,9 +5,10 @@ import {
   ProFormText,
   ProFormTextArea,
 } from "@ant-design/pro-components";
-import { Alert, Checkbox, Col, Row, Typography, message, notification } from "antd";
+import { Alert, Col, Row, message, notification } from "antd";
 import React, { useRef } from "react";
 import { errorMessage } from "../../../lib/auth";
+import PermissionPicker from "./PermissionPicker";
 import {
   PermissionModule,
   Role,
@@ -132,24 +133,7 @@ const ModalFormGroup: React.FC<ModalFormGroupProps> = (props) => {
             name="permissions"
             normalize={(value: string[]) => withImplied(value ?? [], catalog)}
           >
-            <Checkbox.Group style={{ width: "100%" }} disabled={isAdmin}>
-              {catalog.map((group) => (
-                <div key={group.module} style={{ marginBottom: 12 }}>
-                  <Typography.Text strong>{group.label}</Typography.Text>
-                  <Typography.Text type="secondary">
-                    {" "}
-                    · {group.description}
-                  </Typography.Text>
-                  <div style={{ marginTop: 4 }}>
-                    {group.permissions.map((permission) => (
-                      <Checkbox key={permission.key} value={permission.key}>
-                        {permission.label}
-                      </Checkbox>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </Checkbox.Group>
+            <PermissionPicker catalog={catalog} disabled={isAdmin} />
           </ProForm.Item>
         </Col>
       </Row>
