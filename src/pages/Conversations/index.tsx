@@ -20,7 +20,8 @@ import {
   ReviewItem,
   getConversationMessages,
   getConversations,
-  getIntentNames,
+  IntentOption,
+  getIntentOptions,
   getReviewQueue,
 } from "../../services/conversationsService";
 import AddToIntentModal from "./components/AddToIntentModal";
@@ -36,7 +37,7 @@ type TabKey = "review" | "conversations";
 
 function Conversations() {
   const [tab, setTab] = useState<TabKey>("review");
-  const [intents, setIntents] = useState<string[]>([]);
+  const [intents, setIntents] = useState<IntentOption[]>([]);
   const [adding, setAdding] = useState<ConversationMessage | null>(null);
 
   const [review, setReview] = useState<{ items: ReviewItem[]; total: number }>(
@@ -93,7 +94,7 @@ function Conversations() {
   }, [loadReview, loadConversations, loadMessages, reviewPage]);
 
   useEffect(() => {
-    getIntentNames()
+    getIntentOptions()
       .then(setIntents)
       .catch((error) => notification.error({ message: error.message }));
   }, []);

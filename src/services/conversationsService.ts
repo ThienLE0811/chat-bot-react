@@ -109,9 +109,25 @@ export const addMessageToIntent = (id: string, intent: string) =>
     "Không thêm được câu mẫu"
   );
 
-/** Intent names, for choosing where a message belongs. */
-export const getIntentNames = () =>
-  request<{ title: string }[]>(
+export interface IntentOption {
+  /** Code Rasa trains and predicts, e.g. `ask_user_name`. */
+  name: string;
+  /** Vietnamese name shown to people, from the intent's description. */
+  label?: string;
+}
+
+/** Intents, for choosing where a message belongs. */
+export const getIntentOptions = () =>
+  request<{ title: string; description?: string }[]>(
     () => axios.get(`${API_URL}/intents/getList`),
     "Không tải được danh sách ý định"
-  ).then((intents) => intents.map((intent) => intent.title).sort());
+  ).then((intents) =>
+    intents
+      .map((intent) => ({
+        name: intent.title,
+        label: intent.description?.trim() || undefined,
+      }))
+      .sort((a, b) =>
+        (a.label ?? a.name).localeCompare(b.label ?? b.name, "vi")
+      )
+  );
