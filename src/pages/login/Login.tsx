@@ -1,9 +1,4 @@
-import {
-  FacebookOutlined,
-  GoogleOutlined,
-  LockOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
   LoginForm,
   ProFormCaptcha,
@@ -16,13 +11,10 @@ import { message, Space, Tabs } from "antd";
 import { CSSProperties, useEffect, useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { handleLoginApi } from "../../services/userService";
-// import jwt from "jsonwebtoken";
-import jwt_decode from "jwt-decode";
-
-import { AxiosResponse } from "axios";
+import { getMe, handleLoginApi } from "../../services/userService";
 import { saveCredentialCookie } from "../../utils";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { errorMessage, storePermissions } from "../../lib/auth";
+import { useAppDispatch } from "../../hooks/redux";
 import { LoginResponseSuccessData } from "../../services/data";
 import { setAccountInfo } from "../../redux/slices/account";
 import { Footer } from "antd/es/layout/layout";
@@ -41,43 +33,20 @@ const iconStyles: CSSProperties = {
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { accountInfo } = useAppSelector((state) => state.account);
-  const checkUser = async (res: AxiosResponse<any, any>) => {
-    const checkLogin = res?.data?.data?.userInfo?.userRoleName;
-    console.log("checkLogin", checkLogin);
-    return navigate("/");
-    // return checkLogin === ("ADMIN" || "USER")
-    //   ? navigate("/home")
-    //   : navigate("/singup");
-  };
-
-  // const checkLogin = async (res: AxiosResponse<any, any>) => {
-  //   const checkLogin = res?.data?.data?.username;
-  //   console.log("check::: ", checkLogin);
-  //   return checkLogin ? history.push("/home") : history.push("/singup");
-  // };
-
   const handleLogin = async (values: any) => {
     const { userName, password } = values;
     try {
       const response = await handleLoginApi(userName, password);
-      console.log("res:: ", response);
-      if (response) {
-        const loginData: LoginResponseSuccessData = response.data?.data;
-        saveCredentialCookie(loginData);
-        dispatch(setAccountInfo(loginData?.userInfo));
-        await checkUser(response);
-        message.success("Đăng nhập thành công");
-        console.log("account:: ", accountInfo?.userRoleName);
-        console.log("data login:: ", loginData?.userInfo?.userRoleName);
-        accountInfo?.userRoleName !== loginData?.userInfo?.userRoleName &&
-          window.location.reload();
-      } else {
-        message.error("Đăng nhập thất bại");
-      }
+      const loginData: LoginResponseSuccessData = response.data?.data;
+      saveCredentialCookie(loginData);
+      const me = await getMe();
+      dispatch(setAccountInfo(me.user));
+      storePermissions(me.permissions);
+      message.success("Đăng nhập thành công");
+      // Tải lại cả trang: menu được dựng lúc tải, theo quyền vừa lưu.
+      window.location.href = "/";
     } catch (error: any) {
-      message.error(error?.response?.data?.message || "Đăng nhập thất bại");
-      console.log("error", error);
+      message.error(errorMessage(error, "Đăng nhập thất bại"));
     }
   };
 

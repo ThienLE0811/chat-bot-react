@@ -5,6 +5,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import viVN from "antd/lib/locale/vi_VN";
+import { setupAxiosAuth } from "./lib/auth";
+
+setupAxiosAuth();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

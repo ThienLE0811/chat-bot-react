@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import { ActionType, PageContainer, ProList } from "@ant-design/pro-components";
 import {
   Avatar,
@@ -27,6 +28,7 @@ import { fetchStoriesTableData } from "../../redux/slices/stories/action";
 import { StoriesData } from "../../redux/slices/stories/data";
 
 function Stories() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -67,7 +69,7 @@ function Stories() {
               onClick={() => {
                 setModalFormIntentVisible(true);
               }}
-              // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+              disabled={!canWrite}
             >
               <PlusOutlined /> Tạo stories
             </Button>,
@@ -130,6 +132,7 @@ function Stories() {
                 <Tooltip title="Sửa thông tin" key={"2"}>
                   <Button
                     icon={<EditOutlined />}
+                    disabled={!canWrite}
                     onClick={() => {
                       setCurrentRow(entity);
                       setModalFormIntentVisible(true);
@@ -137,6 +140,7 @@ function Stories() {
                   />
                 </Tooltip>,
                 <Popconfirm
+                  disabled={!canWrite}
                   title="Bạn chắc chắn muốn xóa?"
                   key={"3"}
                   onConfirm={async () => {
@@ -149,7 +153,7 @@ function Stories() {
                     }
                   }}
                 >
-                  <Button icon={<DeleteOutlined />} danger />
+                  <Button icon={<DeleteOutlined />} danger disabled={!canWrite} />
                 </Popconfirm>,
               ];
             },

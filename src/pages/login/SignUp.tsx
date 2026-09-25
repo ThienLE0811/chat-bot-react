@@ -10,7 +10,8 @@ import { message, Space, Tabs } from "antd";
 import { CSSProperties, useEffect, useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { handleLoginApi, handleSingUpApi } from "../../services/userService";
+import { handleSingUpApi } from "../../services/userService";
+import { errorMessage } from "../../lib/auth";
 import Link from "antd/es/typography/Link";
 
 const iconStyles: CSSProperties = {
@@ -24,17 +25,14 @@ const iconStyles: CSSProperties = {
 function SingUp() {
   const navigate = useNavigate();
   const handleSignUp = async (values: any) => {
-    console.log("values:: ", values);
     const { userName, password, email } = values;
     try {
-      // const res = await handleSingUpApi(userName, password, email);
-      const res = await handleLoginApi(userName, password);
-      console.log(res?.data);
-      message.success("Đăng ký thành công");
+      // Tài khoản tự đăng ký thuộc nhóm VIEWER; admin đổi nhóm sau nếu cần.
+      await handleSingUpApi({ userName, password, email });
+      message.success("Đăng ký thành công, vui lòng đăng nhập");
       navigate("/auth/login");
     } catch (err: any) {
-      message.error(err?.response?.data?.message);
-      // console.log("err:: ", err?.response?.data?.message);
+      message.error(errorMessage(err, "Đăng ký không thành công"));
     }
   };
 
@@ -120,6 +118,7 @@ function SingUp() {
                   message: "Vui lòng nhập mật khẩu！",
                   whitespace: true,
                 },
+                { min: 6, message: "Mật khẩu cần ít nhất 6 kí tự" },
               ]}
             />
             <ProFormText.Password
@@ -140,9 +139,7 @@ function SingUp() {
                     if (!value || getFieldValue("password") === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(
-                      new Error("Hai mật khẩu bạn đã nhập không khớp!")
-                    );
+                    return Promise.reject(new Error("Hai mật khẩu bạn đã nhập không khớp!"));
                   },
                 }),
               ]}

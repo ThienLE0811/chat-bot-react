@@ -37,6 +37,7 @@ import TrainStatusTag, { formatDuration } from "./components/TrainStatusTag";
 import TrainTimeline from "./components/TrainTimeline";
 import ValidationPanel from "./components/ValidationPanel";
 import { useTrainJob } from "./useTrainJob";
+import { useCan } from "../../lib/auth";
 import "./index.css";
 
 const STAT_LABELS: [keyof TrainingDataStats, string][] = [
@@ -73,6 +74,7 @@ const ActiveModelTag = ({
 };
 
 function Train() {
+  const can = useCan();
   const [selectedJobId, setSelectedJobId] = useState<string>();
   const [recentJobs, setRecentJobs] = useState<TrainJob[]>([]);
   const [activeModel, setActiveModel] = useState<string | null>(null);
@@ -190,6 +192,7 @@ function Train() {
               <Button
                 icon={<SafetyCertificateOutlined />}
                 loading={checking}
+                disabled={!can("train.run")}
                 onClick={handleValidate}
               >
                 Kiểm tra dữ liệu
@@ -197,6 +200,7 @@ function Train() {
             </Tooltip>
             <Button
               icon={<MessageOutlined />}
+              disabled={!can("chat_test.use")}
               onClick={() => setParseDrawerOpen(true)}
             >
               Thử câu
@@ -205,6 +209,7 @@ function Train() {
               type="primary"
               icon={<RocketOutlined />}
               loading={starting || running}
+              disabled={!can("train.run")}
               onClick={handleTrain}
             >
               {running ? "Đang train" : "Train"}

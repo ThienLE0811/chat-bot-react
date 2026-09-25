@@ -1,8 +1,9 @@
 import { notification } from "antd";
 import axios from "axios";
+import { API_URL } from "./trainService";
 
 const handleLoginApi = async (userName: string, password: string) => {
-  return await axios.post("http://localhost:8000/users/login", {
+  return await axios.post(`${API_URL}/auth/login`, {
     userName,
     password,
   });
@@ -10,21 +11,48 @@ const handleLoginApi = async (userName: string, password: string) => {
 
 const handleLogoutApi = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/users/logout");
-    console.log("data logout::", response.data);
+    await axios.post(`${API_URL}/auth/logout`);
     localStorage.clear();
   } catch (error) {
     console.error(error);
   }
 };
 
+/** Đăng ký công khai: tài khoản mới luôn thuộc nhóm VIEWER. */
 const handleSingUpApi = async (data: any) => {
-  return await axios.post("http://localhost:8000/users/register", data);
+  return await axios.post(`${API_URL}/auth/register`, data);
+};
+
+export interface Me {
+  user: any;
+  role: { code: string; name: string } | null;
+  permissions: string[];
+}
+
+/** Người đang đăng nhập và quyền hiện tại của họ. */
+const getMe = async (): Promise<Me> => {
+  const response = await axios.get<Me>(`${API_URL}/auth/me`);
+  return response.data;
+};
+
+export interface UpdateMeInput {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  /** Chỉ gửi khi đổi mật khẩu, kèm currentPassword. */
+  newPassword?: string;
+  currentPassword?: string;
+}
+
+/** Tự sửa tài khoản của mình: ai đăng nhập cũng được, không đổi được nhóm quyền. */
+const updateMe = async (values: UpdateMeInput): Promise<Me> => {
+  const response = await axios.put<Me>(`${API_URL}/auth/me`, values);
+  return response.data;
 };
 
 const getUser = async (): Promise<any> => {
   try {
-    const response = await axios.get("http://localhost:8000/users/getList", {});
+    const response = await axios.get(`${API_URL}/users/getList`, {});
     if (response?.statusText === "OK") {
       return Promise.resolve(response);
     } else {
@@ -38,28 +66,28 @@ const getUser = async (): Promise<any> => {
 };
 
 const getUserId = async (userId: any) => {
-  return await axios.get(`http://localhost:8000/users/${userId}`, {});
+  return await axios.get(`${API_URL}/users/${userId}`, {});
 };
 
-const deleteUser = async (userId: number) => {
-  return await axios.delete(`http://localhost:8000/users/delete/${userId}`, {});
+const deleteUser = async (userId: string) => {
+  return await axios.delete(`${API_URL}/users/delete/${userId}`, {});
 };
 
+/** Admin tạo tài khoản và chọn nhóm quyền (roleCode). */
 const createUser = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/users/create`, formValues);
+  return await axios.post(`${API_URL}/users/create`, formValues);
 };
 
 const updateUser = async (id: string, formValues: any) => {
-  return await axios.put(
-    `http://localhost:8000/users/update/${id}`,
-    formValues
-  );
+  return await axios.put(`${API_URL}/users/update/${id}`, formValues);
 };
 
 export {
   handleLoginApi,
   handleLogoutApi,
   handleSingUpApi,
+  getMe,
+  updateMe,
   getUser,
   deleteUser,
   updateUser,

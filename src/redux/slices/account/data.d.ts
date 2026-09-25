@@ -3,6 +3,8 @@ import { SortOrder } from "antd/es/table/interface";
 
 export interface AccountState {
   accountInfo: LoginResponseSuccessData;
+  /** Quyền của người đang đăng nhập, lấy từ /auth/me. */
+  permissions: string[];
   dataModel: {};
   storiesData: {};
   train: boolean;
@@ -34,8 +36,8 @@ export interface AccountInfo {
   firstName: string;
   lastName: string;
   userName: string;
-  userRoleName: string;
-  userRole: {};
+  roleCode: string;
+  roleName: string;
 }
 
 export interface LoginResponseSuccessData {

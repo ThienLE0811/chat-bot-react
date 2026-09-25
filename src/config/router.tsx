@@ -1,5 +1,5 @@
 import { MenuDataItem } from "@ant-design/pro-components";
-import { RouteObject } from "react-router-dom";
+import { Navigate, RouteObject } from "react-router-dom";
 import {
   ApartmentOutlined,
   ClusterOutlined,
@@ -33,7 +33,7 @@ import { message } from "antd";
 import Entities from "../pages/Entities";
 import Slots from "../pages/slots";
 import Response from "../pages/response";
-import { checkAccess, userInfo, useRole } from "../lib/getInfo";
+import { can, storedPermissions } from "../lib/auth";
 import Group from "../pages/Group";
 import { useAppSelector } from "../hooks/redux";
 import { connect } from "react-redux";
@@ -46,18 +46,16 @@ import Nlu from "../pages/Nlu";
 import Rules from "../pages/Rules";
 import History from "../pages/History";
 import HistoryTrain from "../pages/History";
+import RequirePermission from "../pages/components/RequirePermission";
 
-export const defaultRouter: Record<string, string> = {
-  "/dialogue": "/dialogue/intents",
-  "/train": "/recruitment/job-board",
-  "/user-management": "/user-management/user",
-};
-
-const accountInfo: any = JSON.parse(
-  sessionStorage.getItem("accountInfo") as any
+// Menu dựng một lần lúc tải trang, theo quyền lưu từ /auth/me.
+// Ẩn menu chỉ để gọn giao diện; backend mới là nơi chặn quyền.
+const permissions = storedPermissions();
+const hidden = (permission: string) => !can(permission, permissions);
+// Vào thẳng bằng URL mà không có quyền thì thấy trang 403.
+const guard = (permission: string, page: React.ReactNode) => (
+  <RequirePermission permission={permission}>{page}</RequirePermission>
 );
-
-console.log("accountInfo:: ", accountInfo);
 
 const filteredMenuItems: MenuDataItem = [
   {
@@ -68,51 +66,51 @@ const filteredMenuItems: MenuDataItem = [
     name: "Dialogue",
     path: "dialogue",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo?.DIALOGUE_MANAGEMENT ? false : true,
+    hideInMenu: hidden("dialogue.read"),
     // element: <PostPage />,
     children: [
       {
         name: "Ý định",
         path: "intents",
         icon: <ReadOutlined />,
-        element: <Intent />,
+        element: guard("dialogue.read", <Intent />),
       },
       {
         name: "Thực thể",
         path: "entity",
         icon: <FolderOpenOutlined />,
-        element: <Entities />,
+        element: guard("dialogue.read", <Entities />),
       },
       {
         name: "Phản hồi",
         path: "response",
         icon: <SwapOutlined />,
-        element: <Response />,
+        element: guard("dialogue.read", <Response />),
       },
       {
         name: "Slots",
         path: "slots",
         icon: <TableOutlined />,
-        element: <Slots />,
+        element: guard("dialogue.read", <Slots />),
       },
 
       {
         name: "Nlu",
         path: "nlu",
         icon: <CreditCardOutlined />,
-        element: <Nlu />,
+        element: guard("dialogue.read", <Nlu />),
       },
       {
         name: "Rules",
         path: "rules",
         icon: <ApartmentOutlined />,
-        element: <Rules />,
+        element: guard("dialogue.read", <Rules />),
       },
       {
         name: "Kho hội thoại",
         path: "stories",
         icon: <HddOutlined />,
-        element: <Stories />,
+        element: guard("dialogue.read", <Stories />),
       },
     ],
   },
@@ -120,31 +118,38 @@ const filteredMenuItems: MenuDataItem = [
     name: "Train",
     path: "train",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo?.TRAIN_MANAGEMENT ? false : true,
+    hideInMenu:
+      hidden("train.read") &&
+      hidden("chat_test.use") &&
+      hidden("conversations.read"),
     children: [
       {
         name: "Train Model",
         path: "train-model",
         icon: <GatewayOutlined />,
-        element: <Train></Train>,
+        element: guard("train.read", <Train />),
+        hideInMenu: hidden("train.read"),
       },
       {
         name: "Chat thử",
         path: "chat-test",
         icon: <CommentOutlined />,
-        element: <ChatTest />,
+        element: guard("chat_test.use", <ChatTest />),
+        hideInMenu: hidden("chat_test.use"),
       },
       {
         name: "Hội thoại thật",
         path: "conversations",
         icon: <MessageOutlined />,
-        element: <Conversations />,
+        element: guard("conversations.read", <Conversations />),
+        hideInMenu: hidden("conversations.read"),
       },
       {
         name: "Lịch sử train",
         path: "history-train",
         icon: <HistoryOutlined />,
-        element: <HistoryTrain />,
+        element: guard("train.read", <HistoryTrain />),
+        hideInMenu: hidden("train.read"),
       },
     ],
   },
@@ -173,19 +178,21 @@ const filteredMenuItems: MenuDataItem = [
     name: "Quản lý người dùng",
     path: "user-management",
     icon: <FileDoneOutlined />,
-    hideInMenu: accountInfo?.USER_MANAGEMENT ? false : true,
+    hideInMenu: hidden("users.read") && hidden("roles.read"),
     children: [
       {
         name: "Người dùng",
         path: "user",
         icon: <UserOutlined />,
-        element: <User></User>,
+        element: guard("users.read", <User />),
+        hideInMenu: hidden("users.read"),
       },
       {
         name: "Phân quyền",
         path: "permission",
         icon: <UserSwitchOutlined />,
-        element: <Group />,
+        element: guard("roles.read", <Group />),
+        hideInMenu: hidden("roles.read"),
       },
     ],
   },
@@ -196,9 +203,30 @@ const filteredMenuItems: MenuDataItem = [
 //   return true;
 // });
 
-const filteredMenuItemsWithRole = filteredMenuItems.filter((menuItem: any) => {
-  return true;
-});
+// Vào route cha (vd: /train) thì tự chuyển tới route con đầu tiên được thấy (vd: /train/train-model)
+const withDefaultChild = (menuItem: any) => {
+  const firstChild = menuItem.children?.find(
+    (child: any) => child.path && !child.hideInMenu
+  );
+  if (!firstChild) return menuItem;
+  return {
+    ...menuItem,
+    children: [
+      {
+        index: true,
+        hideInMenu: true,
+        element: <Navigate to={firstChild.path} replace />,
+      },
+      ...menuItem.children,
+    ],
+  };
+};
+
+const filteredMenuItemsWithRole = filteredMenuItems
+  .filter((menuItem: any) => {
+    return true;
+  })
+  .map(withDefaultChild);
 
 export const workplace: RouteObject | MenuDataItem = {
   path: "/",
@@ -227,8 +255,3 @@ export const routes: MenuDataItem[] | RouteObject[] = [
   },
   workplace,
 ];
-
-//   workplace: workplace,
-//   all: routes,
-//   defaultRouter: defaultRouter,
-// };

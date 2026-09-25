@@ -47,14 +47,7 @@ export const newStructureRoutesProLayout = (
   //   expires: 3000,
   // });
 
-  // Cookies.set("userRoleName", JSON.stringify(data?.userInfo?.userRoleName) || "", {
-  //   expires: 3000
-  // });
-
-  sessionStorage.setItem(
-          "accountInfo",
-          JSON.stringify(data?.userInfo?.userRole)
-        );
+  // Quyền không đi kèm lúc đăng nhập: lấy từ /auth/me (xem lib/auth.ts).
 };
 
 //httpOnly: true
@@ -68,4 +61,5 @@ export const clearCredentialCookie = () => {
   Cookies.remove("access_token", { path: "/"});
   Cookies.remove("_id", { path: "/" });
   sessionStorage.removeItem('accountInfo');
+  sessionStorage.removeItem('permissions');
 };

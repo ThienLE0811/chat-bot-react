@@ -38,20 +38,14 @@ const checkAccess = () => {
   // }
 };
 
+// Quyền: xem lib/auth.ts (can, useCan).
 const userInfo = () => {
-  // const userRole = decodeURIComponent(getCookie("userRole"));
-  const userRole = getCookie("userRole").replace(/%22/g, " ").trim();
   const userName = getCookie("userName");
   const firstName = getCookie("firstName");
   const lastName = getCookie("lastName");
   const _id = getCookie("_id");
 
-  return { userName, firstName, lastName, userRole, _id };
+  return { userName, firstName, lastName, _id };
 };
 
-function useRole() {
-  const { accountInfo } = useAppSelector((state) => state.account);
-  return accountInfo?.userRole;
-}
-
-export { checkAccess, userInfo, useRole };
+export { checkAccess, userInfo };

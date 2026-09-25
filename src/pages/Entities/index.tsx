@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -13,12 +14,12 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 // import columnsEntitiesTable from "./components/columnsEntitiesTable";
 import { deleteEntities, getEntities } from "../../services/entitiesService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
-import ModalFormEntities from "./components/ModalFormEntities";
 import TagListCell from "../components/TagListCell";
+import ModalFormEntities from "./components/ModalFormEntities";
 
 function Entities() {
-  const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
-    useState<boolean>(false);
+  const canWrite = useCan()("dialogue.write");
+  const [modalFormEntitiesVisible, setModalFormEntitiesVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
   //   []
@@ -98,7 +99,7 @@ function Entities() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
             onClick={() => {
               setCurrentRow(record);
               setModalFormEntitiesVisible(true);
@@ -106,6 +107,7 @@ function Entities() {
           />
         </Tooltip>,
         <Popconfirm
+          disabled={!canWrite}
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
@@ -121,7 +123,7 @@ function Entities() {
           <Button
             icon={<DeleteOutlined />}
             danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
           />
         </Popconfirm>,
       ],
@@ -177,7 +179,7 @@ function Entities() {
             onClick={() => {
               setModalFormEntitiesVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo thực thể
           </Button>,

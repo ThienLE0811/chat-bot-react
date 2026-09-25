@@ -13,18 +13,15 @@ import {
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { message, Button, Dropdown, Menu, notification } from "antd";
-import {
-  getUser,
-  getUserId,
-  handleLogoutApi,
-} from "../../services/userService";
+import { getMe } from "../../services/userService";
 import { motion } from "framer-motion";
 import { workplace } from "../../config/router";
 import { variants, transition } from "../../config/pageTransition";
 import { clearCredentialCookie } from "../../utils";
-import { checkAccess, userInfo } from "../../lib/getInfo";
+import { checkAccess } from "../../lib/getInfo";
+import { storePermissions } from "../../lib/auth";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { setAccountInfo } from "../../redux/slices/account";
+import { setAccountInfo, setPermissions } from "../../redux/slices/account";
 import RightContentHeader from "../components/RightContentHeader/RightContentHeader";
 import MenuFooterHeader from "../components/MenuFooter";
 
@@ -36,14 +33,13 @@ function Home() {
   const { accountInfo } = useAppSelector((state) => state.account);
 
   useEffect(() => {
-    checkAccess();
-    getUserId(userInfo()._id || "")
-      .then((response) => {
-        dispatch(setAccountInfo(response.data));
-        sessionStorage.setItem(
-          "accountInfo",
-          JSON.stringify(response?.data?.userRole) || ""
-        );
+    if (checkAccess() !== "OK") return;
+    getMe()
+      .then(({ user, permissions }) => {
+        dispatch(setAccountInfo(user));
+        dispatch(setPermissions(permissions));
+        // Admin vừa đổi quyền của mình: tải lại để menu dựng theo quyền mới.
+        if (storePermissions(permissions)) window.location.reload();
       })
       .catch((error) => {
         console.log(error);

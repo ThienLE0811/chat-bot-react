@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -33,6 +34,7 @@ import ModalFormNlu from "./components/ModalFormNlu";
 import Link from "antd/es/typography/Link";
 
 function Nlu() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -155,7 +157,7 @@ function Nlu() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
             key={2}
             onClick={() => {
               setCurrentRow(record);
@@ -164,6 +166,7 @@ function Nlu() {
           />
         </Tooltip>,
         <Popconfirm
+          disabled={!canWrite}
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
@@ -181,7 +184,7 @@ function Nlu() {
             danger
             key={3}
             style={{ display: hiddenView ? "none" : "" }}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
           />
         </Popconfirm>,
       ],
@@ -246,7 +249,7 @@ function Nlu() {
             onClick={() => {
               setModalFormEntitiesVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo mới
           </Button>,

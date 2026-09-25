@@ -6,6 +6,7 @@ import {
   getTrainJob,
   isTerminal,
 } from "../../services/trainService";
+import { withToken } from "../../lib/auth";
 
 /**
  * Follows one training job over SSE: the server sends a snapshot, then live
@@ -22,7 +23,9 @@ export function useTrainJob(jobId?: string, onDone?: (job: TrainJob) => void) {
     setJob(null);
     if (!jobId) return;
 
-    const source = new EventSource(`${API_URL}/train/jobs/${jobId}/stream`);
+    const source = new EventSource(
+      withToken(`${API_URL}/train/jobs/${jobId}/stream`)
+    );
     const finish = async () => {
       source.close();
       setConnected(false);

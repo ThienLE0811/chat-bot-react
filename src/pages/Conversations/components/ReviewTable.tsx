@@ -5,6 +5,7 @@ import {
 } from "../../../services/conversationsService";
 import { IntentTag } from "../../components/IntentConfidence";
 import { ReasonTag, displayName, formatTime } from "./labels";
+import { useCan } from "../../../lib/auth";
 
 export const REVIEW_PAGE_SIZE = 20;
 
@@ -30,6 +31,7 @@ const ReviewTable = ({
   onOpenConversation,
   onChanged,
 }: Props) => {
+  const canReview = useCan()("conversations.review");
   const ignore = async (item: ReviewItem) => {
     try {
       await setMessageReview(item._id, "ignored");
@@ -86,10 +88,15 @@ const ReviewTable = ({
           key: "actions",
           render: (_, item) => (
             <Space wrap>
-              <Button type="primary" size="small" onClick={() => onAdd(item)}>
+              <Button
+                type="primary"
+                size="small"
+                disabled={!canReview}
+                onClick={() => onAdd(item)}
+              >
                 Thêm vào ý định
               </Button>
-              <Button size="small" onClick={() => ignore(item)}>
+              <Button size="small" disabled={!canReview} onClick={() => ignore(item)}>
                 Bỏ qua
               </Button>
               <Button

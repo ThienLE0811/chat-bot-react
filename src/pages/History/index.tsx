@@ -15,11 +15,13 @@ import {
   activateModel,
   getModels,
 } from "../../services/trainService";
+import { useCan, withToken } from "../../lib/auth";
 import TrainStatusTag, {
   formatDuration,
 } from "../Train/components/TrainStatusTag";
 
 function HistoryTrain() {
+  const canRun = useCan()("train.run");
   const actionRef = useRef<ActionType>();
   const [summary, setSummary] = useState<Omit<ModelList, "items"> | null>(
     null
@@ -28,7 +30,7 @@ function HistoryTrain() {
 
   // Reload when any training finishes or someone switches models elsewhere.
   useEffect(() => {
-    const source = new EventSource(`${API_URL}/train/events`);
+    const source = new EventSource(withToken(`${API_URL}/train/events`));
     source.onmessage = (message) => {
       const event: TrainStreamEvent = JSON.parse(message.data);
       if (event.type === "model.activated" || event.type === "done") {
@@ -121,13 +123,14 @@ function HistoryTrain() {
             description="Model đang chạy sẽ được thay ngay lập tức."
             okText="Chuyển"
             cancelText="Huỷ"
+            disabled={!canRun}
             onConfirm={() => handleActivate(record.modelFile)}
           >
             <Button
               size="small"
               icon={<RollbackOutlined />}
               loading={activating === record.modelFile}
-              disabled={!summary?.rasaReachable || !!activating}
+              disabled={!canRun || !summary?.rasaReachable || !!activating}
             >
               Dùng bản này
             </Button>

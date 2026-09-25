@@ -8,12 +8,9 @@ import {
   ReadOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
+import { useCan } from "../../../lib/auth";
 
 const { Text } = Typography;
-
-const accountInfo: any = JSON.parse(
-  sessionStorage.getItem("accountInfo") as any
-);
 
 const items = [
   {
@@ -21,48 +18,49 @@ const items = [
     description: "Quản lý ý định người dùng",
     icon: <ReadOutlined />,
     path: "/dialogue/intents",
-    visible: accountInfo?.DIALOGUE_MANAGEMENT,
+    permission: "dialogue.read",
   },
   {
     title: "Thực thể",
     description: "Quản lý thực thể hội thoại",
     icon: <FolderOpenOutlined />,
     path: "/dialogue/entity",
-    visible: accountInfo?.DIALOGUE_MANAGEMENT,
+    permission: "dialogue.read",
   },
   {
     title: "Phản hồi",
     description: "Quản lý phản hồi chatbot",
     icon: <SwapOutlined />,
     path: "/dialogue/response",
-    visible: accountInfo?.DIALOGUE_MANAGEMENT,
+    permission: "dialogue.read",
   },
   {
     title: "Kho hội thoại",
     description: "Quản lý kịch bản hội thoại",
     icon: <HddOutlined />,
     path: "/dialogue/stories",
-    visible: accountInfo?.DIALOGUE_MANAGEMENT,
+    permission: "dialogue.read",
   },
   {
     title: "Train Model",
     description: "Huấn luyện mô hình chatbot",
     icon: <GatewayOutlined />,
     path: "/train/train-model",
-    visible: accountInfo?.TRAIN_MANAGEMENT,
+    permission: "train.read",
   },
   {
     title: "Lịch sử train",
     description: "Xem lại các lần huấn luyện",
     icon: <HistoryOutlined />,
     path: "/train/history-train",
-    visible: accountInfo?.TRAIN_MANAGEMENT,
+    permission: "train.read",
   },
 ];
 
 const QuickAccessCards = () => {
   const navigate = useNavigate();
-  const visibleItems = items.filter((item) => item.visible);
+  const can = useCan();
+  const visibleItems = items.filter((item) => can(item.permission));
 
   if (visibleItems.length === 0) return null;
 

@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -37,6 +38,7 @@ import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import Link from "antd/es/typography/Link";
 
 function Slots() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -205,7 +207,7 @@ function Slots() {
               onClick={() => {
                 setModalFormIntentVisible(true);
               }}
-              // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+              disabled={!canWrite}
             >
               <PlusOutlined /> Tạo slots
             </Button>,
@@ -268,7 +270,7 @@ function Slots() {
                 <Tooltip title="Sửa thông tin" key={"1"}>
                   <Button
                     icon={<EditOutlined />}
-                    // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+                    disabled={!canWrite}
                     onClick={() => {
                       setCurrentRow(entity);
                       setModalFormIntentVisible(true);
@@ -276,6 +278,7 @@ function Slots() {
                   />
                 </Tooltip>,
                 <Popconfirm
+                  disabled={!canWrite}
                   title="Bạn chắc chắn muốn xóa?"
                   key={"2"}
                   onConfirm={async () => {
@@ -288,7 +291,7 @@ function Slots() {
                     }
                   }}
                 >
-                  <Button icon={<DeleteOutlined />} danger />
+                  <Button icon={<DeleteOutlined />} danger disabled={!canWrite} />
                 </Popconfirm>,
               ];
             },

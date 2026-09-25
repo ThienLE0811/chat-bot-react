@@ -1,3 +1,4 @@
+import { useCan } from "../../../lib/auth";
 import {
   ActionType,
   ModalForm,
@@ -39,6 +40,7 @@ interface Item {
 }
 
 const DetailRules = ({ initData }: any) => {
+  const canWrite = useCan()("dialogue.write");
   const actionRef = useRef<ActionType>();
   const tableRef = useRef<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -48,7 +50,6 @@ const DetailRules = ({ initData }: any) => {
   const [checkUpdate, setCheckUpdate] = useState<boolean>(false);
   const [indexUpdate, setIndexUpdate] = useState<number>(0);
   const dispatch = useAppDispatch();
-  const _ = require("lodash");
   const [initialData, setInitialData] = useState<any>(initData);
   const [form] = Form.useForm();
 
@@ -124,6 +125,7 @@ const DetailRules = ({ initData }: any) => {
           <Button.Group>
             <Button
               type="primary"
+              disabled={!canWrite}
               onClick={() => {
                 setShowModal(true);
                 console.log("index", index);
@@ -138,7 +140,7 @@ const DetailRules = ({ initData }: any) => {
             >
               Update
             </Button>
-            <Button danger onClick={() => remove(index)}>
+            <Button danger disabled={!canWrite} onClick={() => remove(index)}>
               Delete
             </Button>
           </Button.Group>
@@ -198,8 +200,8 @@ const DetailRules = ({ initData }: any) => {
         style={{ height: "100%", width: "100%" }}
         extra={
           <Space>
-            <Button size="small" key={1}>
-              <Dropdown overlay={menu} trigger={["hover"]}>
+            <Button size="small" key={1} disabled={!canWrite}>
+              <Dropdown overlay={menu} disabled={!canWrite} trigger={["hover"]}>
                 <span
                   style={{
                     display: "flex",
@@ -218,6 +220,7 @@ const DetailRules = ({ initData }: any) => {
               type="primary"
               size="small"
               key={2}
+              disabled={!canWrite}
               onClick={() => {
                 form
                   .validateFields()

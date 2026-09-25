@@ -6,6 +6,7 @@ import {
 } from "../../../services/conversationsService";
 import { IntentTag } from "../../components/IntentConfidence";
 import { ReviewTag, formatTime } from "./labels";
+import { useCan } from "../../../lib/auth";
 
 interface Props {
   messages: ConversationMessage[];
@@ -26,6 +27,7 @@ const Transcript = ({
   onAdd,
   onChanged,
 }: Props) => {
+  const canReview = useCan()("conversations.review");
   const listRef = useRef<HTMLDivElement>(null);
   const count = messages.length;
 
@@ -105,7 +107,7 @@ const Transcript = ({
               )}
               <ReviewTag review={message.review} />
             </Space>
-            {message.text && !isCommand(message.text) && (
+            {canReview && message.text && !isCommand(message.text) && (
               <Space size={0} className="conversations__actions">
                 {message.review?.status === "wrong" ? (
                   <Button type="link" size="small" onClick={() => review(message, "open")}>
