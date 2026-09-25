@@ -47,12 +47,9 @@ const getIntent = async (
   }
 };
 
+/** Throws on failure; the form shows the server's reason. */
 const createIntent = async (formValues: any) => {
-  try {
-    return await axios.post(`http://localhost:8000/intents/create`, formValues);
-  } catch (error) {
-    notification.error({ message: "Tạo mới không thành công!" });
-  }
+  return await axios.post(`http://localhost:8000/intents/create`, formValues);
 };
 
 const updateIntent = async (id: string, formValues: any) => {

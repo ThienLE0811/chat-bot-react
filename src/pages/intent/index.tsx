@@ -52,7 +52,7 @@ function Intent() {
 
   const columns = [
     {
-      title: "Tên",
+      title: "Mã ý định",
       dataIndex: "title",
       width: 120,
       render: (dom, entity) => {
@@ -70,7 +70,14 @@ function Intent() {
       },
     },
     {
-      title: "Mô tả",
+      title: "Tên tiếng Việt",
+      dataIndex: "description",
+      width: 200,
+      hideInSearch: true,
+      render: (_, record) => record?.description || "—",
+    },
+    {
+      title: "Câu mẫu",
       valueType: "treeSelect",
       // render: (text, record) => (
       //   <>
