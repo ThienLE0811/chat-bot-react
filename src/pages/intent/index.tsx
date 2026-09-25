@@ -37,6 +37,7 @@ import {
 } from "../../services/intentServices";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 
+import TagListCell from "../components/TagListCell";
 function Intent() {
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
@@ -78,22 +79,12 @@ function Intent() {
     },
     {
       title: "Câu mẫu",
-      valueType: "treeSelect",
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       text={record?.data.join(", ")}
-      //     />
-      //   </>
-      // ),
-      ellipsis: true,
+      width: 420,
       hideInSearch: true,
       dataIndex: "examples",
     },
     // {
+      render: (_, record) => <TagListCell items={record?.examples} />,
     //   title: "Ngày tạo",
     //   dataIndex: "createdAt",
     //   valueType: "date",

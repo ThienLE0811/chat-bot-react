@@ -19,12 +19,9 @@ const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
   }
 };
 
+/** Throws on failure; the form shows the server's reason. */
 const createNlu = async (formValues: any) => {
-  try {
-    return await axios.post(`http://localhost:8000/nlu/create`, formValues);
-  } catch (error) {
-    notification.error({ message: "Tạo mới không thành công!" });
-  }
+  return await axios.post(`http://localhost:8000/nlu/create`, formValues);
 };
 
 const updateNlu = async (id: string, formValues: any) => {

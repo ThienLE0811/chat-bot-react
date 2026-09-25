@@ -7,21 +7,14 @@ import {
   ProTable,
 } from "@ant-design/pro-components";
 import Home from "../Home/Home";
-import {
-  Button,
-  Drawer,
-  message,
-  notification,
-  Popconfirm,
-  Switch,
-  Tooltip,
-} from "antd";
+import { Button, Drawer, message, notification, Popconfirm, Switch, Tooltip } from "antd";
 import { useRef, useState } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 // import columnsEntitiesTable from "./components/columnsEntitiesTable";
 import { deleteEntities, getEntities } from "../../services/entitiesService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import ModalFormEntities from "./components/ModalFormEntities";
+import TagListCell from "../components/TagListCell";
 
 function Entities() {
   const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
@@ -56,31 +49,19 @@ function Entities() {
     {
       title: "Giá trị",
       dataIndex: "dataEntities",
-      valueType: "treeSelect",
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       // text={record?.data.join(", ")}
-      //       text={record?.dataEntities.join(", ")}
-      //     />
-      //   </>
-      // ),
+      width: 420,
+      render: (_, record) => <TagListCell items={record?.dataEntities} />,
     },
     {
       title: "Mô tả",
       render: (text, record) => (
-        <>
-          <ResponsesiveTextTable
-            maxWidth={300}
-            minWidth={150}
-            // text={text?.props?.children?.join(", ") || ""}
-            // text={record?.data.join(", ")}
-            text={record?.description}
-          />
-        </>
+        <ResponsesiveTextTable
+          maxWidth={300}
+          minWidth={150}
+          // text={text?.props?.children?.join(", ") || ""}
+          // text={record?.data.join(", ")}
+          text={record?.description}
+        />
       ),
       ellipsis: true,
       hideInSearch: true,
@@ -90,9 +71,7 @@ function Entities() {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
+      render: (text) => <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />,
       hideInSearch: true,
       fieldProps: {
         format: "DD/MM/YYYY",
@@ -101,9 +80,7 @@ function Entities() {
     {
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
-      ),
+      render: (text) => <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />,
       valueType: "date",
       fieldProps: {
         format: "DD/MM/YYYY",
@@ -190,8 +167,7 @@ function Entities() {
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} thực thể`,
+          showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} thực thể`,
         }}
         toolBarRender={() => [
           <Button

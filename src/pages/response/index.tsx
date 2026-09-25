@@ -24,6 +24,7 @@ import { deleteResponse, getResponse } from "../../services/responseService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import ModalFormResponse from "./components/ModalFormResponse";
 
+import TagListCell from "../components/TagListCell";
 function Response() {
   const [modalFormResponseVisible, setModalFormResponseVisible] =
     useState<boolean>(false);
@@ -92,18 +93,15 @@ function Response() {
       //     {console.log("log:: ", record?.data)}
       //   </>
       // ),
-      render: (text, record) => (
-        <>
-          {record?.data.map((value: any, index: number) => (
-            <Tag color={"green"} style={{ paddingRight: "10px" }} key={index}>
-              {value?.text}
-            </Tag>
-          ))}
-        </>
+      render: (_, record) => (
+        <TagListCell
+          color="green"
+          items={record?.data
+            ?.map((value: any) => value?.text)
+            .filter(Boolean)}
+        />
       ),
-      width: 250,
-      valueType: "",
-      ellipsis: true,
+      width: 420,
       hideInSearch: true,
       dataIndex: "data",
     },

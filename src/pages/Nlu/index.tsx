@@ -46,14 +46,13 @@ function Nlu() {
 
   const columns = [
     {
-      title: "Tên intent",
+      title: "Mã ý định",
       dataIndex: "intent",
       // width: 120,
       render: (dom, entity) => {
         return (
           <Link
             onClick={() => {
-              console.log("click");
               setCurrentRow(entity);
               setShowDetail(true);
             }}
@@ -64,7 +63,26 @@ function Nlu() {
       },
     },
     {
-      title: "Examples",
+      title: "Tên tiếng Việt",
+      dataIndex: "intentDescription",
+      hideInSearch: true,
+      render: (_, record) => record?.intentDescription || "—",
+    },
+    {
+      title: "Số câu mẫu",
+      dataIndex: "examples",
+      key: "exampleCount",
+      hideInSearch: true,
+      hideInDescriptions: true,
+      render: (_, record) => (
+        <ResponsesiveTextTable
+          minWidth={90}
+          text={record?.examples?.length ?? 0}
+        />
+      ),
+    },
+    {
+      title: "Câu mẫu",
       dataIndex: "examples",
       ellipsis: true,
       valueType: "treeSelect",
@@ -105,7 +123,7 @@ function Nlu() {
     },
     {
       title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
+      dataIndex: "updateAt",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
       ),
@@ -188,7 +206,7 @@ function Nlu() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        rowKey="_id"
         headerTitle="Danh sách NLU"
         search={{
           // labelWidth: 120,
@@ -218,7 +236,7 @@ function Nlu() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} thực thể`,
+            `${range[0]}-${range[1]} trên ${total} ý định`,
         }}
         toolBarRender={() => [
           <Button

@@ -20,10 +20,12 @@ import {
   ReviewItem,
   getConversationMessages,
   getConversations,
-  IntentOption,
-  getIntentOptions,
   getReviewQueue,
 } from "../../services/conversationsService";
+import {
+  IntentOption,
+  getIntentOptions,
+} from "../../services/intentServices";
 import AddToIntentModal from "./components/AddToIntentModal";
 import ReviewTable, { REVIEW_PAGE_SIZE } from "./components/ReviewTable";
 import Transcript from "./components/Transcript";
