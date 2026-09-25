@@ -5,7 +5,6 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Menu, MenuProps } from "antd";
-import { ItemType } from "antd/es/menu/hooks/useItems";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../hooks/redux";
 import { handleLogoutApi } from "../../../services/userService";

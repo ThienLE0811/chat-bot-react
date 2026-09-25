@@ -97,6 +97,7 @@ const PermissionPicker = ({ catalog, value = [], onChange, disabled }: Props) =>
                     <Typography.Text strong>{group.label}</Typography.Text>
                   </Checkbox>
                   <Tag
+                    bordered={false}
                     color={count > 0 ? "processing" : "default"}
                     style={{ marginInlineStart: "auto", marginInlineEnd: 0 }}
                   >
