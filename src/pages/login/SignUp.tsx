@@ -62,7 +62,7 @@ function SingUp() {
             //       textAlign: "center",
             //     }}
             //   >
-            //     Công ty cổ phần công nghệ AceSoft
+            //     Công ty cổ phần công nghệ
             //   </p>
             // </div>,
           ]}
