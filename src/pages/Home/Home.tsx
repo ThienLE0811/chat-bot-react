@@ -82,7 +82,7 @@ function Home() {
         // navTheme="light"
         // title={"Ace Bot"}
         // logo="/GoGroup-2.png"
-        logo="/logo.png"
+        logo="/logo.svg"
         logoStyle={{ width: 200 }}
         iconfontUrl="//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js"
         layout="mix"

@@ -42,7 +42,7 @@ function SingUp() {
     <div className="container">
       <div className="singup">
         <LoginForm
-          logo="/logo.png"
+          logo="/logo.svg"
           title="AceBot"
           subTitle="Nền tảng xây dựng chat bot"
           submitter={{

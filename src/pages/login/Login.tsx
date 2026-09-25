@@ -85,7 +85,7 @@ function Login() {
     <div className="container">
       <div className="login">
         <LoginForm
-          logo="/logo.png"
+          logo="/logo.svg"
           title="AceBot"
           subTitle="Nền tảng xây dựng chat bot"
           submitter={{
