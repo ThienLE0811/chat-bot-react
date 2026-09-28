@@ -45,7 +45,8 @@ export const updateStoriesData = createAsyncThunk<StoriesData, any>(
     try {
       const res = await updateStories(formValues?.id, formValues?.data);
       if (res?.data?.statusCode === 200) {
-        notification.success({ message: "Cập nhật thành công" });
+        // A toast, not a notification: it would cover the drawer's buttons.
+        message.success("Cập nhật thành công");
         return Promise.resolve(res?.data?.Stories);
       } else {
         notification.error({ message: "Cập nhật không thành công" });

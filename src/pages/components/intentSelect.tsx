@@ -3,7 +3,7 @@ import { DefaultOptionType } from "antd/es/select";
 import { IntentOption } from "../../services/intentServices";
 
 /** Lowercase without Vietnamese diacritics, so "hoi ten" finds "Hỏi tên". */
-function searchKey(text: string): string {
+export function searchKey(text: string): string {
   return text
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
