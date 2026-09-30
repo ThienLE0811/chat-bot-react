@@ -5,8 +5,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import viVN from "antd/lib/locale/vi_VN";
+import { setupApiEnvelope } from "./lib/apiEnvelope";
 import { setupAxiosAuth } from "./lib/auth";
 
+setupApiEnvelope();
 setupAxiosAuth();
 
 const root = ReactDOM.createRoot(

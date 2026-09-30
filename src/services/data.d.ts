@@ -1,39 +1,17 @@
+/** `data` của POST /auth/login (sau khi bóc envelope { status, data }). */
 export interface LoginResponseSuccessData {
-  /**
-   * token user
-   * @type {string}
-   * @memberof LoginResponseSuccessData
-   */
+  /** JWT gửi kèm header Authorization. */
   accessToken?: string;
-  /**
-   * userId của người dùng
-   * @type {string}
-   * @memberof LoginResponseSuccessData
-   */
-  userId?: string;
-  /**
-   * Refresh token
-   * @type {string}
-   * @memberof LoginResponseSuccessData
-   */
- 
-  /**
-   *
-   * @type {string}
-   * @memberof LoginResponseSuccessData
-   */
-  tokenType?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof LoginResponseSuccessData
-   */
-  expires?: number;
   userInfo?: {
-    userRoleName: string;
-    
+    _id: string;
+    userName: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    roleCode?: string;
+    createdAt?: string;
+    updateAt?: string;
   };
-  token?: string
 }
 
 export interface PostsInfo {}

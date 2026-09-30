@@ -37,7 +37,7 @@ function Login() {
     const { userName, password } = values;
     try {
       const response = await handleLoginApi(userName, password);
-      const loginData: LoginResponseSuccessData = response.data?.data;
+      const loginData: LoginResponseSuccessData = response.data;
       saveCredentialCookie(loginData);
       const me = await getMe();
       dispatch(setAccountInfo(me.user));

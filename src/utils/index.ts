@@ -22,12 +22,8 @@ export const newStructureRoutesProLayout = (
 
   
   export const saveCredentialCookie = (
-  data:any) => {
-  Cookies.set("refreshToken", data?.token?.refreshToken || "", {
-    expires: 3000,
-  });
-
-  Cookies.set("access_token", data?.token?.access_token?.token || "", {
+  data: LoginResponseSuccessData) => {
+  Cookies.set("access_token", data?.accessToken || "", {
     expires: 3000,
   });
 
