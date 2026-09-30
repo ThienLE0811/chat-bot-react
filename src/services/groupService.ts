@@ -1,52 +1,76 @@
 import { notification } from "antd";
-import axios from "axios"
+import axios from "axios";
+import { API_URL } from "./trainService";
 
+export interface PermissionModule {
+  module: string;
+  label: string;
+  description: string;
+  permissions: { key: string; label: string }[];
+}
 
-// const getPermission = async () => {
-//   return await axios.get("http://localhost:8000/roleService/role/getList", {})
-// };
+export interface Role {
+  _id: string;
+  code: string;
+  name: string;
+  description?: string;
+  permissions: string[];
+  isSystem: boolean;
+  userCount: number;
+}
 
+export interface RoleInput {
+  code?: string;
+  name: string;
+  description?: string;
+  permissions: string[];
+}
 
-const getPermission = async (): Promise<any> => {
+/** Nhóm quyền, trả nguyên response cho ProTable. */
+const getRoles = async (): Promise<any> => {
   try {
-    const response = await axios.get("http://localhost:8000/roleService/role/getList", {});
-    if(response?.statusText === "OK"){
-      
-      return Promise.resolve(response);
-    }
-    else {
-      notification.error({message: "Không lấy được dữ liệu"})
-      return Promise.reject()
-    }
+    return await axios.get<Role[]>(`${API_URL}/roles`);
   } catch (error) {
-   notification.error({message: "Không lấy được dữ liệu"})
-    return Promise.reject()
+    notification.error({ message: "Không lấy được danh sách nhóm quyền" });
+    return Promise.reject(error);
   }
 };
 
-// const deletePermission = async (userId:number) => {
-//   return await axios.delete(`http://localhost:8000/users/delete/${userId}`, {})
-// };
-
-// const createUser = async (formValues:any) => {
-//   return await axios.post(`http://localhost:8000/users/create`,formValues)
-// };
-
-const updatePermission = async (id:string,formValues:any) => {
-  return await axios.put(`http://localhost:8000/roleService/role/update/${id}`,formValues)
+/** Danh mục quyền theo module, để dựng các ô chọn quyền. */
+const getPermissionCatalog = async (): Promise<PermissionModule[]> => {
+  const response = await axios.get<PermissionModule[]>(
+    `${API_URL}/roles/permissions`
+  );
+  return response.data;
 };
 
-const getPermissionRole:any = async () => {
-  const response =  await axios.get("http://localhost:8000/roleService/role/getList", {})
-  const roles = response.data.map((item:any) => {
-          return { label: item?.description, value: item?.roleType };
-        })
-  // console.log("res::",roles); // [{label: "Admin", value:"Admin" }, {label: "User", value:"User" }]
-  return roles
+const createRole = async (values: RoleInput) => {
+  return await axios.post<Role>(`${API_URL}/roles`, values);
 };
 
+const updateRole = async (id: string, values: RoleInput) => {
+  const { code, ...rest } = values;
+  return await axios.put<Role>(`${API_URL}/roles/${id}`, rest);
+};
 
+const deleteRole = async (id: string) => {
+  return await axios.delete(`${API_URL}/roles/${id}`);
+};
 
-export { getPermission, updatePermission,getPermissionRole }
+/** Lựa chọn nhóm quyền cho form người dùng. */
+const getRoleOptions = async () => {
+  const response = await axios.get<Role[]>(`${API_URL}/roles`);
+  return response.data.map((role) => ({
+    label: `${role.name} (${role.code})`,
+    value: role.code,
+  }));
+};
 
-
+export {
+  getRoles,
+  getPermissionCatalog,
+  createRole,
+  updateRole,
+  deleteRole,
+  getRoleOptions,
+};

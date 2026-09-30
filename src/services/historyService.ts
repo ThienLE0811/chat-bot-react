@@ -1,14 +1,15 @@
 import axios from "axios";
+import { API_URL } from "./trainService";
 import { message, notification } from "antd";
 
 const getHistory = async (): Promise<any> => {
   try {
     const response = await axios.get(
-      "http://localhost:8000/history/getList",
+      `${API_URL}/history/getList`,
       {}
     );
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });

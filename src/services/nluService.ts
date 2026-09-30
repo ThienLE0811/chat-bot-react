@@ -1,28 +1,14 @@
-import { message, notification } from "antd";
+import { notification } from "antd";
 import axios from "axios";
-
-// const getEntities = async () => {
-//     const response = await axios.get("http://localhost:8000/entities/getList", {});
-//     console.log("res:: ",response)
-//     if(response.statusText === "OK"){
-//       return response;
-//     }
-//     else {
-//       message.error("Không lấy được dữ liệu")
-//       return response
-//     }
-
-// };
+import { API_URL } from "./trainService";
 
 const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
-  console.log("params:: ", params);
-  console.log("filter:: ", filters);
   try {
-    const response = await axios.get("http://localhost:8000/nlu/getList", {
+    const response = await axios.get(`${API_URL}/nlu/getList`, {
       params: { filters: params.intent },
     });
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });
@@ -34,30 +20,27 @@ const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
   }
 };
 
+/** Throws on failure; the form shows the server's reason. */
 const createNlu = async (formValues: any) => {
-  try {
-    return await axios.post(`http://localhost:8000/nlu/create`, formValues);
-  } catch (error) {
-    notification.error({ message: "Tạo mới không thành công!" });
-  }
+  return await axios.post(`${API_URL}/nlu/create`, formValues);
 };
 
 const updateNlu = async (id: string, formValues: any) => {
-  return await axios.put(`http://localhost:8000/nlu/update/${id}`, formValues);
+  return await axios.put(`${API_URL}/nlu/update/${id}`, formValues);
 };
 
 const deleteNlu = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/nlu/delete/${id}`, {});
+  return await axios.delete(`${API_URL}/nlu/delete/${id}`, {});
 };
 
 const getListIntent = async (): Promise<any> => {
   try {
     const response = await axios.get(
-      "http://localhost:8000/intents/getList",
+      `${API_URL}/intents/getList`,
       {}
     );
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       const roles = response.data.map((item: any) => {
         return { label: item?.title, value: item?.title };
       });

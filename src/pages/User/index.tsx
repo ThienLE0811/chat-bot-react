@@ -14,7 +14,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import columnsUserTable from "./components/columnsUserTable";
 import { deleteUser, getUser } from "../../services/userService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
-import { useAppSelector } from "../../hooks/redux";
+import { errorMessage, useCan } from "../../lib/auth";
 
 function User() {
   const [modalFormUserVisible, setModalFormUserVisible] =
@@ -26,8 +26,7 @@ function User() {
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const [loadCheck, setLoadCheck] = useState({});
-  const { accountInfo } = useAppSelector((state) => state.account);
-  console.log("accountInfo:: ", accountInfo);
+  const canWrite = useCan()("users.write");
 
   const columns = [
     {
@@ -68,28 +67,16 @@ function User() {
       renderText: (text, record) => `${record?.firstName} ${record?.lastName}`,
     },
     {
-      title: "Nhóm",
+      title: "Nhóm quyền",
       renderText: (text, record) => (
         <ResponsesiveTextTable
           maxWidth={200}
           minWidth={40}
-          text={record?.userGroup}
+          text={record?.roleName}
         />
       ),
       ellipsis: true,
-      debounceTime: 800,
-      fieldProps: {
-        showSearch: true,
-      },
-      formItemProps: {},
-      //   request: async ({ keyWords }) =>
-      //     (
-      //       await api.group.getListGroup({ params: { keyword: keyWords } })
-      //     ).data?.map((value: any) => ({
-      //       label: value?.grpName,
-      //       value: value?.grpCode,
-      //     })),
-      dataIndex: "userGroup",
+      dataIndex: "roleName",
     },
     // {
     //   title: 'Domain name',
@@ -133,7 +120,7 @@ function User() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={accountInfo?.USER_MANAGEMENT.UPDATE_USER ? false : true}
+            disabled={!canWrite}
             onClick={() => {
               !currentRow?.usrUid && setCurrentRow(record);
               setModalFormUserVisible(true);
@@ -143,22 +130,20 @@ function User() {
         <Popconfirm
           title="Xóa nguời dùng"
           key={"2"}
+          disabled={!canWrite}
           onConfirm={async () => {
-            const res = await deleteUser(record?._id);
-            console.log("res:: ", res);
-            if (res?.data?.statusCode === 200) {
+            try {
+              await deleteUser(record?._id);
               actionRef.current?.reload();
               message.success("Xóa người dùng thành công");
-            } else {
-              message.error("Xóa người dùng không thành công");
+            } catch (error: any) {
+              if (error?.response?.status !== 403) {
+                message.error(errorMessage(error, "Xóa người dùng không thành công"));
+              }
             }
           }}
         >
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
-          />
+          <Button icon={<DeleteOutlined />} danger disabled={!canWrite} />
         </Popconfirm>,
       ],
     },
@@ -176,7 +161,7 @@ function User() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        rowKey="_id"
         headerTitle="Danh sách người dùng"
         // search={{
         //   labelWidth: 120,
@@ -213,7 +198,7 @@ function User() {
             onClick={() => {
               setModalFormUserVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo người dùng
           </Button>,

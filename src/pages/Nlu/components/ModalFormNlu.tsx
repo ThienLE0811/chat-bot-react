@@ -1,43 +1,18 @@
-import { debounce } from "lodash";
-import {
-  ActionType,
-  ProFormInstance,
-  ProFormItem,
-} from "@ant-design/pro-components";
 import {
   ModalForm,
-  ProForm,
-  ProFormGroup,
+  ProFormInstance,
   ProFormSelect,
-  ProFormText,
-  ProFormTextArea,
 } from "@ant-design/pro-components";
+import { Col, notification, Row } from "antd";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Badge,
-  Button,
-  Col,
-  Input,
-  message,
-  notification,
-  Row,
-  Tooltip,
-} from "antd";
-import React, { useRef, useState } from "react";
-import {
-  createNlu,
-  getListIntent,
-  updateNlu,
-} from "../../../services/nluService";
+  IntentOption,
+  getIntentOptions,
+} from "../../../services/intentServices";
+import { createNlu, updateNlu } from "../../../services/nluService";
+import { intentSelectProps } from "../../components/intentSelect";
 
-export type FormValueType = {
-  target?: string;
-  template?: string;
-  type?: string;
-  time?: string;
-  frequency?: string;
-} & Partial<any>;
-
-export type ModalFormUserProps = {
+export type ModalFormNluProps = {
   visible: boolean;
   initiateData?: any;
   onSuccess?: () => void;
@@ -45,41 +20,52 @@ export type ModalFormUserProps = {
   onVisibleChange: (visible: boolean) => void;
 };
 
-const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
+/**
+ * Creates or edits the examples of one intent. The server trims them, drops
+ * blanks and repeats, and refuses an example another intent already has.
+ */
+const ModalFormNlu: React.FC<ModalFormNluProps> = (props) => {
   const { visible, onVisibleChange, initiateData, onSuccess, onFailure } =
     props;
-  console.log("init:: ", initiateData);
-  // const delayedGetListIntent = debounce(getListIntent, 3000);
-  const actionRef = useRef<ActionType>();
-  const restFormRef = useRef<ProFormInstance>();
+  const formRef = useRef<ProFormInstance>();
+  const [intents, setIntents] = useState<IntentOption[]>([]);
+  const selectProps = useMemo(() => intentSelectProps(intents), [intents]);
+
+  useEffect(() => {
+    if (!visible) return;
+    getIntentOptions()
+      .then(setIntents)
+      .catch((error) => notification.error({ message: error.message }));
+  }, [visible]);
+
   const handleSubmit = async (formValues: any) => {
-    console.log("value::: ", formValues);
-    const trimmedData = {
-      intent: formValues.intent,
-      examples: formValues.examples.map((item: string) => item.trim()),
-    };
+    const values = { intent: formValues.intent, examples: formValues.examples };
     try {
       const res: any = initiateData?._id
-        ? await updateNlu(initiateData?._id, trimmedData)
-        : await createNlu(trimmedData);
+        ? await updateNlu(initiateData?._id, values)
+        : await createNlu(values);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
-        actionRef.current?.reload();
         notification.success({
           message: initiateData?._id
             ? "Cập nhật thành công"
             : "Tạo mới thành công",
         });
-        return Promise.resolve();
-      } else {
-        notification.error({ message: "Thao tác không thành công" });
-        onFailure?.(res);
-        return Promise.reject();
+        return true;
       }
-    } catch (error) {
-      notification.error({ message: "Ý định đã được sử dụng!" });
-      console.log(error);
+      notification.error({ message: "Thao tác không thành công" });
+      onFailure?.(res);
+      return false;
+    } catch (error: any) {
+      // e.g. the intent already has a list, or an example belongs to another.
+      const reason = error?.response?.data?.message;
+      notification.error({
+        message: "Thao tác không thành công",
+        description: Array.isArray(reason) ? reason.join(". ") : reason,
+      });
+      onFailure?.(error);
+      return false;
     }
   };
 
@@ -91,50 +77,31 @@ const ModalFormNlu: React.FC<ModalFormUserProps> = (props) => {
         destroyOnClose: true,
         okText: "Xác nhận",
       }}
-      className="modal-form-user"
-      formRef={restFormRef}
+      formRef={formRef}
       onFinish={handleSubmit}
       onVisibleChange={onVisibleChange}
-      title={initiateData?._id ? "Cập nhật Nlu" : "Tạo mới Nlu"}
+      title={initiateData?._id ? "Cập nhật câu mẫu" : "Tạo mới câu mẫu"}
     >
       <Row gutter={16}>
-        {/* <Col span={16}>
-          <ProFormText
-            label="Tên intent"
-            required
-            name="intent"
-            rules={[
-              {
-                max: 100,
-                message: "Vui lòng không nhập quá 100 kí tự hoặc để trống",
-                required: true,
-              },
-            ]}
-          />
-        </Col> */}
-        <Col span={16}>
+        <Col span={24}>
           <ProFormSelect
-            label="Tên intent"
+            label="Ý định"
             name="intent"
-            showSearch
-            initialValue={initiateData?.userRoleName}
-            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
-            // request={async () => delayedGetListIntent()}
-            request={async () => getListIntent()}
+            placeholder="Tìm theo tên tiếng Việt hoặc mã ý định"
+            rules={[{ required: true, message: "Vui lòng chọn ý định" }]}
+            fieldProps={selectProps}
           />
         </Col>
         <Col span={24}>
           <ProFormSelect
-            label="Examples"
+            label="Câu mẫu"
             name="examples"
-            required
             mode="tags"
-            rules={[
-              {
-                message: "Vui lòng không để trống",
-                required: true,
-              },
-            ]}
+            tooltip="Những câu người dùng hay nói cho ý định này, bot học từ đây khi train. Gõ một câu rồi bấm Enter. Nên có 8–15 câu."
+            placeholder="Ví dụ: mấy giờ bên bạn mở cửa"
+            fieldProps={{ tokenSeparators: ["\n"], open: false }}
+            extra="Đánh dấu thực thể bằng [giá trị](tên_thực_thể), ví dụ: tên mình là [Thiện](customer_name)"
+            rules={[{ required: true, message: "Vui lòng nhập câu mẫu" }]}
           />
         </Col>
       </Row>

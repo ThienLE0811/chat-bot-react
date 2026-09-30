@@ -2,98 +2,86 @@ import {
   ActionType,
   PageContainer,
   ProColumns,
-  ProDescriptions,
-  ProDescriptionsItemProps,
   ProTable,
 } from "@ant-design/pro-components";
-import Home from "../Home/Home";
-import { Button, Drawer, message, Popconfirm, Tooltip } from "antd";
-import ModalFormUser from "./components/ModalFormGroup";
-import { useRef, useState } from "react";
-import {
-  ControlOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { deleteUser, getUser } from "../../services/userService";
+import { Button, Popconfirm, Space, Tag, Tooltip, message } from "antd";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import ModalFormGroup from "./components/ModalFormGroup";
-import { getPermission } from "../../services/groupService";
-import { useAppSelector } from "../../hooks/redux";
+import {
+  PermissionModule,
+  Role,
+  deleteRole,
+  getPermissionCatalog,
+  getRoles,
+} from "../../services/groupService";
+import { errorMessage, useCan } from "../../lib/auth";
 
 function Group() {
-  const [modalFormUserVisible, setModalFormUserVisible] =
-    useState<boolean>(false);
-  const [currentRow, setCurrentRow] = useState<any>();
-  // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
-  //   []
-  // );
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [currentRow, setCurrentRow] = useState<Role>();
+  const [catalog, setCatalog] = useState<PermissionModule[]>([]);
   const actionRef = useRef<ActionType>();
-  const [loadCheck, setLoadCheck] = useState({});
-  const { accountInfo } = useAppSelector((state) => state.account);
+  const canWrite = useCan()("roles.write");
+
+  useEffect(() => {
+    getPermissionCatalog()
+      .then(setCatalog)
+      .catch(() => message.error("Không lấy được danh mục quyền"));
+  }, []);
+
+  // "Thiết kế hội thoại: Xem, Thêm, sửa, xóa" cho từng module nhóm có quyền.
+  const summarize = useMemo(
+    () => (permissions: string[]) =>
+      catalog
+        .map((group) => ({
+          label: group.label,
+          granted: group.permissions.filter((p) => permissions.includes(p.key)),
+        }))
+        .filter((group) => group.granted.length > 0)
+        .map((group) => (
+          <Tag key={group.label} style={{ marginBottom: 4 }}>
+            {group.label}: {group.granted.map((p) => p.label).join(", ")}
+          </Tag>
+        )),
+    [catalog]
+  );
 
   const columns = [
     {
       title: "Tên nhóm",
       dataIndex: "name",
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
-    },
-    // {
-    //   title: "Trạng thái",
-    //   dataIndex: "usrStatus",
-    //   valueType: "select",
-    //   initialValue: "ACTIVE",
-    //   valueEnum: {
-    //     ACTIVE: { text: <Badge status="success" text="Hoạt động" /> },
-    //     INACTIVE: { text: <Badge status="error" text="Không hoạt động" /> },
-    //   },
-    // },
-    {
-      title: "Code nhóm",
-      dataIndex: "roleType",
+      width: 160,
     },
     {
-      title: "Nhóm",
-      dataIndex: "description",
-      hideInSearch: true,
-      renderText: (text, record) => `${record?.description}`,
-    },
-    {
-      title: "Số lượng người dùng",
-      renderText: (text, record) => (
-        <ResponsesiveTextTable
-          maxWidth={200}
-          minWidth={100}
-          text={record?.user}
-        />
+      title: "Mã nhóm",
+      dataIndex: "code",
+      width: 120,
+      render: (_, record) => (
+        <Space size={4}>
+          {record.code}
+          {record.isSystem && <Tag color="green">Hệ thống</Tag>}
+        </Space>
       ),
-      ellipsis: true,
-      debounceTime: 800,
-      fieldProps: {
-        showSearch: true,
-      },
-      formItemProps: {},
-      //   request: async ({ keyWords }) =>
-      //     (
-      //       await api.group.getListGroup({ params: { keyword: keyWords } })
-      //     ).data?.map((value: any) => ({
-      //       label: value?.grpName,
-      //       value: value?.grpCode,
-      //     })),
+    },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      render: (text) => (
+        <ResponsesiveTextTable maxWidth={240} minWidth={100} text={text} />
+      ),
+    },
+    {
+      title: "Quyền",
+      dataIndex: "permissions",
+      render: (_, record) =>
+        record.permissions.length ? summarize(record.permissions) : "Không có quyền",
+    },
+    {
+      title: "Số người dùng",
       dataIndex: "userCount",
+      width: 110,
     },
     {
       title: "Hành động",
@@ -102,32 +90,51 @@ function Group() {
       fixed: "right",
       width: 100,
       render: (_, record) => [
-        <Tooltip title="Sửa thông tin" key={"1"}>
+        <Tooltip title="Sửa nhóm" key="edit">
           <Button
             icon={<EditOutlined />}
-            disabled={
-              accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
-            }
+            disabled={!canWrite}
             onClick={() => {
-              !currentRow?._id && setCurrentRow(record);
-              setModalFormUserVisible(true);
+              setCurrentRow(record);
+              setModalVisible(true);
             }}
           />
         </Tooltip>,
-        // <Tooltip title="Phân quyền" key={"2"}>
-        //   <Button
-        //     icon={<ControlOutlined />}
-        //     disabled={
-        //       accountInfo?.userRole?.PERMISSION_MANAGEMENT ? false : true
-        //     }
-        //     onClick={() => {
-        //       !currentRow?._id && setModalFormUserVisible(true);
-        //     }}
-        //   />
-        // </Tooltip>,
+        <Popconfirm
+          key="delete"
+          title={`Xóa nhóm ${record.code}?`}
+          disabled={!canWrite || record.isSystem}
+          onConfirm={async () => {
+            try {
+              await deleteRole(record._id);
+              message.success("Xóa nhóm thành công");
+              actionRef.current?.reload();
+            } catch (error: any) {
+              if (error?.response?.status !== 403) {
+                message.error(errorMessage(error, "Xóa nhóm không thành công"));
+              }
+            }
+          }}
+        >
+          <Tooltip
+            title={
+              record.isSystem
+                ? "Không xóa được nhóm hệ thống"
+                : record.userCount > 0
+                ? "Chuyển người dùng sang nhóm khác trước khi xóa"
+                : "Xóa nhóm"
+            }
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              danger
+              disabled={!canWrite || record.isSystem || record.userCount > 0}
+            />
+          </Tooltip>
+        </Popconfirm>,
       ],
     },
-  ] as ProColumns<any>[];
+  ] as ProColumns<Role>[];
 
   return (
     <PageContainer
@@ -138,25 +145,13 @@ function Group() {
         paddingBlock: 4,
       }}
     >
-      <ProTable
+      <ProTable<Role>
         actionRef={actionRef}
-        // formRef={formRef}
-        rowKey="usrUid"
-        headerTitle="Danh sách nhóm"
-        // search={{
-        //   labelWidth: 120,
-        // }}
-
+        rowKey="_id"
+        headerTitle="Danh sách nhóm quyền"
         search={false}
         scroll={{ x: "max-content", y: "calc(100vh - 260px)" }}
-        options={{
-          search: {
-            placeholder: "Nhập từ khoá để tìm kiếm...",
-            style: { width: 300 },
-          },
-          density: false,
-          setting: false,
-        }}
+        options={{ density: false, setting: false }}
         size="small"
         cardProps={{
           bodyStyle: {
@@ -169,73 +164,35 @@ function Group() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} người dùng`,
+            `${range[0]}-${range[1]} trên ${total} nhóm`,
         }}
-        // toolBarRender={() => [
-        //   <Button
-        //     type="primary"
-        //     key="primary"
-        //     danger
-        //     onClick={() => {
-        //       setModalFormUserVisible(true);
-        //     }}
-        //     // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
-        //   >
-        //     <PlusOutlined /> Tạo người dùng
-        //   </Button>,
-        // ]}
-        request={() => getPermission()}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="create"
+            danger
+            disabled={!canWrite}
+            onClick={() => {
+              setCurrentRow(undefined);
+              setModalVisible(true);
+            }}
+          >
+            <PlusOutlined /> Tạo nhóm
+          </Button>,
+        ]}
+        request={() => getRoles()}
         columns={columns}
-        // columns={access?.["USER_MANAGEMENT.GET_USERS"] && columnsUserTable()}
-        // rowSelection={{
-        //   onChange: (_, selectedRows) => {
-        //     setSelectedRows(selectedRows);
-        //   },
-        // }}
       />
       <ModalFormGroup
-        visible={modalFormUserVisible}
+        visible={modalVisible}
         initiateData={currentRow}
+        catalog={catalog}
         onVisibleChange={(visible: boolean) => {
-          if (!visible && !showDetail) setCurrentRow(undefined);
-          setModalFormUserVisible(visible);
+          if (!visible) setCurrentRow(undefined);
+          setModalVisible(visible);
         }}
         onSuccess={() => actionRef.current?.reload()}
       />
-      <Drawer
-        width={"60%"}
-        open={showDetail}
-        onClose={() => {
-          setShowDetail(false);
-        }}
-        afterOpenChange={(open) => {
-          if (open) {
-            // fetchUserInfo(currentRow?.usrUid);
-          } else {
-            setCurrentRow(undefined);
-          }
-        }}
-        closable={false}
-      >
-        {/* {currentRow?.usrUid && ( */}
-        <ProDescriptions<any>
-          column={{ xl: 3 }}
-          // loading={loadingUserInfo}
-          title={`${currentRow?.lastname} ${currentRow?.firstname}`}
-          dataSource={currentRow}
-          // request={async () => ({
-          //   data: userInfo || {},
-          // })}
-          params={{
-            id: currentRow?._id,
-          }}
-          columns={columns as ProDescriptionsItemProps<any>[]}
-        />
-        {/* )} */}
-        {/* {currentRow?.grpUid && (
-          <DetailPermission groupId={currentRow?.grpUid} />
-        )} */}
-      </Drawer>
     </PageContainer>
   );
 }

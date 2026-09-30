@@ -6,7 +6,7 @@ const MenuFooterHeader: React.FC = () => {
         paddingBlockStart: 12,
       }}
     >
-      <div>Hệ thống Xây dựng chat bot AceSoft</div>
+      <div>Hệ thống Xây dựng chat bot</div>
     </div>
   );
 };

@@ -23,7 +23,6 @@ import {
 import React, { useRef, useState } from "react";
 import { useAppDispatch } from "../../../hooks/redux";
 import { setCurrentParse } from "../../../redux/slices/account";
-import { getPermissionRole } from "../../../services/groupService";
 import { parseMessage } from "../../../services/trainService";
 import {
   createUser,

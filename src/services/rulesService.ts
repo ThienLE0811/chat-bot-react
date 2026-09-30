@@ -1,25 +1,12 @@
-import { message, notification } from "antd";
+import { notification } from "antd";
 import axios from "axios";
-
-// const getEntities = async () => {
-//     const response = await axios.get("http://localhost:8000/entities/getList", {});
-//     console.log("res:: ",response)
-//     if(response.statusText === "OK"){
-//       return response;
-//     }
-//     else {
-//       message.error("Không lấy được dữ liệu")
-//       return response
-//     }
-
-// };
+import { API_URL } from "./trainService";
 
 const getRules = async (): Promise<any> => {
-  console.log("log:: ", process.env);
   try {
-    const response = await axios.get(`http://localhost:8000/rules/getList`, {});
+    const response = await axios.get(`${API_URL}/rules/getList`, {});
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });
@@ -32,18 +19,18 @@ const getRules = async (): Promise<any> => {
 };
 
 const createRules = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/rules/create`, formValues);
+  return await axios.post(`${API_URL}/rules/create`, formValues);
 };
 
 const updateRules = async (id: string, formValues: any) => {
   return await axios.put(
-    `http://localhost:8000/rules/update/${id}`,
+    `${API_URL}/rules/update/${id}`,
     formValues
   );
 };
 
 const deleteRules = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/rules/delete/${id}`, {});
+  return await axios.delete(`${API_URL}/rules/delete/${id}`, {});
 };
 
 export { getRules, updateRules, deleteRules, createRules };

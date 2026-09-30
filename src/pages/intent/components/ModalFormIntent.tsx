@@ -69,8 +69,15 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         onFailure?.(res);
         return Promise.reject();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      // e.g. the code is taken, or an example already belongs to another intent.
+      const reason = error?.response?.data?.message;
+      notification.error({
+        message: "Thao tác không thành công",
+        description: Array.isArray(reason) ? reason.join(". ") : reason,
+      });
+      onFailure?.(error);
+      return Promise.reject();
     }
   };
 
@@ -91,7 +98,8 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
       <Row gutter={16}>
         <Col span={16}>
           <ProFormText
-            label="Tên"
+            label="Mã ý định"
+            tooltip="Mã Rasa dùng để train, ví dụ ask_user_name"
             required
             name="title"
             rules={[
@@ -100,6 +108,21 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
                 message: "Vui lòng không nhập quá 100 kí tự hoặc để trống",
                 required: true,
               },
+              {
+                pattern: /^[A-Za-z0-9_]+$/,
+                message: 'Mã ý định chỉ gồm chữ không dấu, số và "_"',
+              },
+            ]}
+          />
+        </Col>
+        <Col span={24}>
+          <ProFormText
+            label="Tên tiếng Việt"
+            tooltip="Tên dễ hiểu hiển thị cho người dùng khi chọn ý định"
+            name="description"
+            placeholder="Ví dụ: Hỏi giờ làm việc"
+            rules={[
+              { max: 200, message: "Vui lòng không nhập quá 200 kí tự" },
             ]}
           />
         </Col>
@@ -119,17 +142,13 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         </Col> */}
         <Col span={24}>
           <ProFormSelect
-            label="Nội dung"
+            label="Câu mẫu"
             name="examples"
-            // required
             mode="tags"
-            // rules={[
-            //   {
-            //     max: 500,
-            //     message: "Vui lòng không nhập quá 500 kí tự hoặc để trống",
-            //     required: true,
-            //   },
-            // ]}
+            tooltip="Những câu người dùng hay nói cho ý định này, bot học từ đây khi train. Gõ một câu rồi bấm Enter. Nên có 8–15 câu."
+            placeholder="Ví dụ: mấy giờ bên bạn mở cửa"
+            fieldProps={{ tokenSeparators: ["\n"], open: false }}
+            extra="Đánh dấu thực thể bằng [giá trị](tên_thực_thể), ví dụ: tên mình là [Thiện](customer_name)"
           />
         </Col>
       </Row>

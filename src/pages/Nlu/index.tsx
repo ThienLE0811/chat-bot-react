@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -33,6 +34,7 @@ import ModalFormNlu from "./components/ModalFormNlu";
 import Link from "antd/es/typography/Link";
 
 function Nlu() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -46,14 +48,13 @@ function Nlu() {
 
   const columns = [
     {
-      title: "Tên intent",
+      title: "Mã ý định",
       dataIndex: "intent",
       // width: 120,
       render: (dom, entity) => {
         return (
           <Link
             onClick={() => {
-              console.log("click");
               setCurrentRow(entity);
               setShowDetail(true);
             }}
@@ -64,7 +65,26 @@ function Nlu() {
       },
     },
     {
-      title: "Examples",
+      title: "Tên tiếng Việt",
+      dataIndex: "intentDescription",
+      hideInSearch: true,
+      render: (_, record) => record?.intentDescription || "—",
+    },
+    {
+      title: "Số câu mẫu",
+      dataIndex: "examples",
+      key: "exampleCount",
+      hideInSearch: true,
+      hideInDescriptions: true,
+      render: (_, record) => (
+        <ResponsesiveTextTable
+          minWidth={90}
+          text={record?.examples?.length ?? 0}
+        />
+      ),
+    },
+    {
+      title: "Câu mẫu",
       dataIndex: "examples",
       ellipsis: true,
       valueType: "treeSelect",
@@ -105,7 +125,7 @@ function Nlu() {
     },
     {
       title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
+      dataIndex: "updateAt",
       render: (text) => (
         <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
       ),
@@ -137,7 +157,7 @@ function Nlu() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
             key={2}
             onClick={() => {
               setCurrentRow(record);
@@ -146,6 +166,7 @@ function Nlu() {
           />
         </Tooltip>,
         <Popconfirm
+          disabled={!canWrite}
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
@@ -163,7 +184,7 @@ function Nlu() {
             danger
             key={3}
             style={{ display: hiddenView ? "none" : "" }}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
           />
         </Popconfirm>,
       ],
@@ -188,7 +209,7 @@ function Nlu() {
       <ProTable
         actionRef={actionRef}
         // formRef={formRef}
-        rowKey="usrUid"
+        rowKey="_id"
         headerTitle="Danh sách NLU"
         search={{
           // labelWidth: 120,
@@ -218,7 +239,7 @@ function Nlu() {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} thực thể`,
+            `${range[0]}-${range[1]} trên ${total} ý định`,
         }}
         toolBarRender={() => [
           <Button
@@ -228,7 +249,7 @@ function Nlu() {
             onClick={() => {
               setModalFormEntitiesVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo mới
           </Button>,

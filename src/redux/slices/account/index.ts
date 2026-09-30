@@ -2,9 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { message, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { IResponseFetchData, AccountState } from "./data";
+import { storedPermissions } from "../../../lib/auth";
 
 const initialState: AccountState = {
   accountInfo: {},
+  permissions: storedPermissions(),
   dataModel: {},
   storiesData: {},
   train: false,
@@ -21,6 +23,9 @@ const accountSlice = createSlice({
   reducers: {
     setAccountInfo(state, action) {
       state.accountInfo = action.payload;
+    },
+    setPermissions(state, action: PayloadAction<string[]>) {
+      state.permissions = action.payload;
     },
     setDataModel(state, action) {
       state.dataModel = action.payload;
@@ -72,6 +77,7 @@ const accountSlice = createSlice({
 const { actions, reducer } = accountSlice;
 export const {
   setAccountInfo,
+  setPermissions,
   setDataModel,
   setStoriesData,
   setTrain,

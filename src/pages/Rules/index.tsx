@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -40,6 +41,7 @@ import ResponsesiveTextTable from "../components/ResponsiveTextTable";
 import Link from "antd/es/typography/Link";
 
 function Rules() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -127,7 +129,7 @@ function Rules() {
               onClick={() => {
                 setModalForm(true);
               }}
-              // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+              disabled={!canWrite}
             >
               <PlusOutlined /> Tạo rules
             </Button>,
@@ -182,6 +184,7 @@ function Rules() {
                 <Tooltip title="Sửa thông tin" key={"2"}>
                   <Button
                     icon={<EditOutlined />}
+                    disabled={!canWrite}
                     onClick={() => {
                       setCurrentRow(entity);
                       setModalForm(true);
@@ -189,6 +192,7 @@ function Rules() {
                   />
                 </Tooltip>,
                 <Popconfirm
+                  disabled={!canWrite}
                   title="Bạn chắc chắn muốn xóa?"
                   key={"3"}
                   onConfirm={async () => {
@@ -201,7 +205,7 @@ function Rules() {
                     }
                   }}
                 >
-                  <Button icon={<DeleteOutlined />} danger />
+                  <Button icon={<DeleteOutlined />} danger disabled={!canWrite} />
                 </Popconfirm>,
               ];
             },

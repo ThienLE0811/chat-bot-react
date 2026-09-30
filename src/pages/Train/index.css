@@ -21,3 +21,15 @@
 .img-train {
     text-align: center;
 }
+.train-page__summary {
+  margin-bottom: 16px;
+}
+
+.train-page__timeline {
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.train-page__row--selected > td {
+  background: #e6f4ff !important;
+}

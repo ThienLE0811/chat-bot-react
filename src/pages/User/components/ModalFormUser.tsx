@@ -19,13 +19,9 @@ import {
   Tooltip,
 } from "antd";
 import React, { useRef, useState } from "react";
-import { getPermissionRole } from "../../../services/groupService";
-import {
-  createUser,
-  updateUser,
-  handleLoginApi,
-  handleSingUpApi,
-} from "../../../services/userService";
+import { getRoleOptions } from "../../../services/groupService";
+import { createUser, updateUser } from "../../../services/userService";
+import { errorMessage } from "../../../lib/auth";
 
 export type FormValueType = {
   target?: string;
@@ -48,14 +44,15 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
     props;
   const actionRef = useRef<ActionType>();
   const restFormRef = useRef<ProFormInstance>();
+  const isEdit = !!initiateData?._id;
   const handleSubmit = async (formValues: any) => {
-    console.log(formValues);
-
     try {
-      const res = initiateData?._id
-        ? await updateUser(initiateData?._id, formValues)
-        : await handleSingUpApi(formValues);
-      console.log("log user:: ", res);
+      // Khi cập nhật, bỏ trống mật khẩu nghĩa là giữ nguyên mật khẩu cũ
+      const { password, ...rest } = formValues;
+      const updateValues = password ? formValues : rest;
+      const res = isEdit
+        ? await updateUser(initiateData?._id, updateValues)
+        : await createUser(formValues);
       if (res?.data?.statusCode === 200) {
         onVisibleChange(false);
         onSuccess?.();
@@ -71,7 +68,10 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         return Promise.reject();
       }
     } catch (error) {
-      console.log(error);
+      // 403 đã được báo chung trong lib/auth.ts
+      if ((error as any)?.response?.status !== 403) {
+        message.error(errorMessage(error, "Lưu người dùng không thành công"));
+      }
     }
   };
 
@@ -87,7 +87,9 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
         destroyOnClose: true,
         okText: "Xác nhận",
       }}
-      initialValues={initiateData}
+      initialValues={
+        initiateData ? { ...initiateData, password: undefined } : undefined
+      }
       className="modal-form-user"
       formRef={restFormRef}
       onFinish={handleSubmit}
@@ -120,14 +122,18 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           />
         </Col>
         <Col span={8}>
-          <ProFormText
-            label="Mật khẩu"
+          <ProFormText.Password
+            label={isEdit ? "Mật khẩu mới" : "Mật khẩu"}
             name="password"
-            disabled={initiateData?._id ? true : false}
-            required
+            required={!isEdit}
+            tooltip={isEdit ? "Bỏ trống nếu không muốn đổi mật khẩu" : undefined}
+            fieldProps={{
+              autoComplete: "new-password",
+              placeholder: isEdit ? "Bỏ trống để giữ nguyên" : undefined,
+            }}
             rules={[
-              // { max: 20, message: "Vui lòng không nhập quá 20 kí tự" },
-              { required: true, message: "Vui lòng không bỏ trống" },
+              { required: !isEdit, message: "Vui lòng không bỏ trống" },
+              { min: 6, message: "Mật khẩu cần ít nhất 6 kí tự" },
             ]}
           />
         </Col>
@@ -148,33 +154,26 @@ const ModalFormUser: React.FC<ModalFormUserProps> = (props) => {
           <ProFormText
             label="Họ"
             name="firstName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
+            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
           />
         </Col>
         <Col span={8}>
           <ProFormText
             label="Tên"
             name="lastName"
-            rules={[{ max: 500, message: "Vui lòng không nhập quá 500 kí tự" }]}
+            rules={[{ max: 100, message: "Vui lòng không nhập quá 100 kí tự" }]}
           />
         </Col>
 
-        {/* <Col span={8}>
-          <ProFormText
-            label="Vai trò"
-            name="userRoleName"
-            // disabled
-            rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
-          />
-        </Col> */}
         <Col span={8}>
           <ProFormSelect
-            label="Vai trò"
-            name="userRoleName"
+            label="Nhóm quyền"
+            name="roleCode"
             showSearch
-            initialValue={initiateData?.userRoleName}
+            initialValue={initiateData?.roleCode}
+            tooltip="Chỉ gán được nhóm có quyền nằm trong quyền của bạn"
             rules={[{ required: true, message: "Vui lòng không bỏ trống" }]}
-            request={async () => getPermissionRole()}
+            request={async () => getRoleOptions()}
           />
         </Col>
       </Row>

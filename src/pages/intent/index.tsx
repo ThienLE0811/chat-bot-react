@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -36,8 +37,10 @@ import {
   testIntent,
 } from "../../services/intentServices";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import TagListCell from "../components/TagListCell";
 
 function Intent() {
+  const canWrite = useCan()("dialogue.write");
   const [modalFormIntentVisible, setModalFormIntentVisible] =
     useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
@@ -52,7 +55,7 @@ function Intent() {
 
   const columns = [
     {
-      title: "Tên",
+      title: "Mã ý định",
       dataIndex: "title",
       width: 120,
       render: (dom, entity) => {
@@ -70,21 +73,18 @@ function Intent() {
       },
     },
     {
-      title: "Mô tả",
-      valueType: "treeSelect",
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       text={record?.data.join(", ")}
-      //     />
-      //   </>
-      // ),
-      ellipsis: true,
+      title: "Tên tiếng Việt",
+      dataIndex: "description",
+      width: 200,
+      hideInSearch: true,
+      render: (_, record) => record?.description || "—",
+    },
+    {
+      title: "Câu mẫu",
+      width: 420,
       hideInSearch: true,
       dataIndex: "examples",
+      render: (_, record) => <TagListCell items={record?.examples} />,
     },
     // {
     //   title: "Ngày tạo",
@@ -120,7 +120,7 @@ function Intent() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
             onClick={() => {
               setCurrentRow(record);
               setModalFormIntentVisible(true);
@@ -128,6 +128,7 @@ function Intent() {
           />
         </Tooltip>,
         <Popconfirm
+          disabled={!canWrite}
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
@@ -143,7 +144,7 @@ function Intent() {
           <Button
             icon={<DeleteOutlined />}
             danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
           />
         </Popconfirm>,
       ],
@@ -256,7 +257,7 @@ function Intent() {
             onClick={() => {
               setModalFormIntentVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo ý định
           </Button>,
@@ -276,7 +277,7 @@ function Intent() {
               onClick={() => {
                 setModalFormIntentVisible(true);
               }}
-              // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+              disabled={!canWrite}
             >
               <PlusOutlined /> Tạo ý định
             </Button>,
@@ -335,7 +336,7 @@ function Intent() {
                 <Tooltip title="Sửa thông tin" key={"1"}>
                   <Button
                     icon={<EditOutlined />}
-                    // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+                    disabled={!canWrite}
                     onClick={() => {
                       setCurrentRow(entity);
                       setModalFormIntentVisible(true);
@@ -343,6 +344,7 @@ function Intent() {
                   />
                 </Tooltip>,
                 <Popconfirm
+                  disabled={!canWrite}
                   title="Bạn chắc chắn muốn xóa?"
                   key={"2"}
                   onConfirm={async () => {
@@ -355,7 +357,7 @@ function Intent() {
                     }
                   }}
                 >
-                  <Button icon={<DeleteOutlined />} danger />
+                  <Button icon={<DeleteOutlined />} danger disabled={!canWrite} />
                 </Popconfirm>,
               ];
             },

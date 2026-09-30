@@ -1,3 +1,4 @@
+import { useCan } from "../../lib/auth";
 import {
   ActionType,
   PageContainer,
@@ -7,25 +8,18 @@ import {
   ProTable,
 } from "@ant-design/pro-components";
 import Home from "../Home/Home";
-import {
-  Button,
-  Drawer,
-  message,
-  notification,
-  Popconfirm,
-  Switch,
-  Tooltip,
-} from "antd";
+import { Button, Drawer, message, notification, Popconfirm, Switch, Tooltip } from "antd";
 import { useRef, useState } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 // import columnsEntitiesTable from "./components/columnsEntitiesTable";
 import { deleteEntities, getEntities } from "../../services/entitiesService";
 import ResponsesiveTextTable from "../components/ResponsiveTextTable";
+import TagListCell from "../components/TagListCell";
 import ModalFormEntities from "./components/ModalFormEntities";
 
 function Entities() {
-  const [modalFormEntitiesVisible, setModalFormEntitiesVisible] =
-    useState<boolean>(false);
+  const canWrite = useCan()("dialogue.write");
+  const [modalFormEntitiesVisible, setModalFormEntitiesVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<any>();
   // const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
   //   []
@@ -56,31 +50,19 @@ function Entities() {
     {
       title: "Giá trị",
       dataIndex: "dataEntities",
-      valueType: "treeSelect",
-      // render: (text, record) => (
-      //   <>
-      //     <ResponsesiveTextTable
-      //       maxWidth={300}
-      //       minWidth={150}
-      //       // text={text?.props?.children?.join(", ") || ""}
-      //       // text={record?.data.join(", ")}
-      //       text={record?.dataEntities.join(", ")}
-      //     />
-      //   </>
-      // ),
+      width: 420,
+      render: (_, record) => <TagListCell items={record?.dataEntities} />,
     },
     {
       title: "Mô tả",
       render: (text, record) => (
-        <>
-          <ResponsesiveTextTable
-            maxWidth={300}
-            minWidth={150}
-            // text={text?.props?.children?.join(", ") || ""}
-            // text={record?.data.join(", ")}
-            text={record?.description}
-          />
-        </>
+        <ResponsesiveTextTable
+          maxWidth={300}
+          minWidth={150}
+          // text={text?.props?.children?.join(", ") || ""}
+          // text={record?.data.join(", ")}
+          text={record?.description}
+        />
       ),
       ellipsis: true,
       hideInSearch: true,
@@ -90,9 +72,7 @@ function Entities() {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       valueType: "date",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />
-      ),
+      render: (text) => <ResponsesiveTextTable maxWidth={200} minWidth={70} text={text} />,
       hideInSearch: true,
       fieldProps: {
         format: "DD/MM/YYYY",
@@ -101,9 +81,7 @@ function Entities() {
     {
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
-      render: (text) => (
-        <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />
-      ),
+      render: (text) => <ResponsesiveTextTable maxWidth={300} minWidth={150} text={text} />,
       valueType: "date",
       fieldProps: {
         format: "DD/MM/YYYY",
@@ -121,7 +99,7 @@ function Entities() {
         <Tooltip title="Sửa thông tin" key={"1"}>
           <Button
             icon={<EditOutlined />}
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
             onClick={() => {
               setCurrentRow(record);
               setModalFormEntitiesVisible(true);
@@ -129,6 +107,7 @@ function Entities() {
           />
         </Tooltip>,
         <Popconfirm
+          disabled={!canWrite}
           title="Bạn chắc chắn muốn xóa?"
           key={"2"}
           onConfirm={async () => {
@@ -144,7 +123,7 @@ function Entities() {
           <Button
             icon={<DeleteOutlined />}
             danger
-            // disabled={access?.["USER_MANAGEMENT.UPDATE_USER"] ? false : true}
+            disabled={!canWrite}
           />
         </Popconfirm>,
       ],
@@ -190,8 +169,7 @@ function Entities() {
         pagination={{
           defaultPageSize: 10,
           showSizeChanger: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} trên ${total} thực thể`,
+          showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} thực thể`,
         }}
         toolBarRender={() => [
           <Button
@@ -201,7 +179,7 @@ function Entities() {
             onClick={() => {
               setModalFormEntitiesVisible(true);
             }}
-            // disabled={!access?.["USER_MANAGEMENT.CREATE_USER"]}
+            disabled={!canWrite}
           >
             <PlusOutlined /> Tạo thực thể
           </Button>,
