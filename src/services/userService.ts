@@ -53,7 +53,7 @@ const updateMe = async (values: UpdateMeInput): Promise<Me> => {
 const getUser = async (): Promise<any> => {
   try {
     const response = await axios.get(`${API_URL}/users/getList`, {});
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });

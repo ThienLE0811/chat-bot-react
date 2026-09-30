@@ -31,7 +31,7 @@ const getIntent = async (
   filters: any
 ): Promise<any> => {
   try {
-    const response = await axios.get("http://localhost:8000/intents/getList", {
+    const response = await axios.get(`${API_URL}/intents/getList`, {
       params: { filters: params.title },
     });
     return {
@@ -50,18 +50,18 @@ const getIntent = async (
 
 /** Throws on failure; the form shows the server's reason. */
 const createIntent = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/intents/create`, formValues);
+  return await axios.post(`${API_URL}/intents/create`, formValues);
 };
 
 const updateIntent = async (id: string, formValues: any) => {
   return await axios.put(
-    `http://localhost:8000/intents/update/${id}`,
+    `${API_URL}/intents/update/${id}`,
     formValues
   );
 };
 
 const deleteIntent = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/intents/delete/${id}`, {});
+  return await axios.delete(`${API_URL}/intents/delete/${id}`, {});
 };
 
 export interface IntentOption {

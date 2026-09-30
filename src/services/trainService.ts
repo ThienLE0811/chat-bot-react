@@ -1,7 +1,11 @@
 import axios from "axios";
 
-export const API_URL: string =
-  import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+if (!import.meta.env.VITE_API_URL) {
+  throw new Error("Thiếu biến môi trường VITE_API_URL (xem file .env)");
+}
+
+/** Backend base URL from VITE_API_URL, without a trailing slash. */
+export const API_URL: string = import.meta.env.VITE_API_URL.replace(/\/+$/, "");
 
 export type TrainStatus =
   | "queued"

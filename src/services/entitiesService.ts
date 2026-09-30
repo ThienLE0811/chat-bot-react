@@ -1,5 +1,6 @@
 import { notification } from "antd";
 import axios from "axios";
+import { API_URL } from "./trainService";
 
 const getEntities = async (
   params: any,
@@ -7,11 +8,11 @@ const getEntities = async (
   filters: any
 ): Promise<any> => {
   try {
-    const response = await axios.get("http://localhost:8000/entities/getList", {
+    const response = await axios.get(`${API_URL}/entities/getList`, {
       params: { filters: params.keyword },
     });
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });
@@ -26,7 +27,7 @@ const getEntities = async (
 const createEntities = async (formValues: any) => {
   try {
     return await axios.post(
-      `http://localhost:8000/entities/create`,
+      `${API_URL}/entities/create`,
       formValues
     );
   } catch (error) {
@@ -36,13 +37,13 @@ const createEntities = async (formValues: any) => {
 
 const updateEntities = async (id: string, formValues: any) => {
   return await axios.put(
-    `http://localhost:8000/entities/update/${id}`,
+    `${API_URL}/entities/update/${id}`,
     formValues
   );
 };
 
 const deleteEntities = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/entities/delete/${id}`, {});
+  return await axios.delete(`${API_URL}/entities/delete/${id}`, {});
 };
 
 export { getEntities, updateEntities, deleteEntities, createEntities };

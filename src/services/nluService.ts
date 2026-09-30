@@ -1,13 +1,14 @@
 import { notification } from "antd";
 import axios from "axios";
+import { API_URL } from "./trainService";
 
 const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
   try {
-    const response = await axios.get("http://localhost:8000/nlu/getList", {
+    const response = await axios.get(`${API_URL}/nlu/getList`, {
       params: { filters: params.intent },
     });
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       return Promise.resolve(response);
     } else {
       notification.error({ message: "Không lấy được dữ liệu" });
@@ -21,25 +22,25 @@ const getNlu = async (params: any, sort: any, filters: any): Promise<any> => {
 
 /** Throws on failure; the form shows the server's reason. */
 const createNlu = async (formValues: any) => {
-  return await axios.post(`http://localhost:8000/nlu/create`, formValues);
+  return await axios.post(`${API_URL}/nlu/create`, formValues);
 };
 
 const updateNlu = async (id: string, formValues: any) => {
-  return await axios.put(`http://localhost:8000/nlu/update/${id}`, formValues);
+  return await axios.put(`${API_URL}/nlu/update/${id}`, formValues);
 };
 
 const deleteNlu = async (id: String) => {
-  return await axios.delete(`http://localhost:8000/nlu/delete/${id}`, {});
+  return await axios.delete(`${API_URL}/nlu/delete/${id}`, {});
 };
 
 const getListIntent = async (): Promise<any> => {
   try {
     const response = await axios.get(
-      "http://localhost:8000/intents/getList",
+      `${API_URL}/intents/getList`,
       {}
     );
     console.log("res:: ", response);
-    if (response?.statusText === "OK") {
+    if (response?.status === 200) {
       const roles = response.data.map((item: any) => {
         return { label: item?.title, value: item?.title };
       });
